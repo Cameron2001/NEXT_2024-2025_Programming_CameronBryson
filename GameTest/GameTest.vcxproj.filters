@@ -33,24 +33,57 @@
     <ClCompile Include="Engine\Storage\Registry.cpp">
       <Filter>Engine\Storage</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\SceneManager.cpp" />
-    <ClCompile Include="Engine\Math\Vector2.cpp" />
-    <ClCompile Include="Engine\Math\Vector3.cpp" />
-    <ClCompile Include="Engine\Math\Vector4.cpp" />
     <ClCompile Include="Engine\Core\Event.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix4.cpp" />
-    <ClCompile Include="Engine\Graphics\Camera.cpp" />
-    <ClCompile Include="Engine\Graphics\Shader.cpp" />
-    <ClCompile Include="Engine\Managers\GraphicsManager.cpp" />
-    <ClCompile Include="Engine\Managers\AudioManager.cpp" />
-    <ClCompile Include="Engine\Systems\RenderView.cpp" />
-    <ClCompile Include="Engine\Graphics\Renderer.cpp" />
-    <ClCompile Include="Engine\Systems\PhysicsController.cpp" />
-    <ClCompile Include="Engine\Systems\CollisionView.cpp" />
-    <ClCompile Include="Engine\Managers\CollisionManager.cpp" />
-    <ClCompile Include="Engine\Core\Collision.cpp" />
+    <ClCompile Include="Engine\Managers\AudioManager.cpp">
+      <Filter>Engine\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Camera.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Core\Collision.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Controllers\CollisionController.cpp">
+      <Filter>Engine\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\CollisionManager.cpp">
+      <Filter>Engine\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Views\CollisionView.cpp">
+      <Filter>Engine\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\GraphicsManager.cpp">
+      <Filter>Engine\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Matrix4.cpp">
+      <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Controllers\PhysicsController.cpp">
+      <Filter>Engine\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Renderer.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Views\RenderView.cpp">
+      <Filter>Engine\Views</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\SceneManager.cpp">
+      <Filter>Engine\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Vector2.cpp">
+      <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Vector3.cpp">
+      <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Vector4.cpp">
+      <Filter>Engine\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Graphics\Shader.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -96,28 +129,69 @@
     <ClInclude Include="Engine\Storage\Registry.h">
       <Filter>Engine\Storage</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\SceneManager.h" />
-    <ClInclude Include="Engine\Core\Components.h" />
-    <ClInclude Include="Engine\Math\Vector2.h" />
-    <ClInclude Include="Engine\Math\Vector3.h" />
-    <ClInclude Include="Engine\Math\Vector4.h" />
     <ClInclude Include="Engine\Core\Event.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix4.h" />
-    <ClInclude Include="Engine\Graphics\Camera.h" />
-    <ClInclude Include="Engine\Graphics\Vertex.h" />
-    <ClInclude Include="Engine\Graphics\Mesh.h" />
-    <ClInclude Include="Engine\Graphics\Shader.h" />
-    <ClInclude Include="Engine\Graphics\Model.h" />
-    <ClInclude Include="Engine\Managers\GraphicsManager.h" />
-    <ClInclude Include="Engine\Managers\AudioManager.h" />
-    <ClInclude Include="Engine\Systems\RenderView.h" />
-    <ClInclude Include="Engine\Graphics\Renderer.h" />
-    <ClInclude Include="Engine\Systems\PhysicsController.h" />
-    <ClInclude Include="Engine\Systems\CollisionView.h" />
-    <ClInclude Include="Engine\Managers\CollisionManager.h" />
-    <ClInclude Include="Engine\Core\Collision.h" />
+    <ClInclude Include="Engine\Managers\AudioManager.h">
+      <Filter>Engine\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Camera.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Collision.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Controllers\CollisionController.h">
+      <Filter>Engine\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\CollisionManager.h">
+      <Filter>Engine\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Views\CollisionView.h">
+      <Filter>Engine\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Components.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\GraphicsManager.h">
+      <Filter>Engine\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Matrix4.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Mesh.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Model.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Controllers\PhysicsController.h">
+      <Filter>Engine\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Renderer.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Views\RenderView.h">
+      <Filter>Engine\Views</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\SceneManager.h">
+      <Filter>Engine\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector2.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector3.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Vector4.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Shader.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Vertex.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
@@ -149,6 +223,18 @@
     </Filter>
     <Filter Include="Engine\Storage">
       <UniqueIdentifier>{aaf50c06-cc55-4208-af09-e8a48ad24d46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Views">
+      <UniqueIdentifier>{43e81358-c94d-455b-ab6a-a082116f0a6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Controllers">
+      <UniqueIdentifier>{d6de39ab-e740-48af-b889-6daa0ff64259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Math">
+      <UniqueIdentifier>{4c6fdfb3-ed3f-49a8-b3ce-4fdc57a85a2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Events">
+      <UniqueIdentifier>{4f4ea57f-ce1b-47f6-b121-9864c93112f0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
