@@ -44,6 +44,9 @@
     <ClCompile Include="Engine\Graphics\Camera.cpp" />
     <ClCompile Include="Engine\Graphics\Shader.cpp" />
     <ClCompile Include="Engine\Managers\GraphicsManager.cpp" />
+    <ClCompile Include="Engine\Managers\AudioManager.cpp" />
+    <ClCompile Include="Engine\Systems\RenderSystem.cpp" />
+    <ClCompile Include="Engine\Graphics\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -104,6 +107,9 @@
     <ClInclude Include="Engine\Graphics\Shader.h" />
     <ClInclude Include="Engine\Graphics\Model.h" />
     <ClInclude Include="Engine\Managers\GraphicsManager.h" />
+    <ClInclude Include="Engine\Managers\AudioManager.h" />
+    <ClInclude Include="Engine\Systems\RenderSystem.h" />
+    <ClInclude Include="Engine\Graphics\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

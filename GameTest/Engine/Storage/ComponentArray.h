@@ -2,6 +2,7 @@
 #include "IComponentArray.h"
 #include <algorithm>
 #include <vector>
+#include <iterator>
 using Entity = unsigned int;
 constexpr size_t MAX_ENTITIES = 10000;
 template <typename T>
@@ -82,7 +83,7 @@ inline std::vector<Entity> ComponentArray<T>::GetEntityIntersection(std::vector<
 	auto IDs = GetEntities();
 	std::sort(IDs.begin(), IDs.end());
 	std::sort(entities.begin(), entities.end());
-	std::vector<Entity> interscection;
+	std::vector<Entity> intersection;
 	intersection.reserve(std::min(IDs.size(), entities.size()));
 	std::set_intersection(IDs.begin(), IDs.end(), entities.begin(), entities.end(), std::back_inserter(intersection));
 	return intersection;

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Shader.h"
 
-void Shader::DrawMesh(const Mesh& mesh)
+void Shader::DrawMesh(const Matrix4& MVP, const Mesh& mesh)
 {
 }

@@ -4,15 +4,6 @@ class Scene;
 class SceneManager
 {
 public:
-	static void Init();
-	static void LateInit();
-	static void Update(const float dt);
-	static void LateUpdate(const float dt);
-	static void Render();
-	static void LateRender();
-	static void Shutdown();
-	static void LateShutdown();
-
 	template <typename T>
 	static void LoadScene()
 	{

@@ -5,11 +5,12 @@ void GraphicsManager::LoadModel(const std::string& modelName, const std::string&
 {
 }
 
-void GraphicsManager::DrawModel(const std::string& modelName)
+Model& GraphicsManager::GetModel(const std::string& modelName)
 {
-	Model & model = m_modelMap[modelName];
-	for (Mesh&mesh : model.meshes)
-	{
-		m_shader.DrawMesh(mesh);
-	}
+	return m_modelMap[modelName];
+}
+
+
+void GraphicsManager::Shutdown()
+{
 }

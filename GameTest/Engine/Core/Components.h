@@ -1,13 +1,13 @@
 #pragma once
 #include "Engine/Math/Vector3.h"
 #include <string>
-struct CTransform
+struct TransformComponent
 {
-	CTransform()
+	TransformComponent()
 		: Position(FVector3(0.0f, 0.0f, 0.0f)), Rotation(FVector3(0.0f, 0.0f, 0.0f)), Scale(FVector3(1.0f, 1.0f, 1.0f))
 	{
 	}
-	CTransform(const FVector3& position, const FVector3& rotation, const FVector3& scale)
+	TransformComponent(const FVector3& position, const FVector3& rotation, const FVector3& scale)
 		: Position(position), Rotation(rotation), Scale(scale)
 	{
 	}
@@ -15,33 +15,33 @@ struct CTransform
 	FVector3 Rotation;
 	FVector3 Scale;
 };
-struct CCollider
+struct ColliderComponent
 {
 
 };
-struct CBoxBounds
+struct BoxBoundsComponent
 {
-	CBoxBounds() : extents(FVector3(0.0f, 0.0f, 0.0f))
+	BoxBoundsComponent() : extents(FVector3(0.0f, 0.0f, 0.0f))
 	{
 	}
-	CBoxBounds(const FVector3& extents)
+	BoxBoundsComponent(const FVector3& extents)
 		: extents(extents)
 	{
 	}
 	FVector3 extents;
 };
-struct CSphereBounds
+struct SphereBoundsComponent
 {
-	CSphereBounds() : radius(0.0f)
+	SphereBoundsComponent() : radius(0.0f)
 	{
 	}
-	CSphereBounds(float radius)
+	SphereBoundsComponent(float radius)
 		: radius(radius)
 	{
 	}
 	float radius;
 };
-struct CRigidBody
+struct RigidBodyComponent
 {
 
 	float linearDrag;
@@ -51,11 +51,11 @@ struct CRigidBody
 	FVector3 angularVelocity;
 	FVector3 angularAcceleration;
 };
-struct CText
+struct TextComponent
 {
 	std::string text;
 };
-struct CModel
+struct ModelComponent
 {
 	std::string modelName;
 };

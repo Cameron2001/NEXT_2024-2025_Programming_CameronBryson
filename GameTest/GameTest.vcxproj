@@ -186,6 +186,7 @@
     <ClInclude Include="App\SimpleController.h" />
     <ClInclude Include="App\SimpleSound.h" />
     <ClInclude Include="App\SimpleSprite.h" />
+    <ClInclude Include="Engine\Managers\AudioManager.h" />
     <ClInclude Include="Engine\Graphics\Camera.h" />
     <ClInclude Include="Engine\Core\Components.h" />
     <ClInclude Include="Engine\Graphics\Model.h" />
@@ -205,6 +206,8 @@
     <ClInclude Include="Engine\Storage\Registry.h" />
     <ClInclude Include="Engine\Managers\SceneManager.h" />
     <ClInclude Include="Engine\Graphics\Shader.h" />
+    <ClInclude Include="Engine\Systems\RenderSystem.h" />
+    <ClInclude Include="Engine\Graphics\Renderer.h" />
     <ClInclude Include="stb_image\stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -215,6 +218,7 @@
     <ClCompile Include="App\SimpleController.cpp" />
     <ClCompile Include="App\SimpleSound.cpp" />
     <ClCompile Include="App\SimpleSprite.cpp" />
+    <ClCompile Include="Engine\Managers\AudioManager.cpp" />
     <ClCompile Include="Engine\Graphics\Camera.cpp" />
     <ClCompile Include="Engine\Math\Matrix4.cpp" />
     <ClCompile Include="Engine\Math\Vector2.cpp" />
@@ -229,6 +233,8 @@
     <ClCompile Include="Engine\Storage\Registry.cpp" />
     <ClCompile Include="Engine\Managers\SceneManager.cpp" />
     <ClCompile Include="Engine\Graphics\Shader.cpp" />
+    <ClCompile Include="Engine\Systems\RenderSystem.cpp" />
+    <ClCompile Include="Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="stb_image\stb_image.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -7,9 +7,9 @@ class GraphicsManager
 {
 public:
 	void LoadModel(const std::string& modelName, const std::string& path);
-	void DrawModel(const std::string& modelName);
+	Model& GetModel(const std::string& modelName);
+	void Shutdown();
 private:
 	std::unordered_map<std::string, Model> m_modelMap;
-	Shader m_shader;
 };
 

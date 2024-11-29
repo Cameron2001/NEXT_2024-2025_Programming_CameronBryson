@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <typeindex>
 #include "Engine/Storage/ComponentArray.h"
 class Registry
 {
@@ -41,7 +42,7 @@ public:
 private:
 	std::vector<Entity> m_entities;
 	std::vector<Entity> m_freeEntities;
-	std::unordered_map<Entity, std::shared_ptr<IComponentArray>> m_componentArrays;
+	std::unordered_map<std::type_index, std::shared_ptr<IComponentArray>> m_componentArrays;
 
 };
 
