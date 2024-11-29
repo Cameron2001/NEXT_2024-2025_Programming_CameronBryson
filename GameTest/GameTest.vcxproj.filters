@@ -34,6 +34,16 @@
       <Filter>Engine\Storage</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\SceneManager.cpp" />
+    <ClCompile Include="Engine\Math\Vector2.cpp" />
+    <ClCompile Include="Engine\Math\Vector3.cpp" />
+    <ClCompile Include="Engine\Math\Vector4.cpp" />
+    <ClCompile Include="Engine\Core\Event.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Math\Matrix4.cpp" />
+    <ClCompile Include="Engine\Graphics\Camera.cpp" />
+    <ClCompile Include="Engine\Graphics\Shader.cpp" />
+    <ClCompile Include="Engine\Managers\GraphicsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -80,6 +90,20 @@
       <Filter>Engine\Storage</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\SceneManager.h" />
+    <ClInclude Include="Engine\Core\Components.h" />
+    <ClInclude Include="Engine\Math\Vector2.h" />
+    <ClInclude Include="Engine\Math\Vector3.h" />
+    <ClInclude Include="Engine\Math\Vector4.h" />
+    <ClInclude Include="Engine\Core\Event.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\Matrix4.h" />
+    <ClInclude Include="Engine\Graphics\Camera.h" />
+    <ClInclude Include="Engine\Graphics\Vertex.h" />
+    <ClInclude Include="Engine\Graphics\Mesh.h" />
+    <ClInclude Include="Engine\Graphics\Shader.h" />
+    <ClInclude Include="Engine\Graphics\Model.h" />
+    <ClInclude Include="Engine\Managers\GraphicsManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
