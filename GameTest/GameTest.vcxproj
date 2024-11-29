@@ -203,7 +203,6 @@
     <ClCompile Include="App\SimpleController.cpp" />
     <ClCompile Include="App\SimpleSound.cpp" />
     <ClCompile Include="App\SimpleSprite.cpp" />
-    <ClCompile Include="Engine\Storage\ComponentArray.cpp" />
     <ClCompile Include="GameTest.cpp" />
     <ClCompile Include="miniaudio\miniaudio.cpp" />
     <ClCompile Include="Game\PlayScene.cpp" />

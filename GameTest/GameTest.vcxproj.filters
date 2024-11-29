@@ -30,9 +30,6 @@
     <ClCompile Include="Engine\Core\Scene.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Storage\ComponentArray.cpp">
-      <Filter>Engine\Storage</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Storage\Registry.cpp">
       <Filter>Engine\Storage</Filter>
     </ClCompile>

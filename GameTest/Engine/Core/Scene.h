@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Storage/Registry.h"
 class Scene
 {
 public:
@@ -12,5 +13,8 @@ public:
 	virtual void LateRender();
 	virtual void Shutdown();
 	virtual void LateShutdown();
+private:
+	Registry m_registry;
+
 };
 
