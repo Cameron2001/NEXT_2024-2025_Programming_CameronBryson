@@ -24,6 +24,19 @@
     <ClCompile Include="miniaudio\miniaudio.cpp">
       <Filter>API\third_party\miniaudio</Filter>
     </ClCompile>
+    <ClCompile Include="Game\PlayScene.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Core\Scene.cpp">
+      <Filter>Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Storage\ComponentArray.cpp">
+      <Filter>Engine\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Storage\Registry.cpp">
+      <Filter>Engine\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Managers\SceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -54,6 +67,22 @@
     <ClInclude Include="miniaudio\miniaudio.h">
       <Filter>API\third_party\miniaudio</Filter>
     </ClInclude>
+    <ClInclude Include="Game\PlayScene.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Scene.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Storage\ComponentArray.h">
+      <Filter>Engine\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Storage\IComponentArray.h">
+      <Filter>Engine\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Storage\Registry.h">
+      <Filter>Engine\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Managers\SceneManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
@@ -67,6 +96,24 @@
     </Filter>
     <Filter Include="API\third_party\stb_image">
       <UniqueIdentifier>{61cfc19b-c57e-4021-b530-bac172fcba86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{82bde0cc-6ac5-455b-b65a-73444bebf64e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{68d2aa26-4a52-4b6e-8aea-0c4cb38c5557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Core">
+      <UniqueIdentifier>{a04ecd66-0bda-404d-8b81-d576c609a571}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Graphics">
+      <UniqueIdentifier>{9accd578-0043-4009-8517-ab61a21dccbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers">
+      <UniqueIdentifier>{58beccc2-562a-4a24-8e7a-5304b59811dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Storage">
+      <UniqueIdentifier>{aaf50c06-cc55-4208-af09-e8a48ad24d46}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
