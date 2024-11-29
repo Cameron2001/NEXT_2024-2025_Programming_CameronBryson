@@ -11,13 +11,13 @@ public:
 		{
 			m_currentScene->Shutdown();
 		}
-		m_currentScene = std::make_shared<T>();
+		m_currentScene = std::make_unique<T>();
 		m_currentScene->Init();
 	}
 
-	static std::shared_ptr<Scene> GetCurrentScene();
+	static Scene& GetCurrentScene();
 private:
-	static std::shared_ptr<Scene> m_currentScene;
+	static std::unique_ptr<Scene> m_currentScene;
 
 
 };

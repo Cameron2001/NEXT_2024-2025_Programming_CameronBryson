@@ -2,9 +2,9 @@
 #include "SceneManager.h"
 #include "Engine/Core/Scene.h"
 
-std::shared_ptr<Scene> SceneManager::m_currentScene = nullptr;
+std::unique_ptr<Scene> SceneManager::m_currentScene = nullptr;
 
-std::shared_ptr<Scene> SceneManager::GetCurrentScene()
+Scene& SceneManager::GetCurrentScene()
 {
-	return m_currentScene;
+	return *m_currentScene;
 }

@@ -45,8 +45,12 @@
     <ClCompile Include="Engine\Graphics\Shader.cpp" />
     <ClCompile Include="Engine\Managers\GraphicsManager.cpp" />
     <ClCompile Include="Engine\Managers\AudioManager.cpp" />
-    <ClCompile Include="Engine\Systems\RenderSystem.cpp" />
+    <ClCompile Include="Engine\Systems\RenderView.cpp" />
     <ClCompile Include="Engine\Graphics\Renderer.cpp" />
+    <ClCompile Include="Engine\Systems\PhysicsController.cpp" />
+    <ClCompile Include="Engine\Systems\CollisionView.cpp" />
+    <ClCompile Include="Engine\Managers\CollisionManager.cpp" />
+    <ClCompile Include="Engine\Core\Collision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -108,8 +112,12 @@
     <ClInclude Include="Engine\Graphics\Model.h" />
     <ClInclude Include="Engine\Managers\GraphicsManager.h" />
     <ClInclude Include="Engine\Managers\AudioManager.h" />
-    <ClInclude Include="Engine\Systems\RenderSystem.h" />
+    <ClInclude Include="Engine\Systems\RenderView.h" />
     <ClInclude Include="Engine\Graphics\Renderer.h" />
+    <ClInclude Include="Engine\Systems\PhysicsController.h" />
+    <ClInclude Include="Engine\Systems\CollisionView.h" />
+    <ClInclude Include="Engine\Managers\CollisionManager.h" />
+    <ClInclude Include="Engine\Core\Collision.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

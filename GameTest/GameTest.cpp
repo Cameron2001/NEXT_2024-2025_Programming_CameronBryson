@@ -15,24 +15,24 @@
 void Init()
 {
 	SceneManager::LoadScene<PlayScene>();
-	SceneManager::GetCurrentScene()->Init();
-	SceneManager::GetCurrentScene()->LateInit();
+	SceneManager::GetCurrentScene().Init();
+	SceneManager::GetCurrentScene().LateInit();
 }
 
 void Update(const float deltaTime)
 {
-	SceneManager::GetCurrentScene()->Update(deltaTime);
-	SceneManager::GetCurrentScene()->LateUpdate(deltaTime);
+	SceneManager::GetCurrentScene().Update(deltaTime);
+	SceneManager::GetCurrentScene().LateUpdate(deltaTime);
 }
 
 void Render()
 {	
-	SceneManager::GetCurrentScene()->Render();
-	SceneManager::GetCurrentScene()->LateRender();
+	SceneManager::GetCurrentScene().Render();
+	SceneManager::GetCurrentScene().LateRender();
 
 }
 void Shutdown()
 {
-	SceneManager::GetCurrentScene()->Shutdown();
-	SceneManager::GetCurrentScene()->LateShutdown();
+	SceneManager::GetCurrentScene().Shutdown();
+	SceneManager::GetCurrentScene().LateShutdown();
 }
