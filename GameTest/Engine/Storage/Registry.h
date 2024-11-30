@@ -101,7 +101,7 @@ inline std::shared_ptr<ComponentArray<T>> Registry::GetComponentArray()
 	{
 		CreateComponentArray<T>();
 	}
-	return m_componentArrays[std::type_index(typeid(T))];
+	return std::static_pointer_cast<ComponentArray<T>>(m_componentArrays[std::type_index(typeid(T))]);
 }
 
 template<typename T>

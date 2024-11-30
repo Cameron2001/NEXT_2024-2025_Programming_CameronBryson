@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <memory>
 #include "App/SimpleSound.h"
 class AudioManager
 {
@@ -8,6 +9,6 @@ public:
 	CSimpleSound& GetSimpleSound(const std::string& soundName);
 	void Shutdown();
 private:
-	std::unordered_map<std::string, CSimpleSound> m_soundMap;
+	std::unordered_map<std::string, std::shared_ptr<CSimpleSound>> m_soundMap;
 };
 

@@ -4,15 +4,21 @@
 #include "Engine/Managers/GraphicsManager.h"
 #include "Engine/Storage/ComponentArray.h"
 #include "Engine/Core/Components.h"
+#include "Engine/Graphics/Camera.h"
 class RenderView
 {
 public:
 	RenderView();
 	~RenderView() = default;
-	void Init();
+	void Init(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<Camera> camera, std::shared_ptr<ComponentArray<TransformComponent>> transformComponentArray, std::shared_ptr<ComponentArray<ModelComponent>> modelComponentArray, std::shared_ptr<ComponentArray<TextComponent>> textComponentArray);
 	void Render();
 	void Shutdown();
 private:
+	std::weak_ptr<GraphicsManager> m_graphicsManager;
+	std::weak_ptr<Camera> m_camera;
+	std::weak_ptr<ComponentArray<TransformComponent>> m_transformComponentArray;
+	std::weak_ptr<ComponentArray<ModelComponent>> m_modelComponentArray;
+	std::weak_ptr<ComponentArray<TextComponent>> m_textComponentArray;
 	//Needs to get passed these pointers on creation
 	// 
 	//What this system needs:

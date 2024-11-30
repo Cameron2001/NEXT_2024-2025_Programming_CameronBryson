@@ -4,7 +4,7 @@
 Registry::Registry()
 {
 	m_entities.reserve(MAX_ENTITIES);
-	m_freeEntities.reserve(MAX_ENTITIES-1);
+	m_freeEntities.resize(MAX_ENTITIES-1);
 	std::iota(m_freeEntities.begin(), m_freeEntities.end(), 1);
 
 }
@@ -19,8 +19,18 @@ Entity Registry::CreateEntity()
 
 void Registry::DestroyEntity(Entity entity)
 {
+	for (auto& componentArray : m_componentArrays)
+	{
+		if (componentArray.second->HasItem(entity))
+		{
+			componentArray.second->RemoveItem(entity);
+		}
+	}
+	m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity), m_entities.end());
+	m_freeEntities.emplace_back(entity);
 }
 
 void Registry::ClearRegistry()
 {
+	
 }

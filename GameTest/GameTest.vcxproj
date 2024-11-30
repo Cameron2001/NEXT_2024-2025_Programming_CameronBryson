@@ -204,6 +204,7 @@
     <ClInclude Include="Engine\Core\Event.h" />
     <ClInclude Include="Engine\Graphics\Mesh.h" />
     <ClInclude Include="Engine\Managers\GraphicsManager.h" />
+    <ClInclude Include="Game\GameComponents.h" />
     <ClInclude Include="miniaudio\miniaudio.h" />
     <ClInclude Include="Game\PlayScene.h" />
     <ClInclude Include="Engine\Core\Scene.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Engine\Views\RenderView.h" />
     <ClInclude Include="Engine\Graphics\Renderer.h" />
     <ClInclude Include="Engine\Controllers\PhysicsController.h" />
+    <ClInclude Include="Game\Controllers\PlayerController.h" />
     <ClInclude Include="stb_image\stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -224,7 +226,6 @@
     <ClCompile Include="App\SimpleSound.cpp" />
     <ClCompile Include="App\SimpleSprite.cpp" />
     <ClCompile Include="Engine\Controllers\CollisionController.cpp" />
-    <ClCompile Include="Engine\Core\Collision.cpp" />
     <ClCompile Include="Engine\Managers\CollisionManager.cpp" />
     <ClCompile Include="Engine\Views\CollisionView.cpp" />
     <ClCompile Include="Engine\Managers\AudioManager.cpp" />
@@ -245,6 +246,7 @@
     <ClCompile Include="Engine\Views\RenderView.cpp" />
     <ClCompile Include="Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="Engine\Controllers\PhysicsController.cpp" />
+    <ClCompile Include="Game\Controllers\PlayerController.cpp" />
     <ClCompile Include="stb_image\stb_image.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

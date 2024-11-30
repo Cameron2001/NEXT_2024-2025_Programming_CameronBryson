@@ -42,9 +42,6 @@
     <ClCompile Include="Engine\Graphics\Camera.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Collision.cpp">
-      <Filter>Engine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Controllers\CollisionController.cpp">
       <Filter>Engine\Controllers</Filter>
     </ClCompile>
@@ -84,6 +81,7 @@
     <ClCompile Include="Engine\Graphics\Shader.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Controllers\PlayerController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -192,6 +190,8 @@
     <ClInclude Include="Engine\Graphics\Vertex.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Game\GameComponents.h" />
+    <ClInclude Include="Game\Controllers\PlayerController.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

@@ -7,7 +7,7 @@ void GraphicsManager::LoadModel(const std::string& modelName, const std::string&
 
 Model& GraphicsManager::GetModel(const std::string& modelName)
 {
-	return m_modelMap[modelName];
+	return *m_modelMap[modelName];
 }
 
 

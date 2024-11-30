@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PlayScene.h"
+#include "Game/GameComponents.h"
 
 PlayScene::PlayScene() : Scene()
 {
@@ -8,6 +9,9 @@ PlayScene::PlayScene() : Scene()
 void PlayScene::Init()
 {
 	Scene::Init();
+	auto player = m_registry->CreateEntity();
+	m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
+	m_registry->AddComponent<PlayerComponent>(player);
 }
 
 void PlayScene::LateInit()
@@ -43,4 +47,9 @@ void PlayScene::Shutdown()
 void PlayScene::LateShutdown()
 {
 	Scene::LateShutdown();
+}
+
+void PlayScene::InitComponentArrays()
+{
+	m_registry->CreateComponentArray<PlayerComponent>();
 }

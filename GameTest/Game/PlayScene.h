@@ -13,5 +13,7 @@ public:
 	virtual void LateRender() override;
 	virtual void Shutdown() override;
 	virtual void LateShutdown() override;
+private:
+	void InitComponentArrays();
 };
 

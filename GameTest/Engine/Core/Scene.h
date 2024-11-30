@@ -25,21 +25,21 @@ public:
 private:
 	void InitComponentArrays();
 protected:
-	//Thinking about making them shared pointers instead for flexibility
 	//Who do I want to have access to the members
 	//Should I create an interface to interact with the members
 	//Who should be able to access that interface
 
 	//Registry
-	Registry m_registry;
+	std::shared_ptr<Registry> m_registry;
+	std::shared_ptr<Camera> m_camera;
 
 	//Managers
 	//Managers are for storing and getting data
 	//Should move managers that might benefit from being passed to a new scene out
 	//or make it shared pointers that can be passed to new scene and lifetime will be extended
-	AudioManager m_audioManager;
-	GraphicsManager m_graphicsManager;
-	CollisionManager m_collisionManager;
+	std::shared_ptr<AudioManager> m_audioManager;
+	std::shared_ptr<GraphicsManager> m_graphicsManager;
+	std::shared_ptr<CollisionManager> m_collisionManager;
 
 
 	//Systems

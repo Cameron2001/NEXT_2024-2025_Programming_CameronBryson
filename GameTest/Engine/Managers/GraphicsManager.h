@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <string>
+#include <memory>
 #include "Engine/Graphics/Model.h"
 #include "Engine/Graphics/Shader.h"
 class GraphicsManager
@@ -10,6 +11,6 @@ public:
 	Model& GetModel(const std::string& modelName);
 	void Shutdown();
 private:
-	std::unordered_map<std::string, Model> m_modelMap;
+	std::unordered_map<std::string, std::shared_ptr<Model>> m_modelMap;
 };
 

@@ -6,4 +6,5 @@ class CollisionManager
 public:
 private:
 };
+
 //Keep track of collisions
