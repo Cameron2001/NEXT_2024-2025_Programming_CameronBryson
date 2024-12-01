@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Vector3.h"
+#include <corecrt_math.h>
 
 FVector3::FVector3()
 {
@@ -98,6 +99,40 @@ FVector3& FVector3::operator/=(const float obj)
 	this->Y /= obj;
 	this->Z /= obj;
 	return *this;
+}
+
+float FVector3::Length() const
+{
+	return sqrtf(X * X + Y * Y + Z * Z);
+}
+
+float FVector3::LengthSquared() const
+{
+	return X * X + Y * Y + Z * Z;
+}
+
+FVector3 FVector3::Normalize()
+{
+	float len = Length();
+	if (len != 0.0f)
+	{
+		return FVector3(X / len, Y / len, Z / len);
+	}
+	return FVector3(0.0f, 0.0f, 0.0f);
+}
+
+float FVector3::Dot(const FVector3& obj) const
+{
+	return (this->X * obj.X) + (this->Y * obj.Y) + (this->Z * obj.Z);
+}
+
+FVector3 FVector3::Cross(const FVector3& obj) const
+{
+	return FVector3(
+		Y * obj.Z - Z * obj.Y,
+		Z * obj.X - X * obj.Z,
+		X * obj.Y - Y * obj.X
+	);
 }
 
 IVector3::IVector3()

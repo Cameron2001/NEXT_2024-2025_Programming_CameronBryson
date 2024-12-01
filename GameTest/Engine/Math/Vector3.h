@@ -25,6 +25,12 @@ public:
 
 	FVector3& operator*=(const float obj);
 	FVector3& operator/=(const float obj);
+public:
+	float Length() const;
+	float LengthSquared() const;
+	FVector3 Normalize();
+	float Dot(const FVector3& obj) const;
+	FVector3 Cross(const FVector3& obj) const;
 };
 class IVector3 {
 public:

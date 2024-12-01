@@ -2,13 +2,13 @@
 #include "Engine/Storage/Registry.h"
 
 #include "Engine/Managers/AudioManager.h"
-#include "Engine/Managers/GraphicsManager.h"
 #include "Engine/Managers/CollisionManager.h"
+#include "Engine/Managers/GraphicsManager.h"
 
-#include "Engine/Views/RenderView.h"
-#include "Engine/Views/CollisionView.h"
-#include "Engine/Controllers/PhysicsController.h"
 #include "Engine/Controllers/CollisionController.h"
+#include "Engine/Controllers/PhysicsController.h"
+#include "Engine/Views/CollisionView.h"
+#include "Engine/Views/RenderView.h"
 class Scene
 {
 public:

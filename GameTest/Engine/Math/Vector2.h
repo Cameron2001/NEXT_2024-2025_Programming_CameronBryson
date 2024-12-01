@@ -33,6 +33,7 @@ public:
 	FVector2& operator*=(const float obj);
 	FVector2& operator/=(const float obj);
 
+
 };
 class IVector2 
 {

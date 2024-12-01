@@ -57,5 +57,9 @@ struct TextComponent
 };
 struct ModelComponent
 {
+	ModelComponent(const std::string& modelName)
+		: modelName(modelName)
+	{
+	}
 	std::string modelName;
 };

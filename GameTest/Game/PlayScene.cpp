@@ -10,8 +10,9 @@ void PlayScene::Init()
 {
 	Scene::Init();
 	auto player = m_registry->CreateEntity();
-	m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
+	m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -10.0f), FVector3(45.0f, 45.0f, 45.0f), FVector3(0.1f, 0.1f, 0.1f));
 	m_registry->AddComponent<PlayerComponent>(player);
+	m_registry->AddComponent<ModelComponent>(player, "Cube");
 }
 
 void PlayScene::LateInit()
@@ -52,4 +53,5 @@ void PlayScene::LateShutdown()
 void PlayScene::InitComponentArrays()
 {
 	m_registry->CreateComponentArray<PlayerComponent>();
+
 }
