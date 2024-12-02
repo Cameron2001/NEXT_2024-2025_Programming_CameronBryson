@@ -14,10 +14,9 @@ Scene::Scene()
 void Scene::Init()
 {
 	InitComponentArrays();
-	m_renderView.Init(m_graphicsManager,m_camera, m_registry->GetComponentArray<TransformComponent>(), m_registry->GetComponentArray<ModelComponent>(), m_registry->GetComponentArray<TextComponent>());
-	m_collisionView.Init(m_collisionManager,m_registry->GetComponentArray<TransformComponent>(), m_registry->GetComponentArray<ColliderComponent>(), m_registry->GetComponentArray<RigidBodyComponent>(), m_registry->GetComponentArray<BoxBoundsComponent>(), m_registry->GetComponentArray<SphereBoundsComponent>());
-	m_physicsController.Init(m_registry->GetComponentArray<TransformComponent>(), m_registry->GetComponentArray<RigidBodyComponent>());
-	m_collisionController.Init(m_collisionManager, m_registry->GetComponentArray<TransformComponent>(), m_registry->GetComponentArray<RigidBodyComponent>());
+	m_renderSystem.Init(m_graphicsManager,m_camera, m_registry->GetComponentArray<TransformComponent>(), m_registry->GetComponentArray<ModelComponent>(), m_registry->GetComponentArray<TextComponent>());
+	m_collisionSystem.Init(m_collisionManager,m_registry->GetComponentArray<TransformComponent>(), m_registry->GetComponentArray<ColliderComponent>(), m_registry->GetComponentArray<RigidBodyComponent>(), m_registry->GetComponentArray<BoxBoundsComponent>(), m_registry->GetComponentArray<SphereBoundsComponent>());
+	m_physicsSystem.Init(m_registry->GetComponentArray<TransformComponent>(), m_registry->GetComponentArray<RigidBodyComponent>());
 }
 
 void Scene::LateInit()
@@ -26,9 +25,8 @@ void Scene::LateInit()
 
 void Scene::Update(const float dt)
 {
-	m_physicsController.Update(dt);
-	m_collisionView.Update(dt);
-	m_collisionController.Update(dt);
+	m_physicsSystem.Update(dt);
+	m_collisionSystem.Update(dt);
 }
 
 void Scene::LateUpdate(const float dt)
@@ -37,7 +35,7 @@ void Scene::LateUpdate(const float dt)
 
 void Scene::Render()
 {
-	m_renderView.Render();
+	m_renderSystem.Render();
 }
 
 void Scene::LateRender()

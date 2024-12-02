@@ -5,10 +5,9 @@
 #include "Engine/Managers/CollisionManager.h"
 #include "Engine/Managers/GraphicsManager.h"
 
-#include "Engine/Controllers/CollisionController.h"
-#include "Engine/Controllers/PhysicsController.h"
-#include "Engine/Views/CollisionView.h"
-#include "Engine/Views/RenderView.h"
+#include "Engine/Systems/CollisionSystem.h"
+#include "Engine/Systems/PhysicsSystem.h"
+#include "Engine/Systems/RenderSystem.h"
 class Scene
 {
 public:
@@ -51,11 +50,10 @@ protected:
 	//Lifetime of systems shouldnt really matter because they are all the same. No data. Just processing
 	//Could be made static if changed a bit
 	//Currently systems either need access to the registry or only to the specific components it needs
-	RenderView m_renderView;
-	CollisionView m_collisionView;
+	RenderSystem m_renderSystem;
+	CollisionSystem m_collisionSystem;
+	PhysicsSystem m_physicsSystem;
 
-	PhysicsController m_physicsController;
-	CollisionController m_collisionController;
 
 
 	//Rendersystem only reads data

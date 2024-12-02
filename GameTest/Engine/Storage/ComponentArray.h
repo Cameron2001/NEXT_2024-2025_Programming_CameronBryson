@@ -7,13 +7,13 @@ using Entity = unsigned int;
 constexpr size_t MAX_ENTITIES = 10000;
 template <typename T>
 class ComponentArray final :
-    public IComponentArray
+	public IComponentArray
 {
 public:
-    ComponentArray();
+	ComponentArray();
 	~ComponentArray() = default;
 
-    template<typename... Args>
+	template<typename... Args>
 	void AddItem(Entity entity, Args&&... args);
 	void RemoveItem(Entity entity) override;
 	bool HasItem(Entity entity) override;
@@ -29,7 +29,7 @@ private:
 template<typename T>
 inline ComponentArray<T>::ComponentArray()
 {
-	m_SparseArray.resize(MAX_ENTITIES);
+	m_SparseArray.resize(MAX_ENTITIES,0);
 	m_DenseArray.reserve(MAX_ENTITIES);
 	m_componentArray.reserve(MAX_ENTITIES);
 }
@@ -81,13 +81,20 @@ template<typename T>
 inline std::vector<Entity> ComponentArray<T>::GetEntityIntersection(std::vector<Entity> entities)
 {
 	auto IDs = GetEntities();
-	std::sort(IDs.begin(), IDs.end());
-	std::sort(entities.begin(), entities.end());
+	
+	if (!std::is_sorted(IDs.begin(), IDs.end())) {
+		std::sort(IDs.begin(), IDs.end());
+	}
+	
+	if (!std::is_sorted(entities.begin(), entities.end())) {
+		std::sort(entities.begin(), entities.end());
+	}
+	
 	std::vector<Entity> intersection;
 	intersection.reserve(std::min(IDs.size(), entities.size()));
 	std::set_intersection(IDs.begin(), IDs.end(), entities.begin(), entities.end(), std::back_inserter(intersection));
+	
 	return intersection;
-
 }
 
 

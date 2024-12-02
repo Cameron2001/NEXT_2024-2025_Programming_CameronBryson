@@ -42,14 +42,8 @@
     <ClCompile Include="Engine\Graphics\Camera.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Controllers\CollisionController.cpp">
-      <Filter>Engine\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Managers\CollisionManager.cpp">
       <Filter>Engine\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Views\CollisionView.cpp">
-      <Filter>Engine\Views</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\GraphicsManager.cpp">
       <Filter>Engine\Managers</Filter>
@@ -57,14 +51,8 @@
     <ClCompile Include="Engine\Math\Matrix4.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Controllers\PhysicsController.cpp">
-      <Filter>Engine\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Graphics\Renderer.cpp">
       <Filter>Engine\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Views\RenderView.cpp">
-      <Filter>Engine\Views</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Managers\SceneManager.cpp">
       <Filter>Engine\Managers</Filter>
@@ -78,8 +66,21 @@
     <ClCompile Include="Engine\Math\Vector4.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Controllers\PlayerController.cpp" />
-    <ClCompile Include="Engine\Graphics\Renderer2D.cpp" />
+    <ClCompile Include="Engine\Graphics\Renderer2D.cpp">
+      <Filter>Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\CollisionSystem.cpp">
+      <Filter>Engine\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp">
+      <Filter>Engine\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PlayerSystem.cpp">
+      <Filter>Engine\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Systems\RenderSystem.cpp">
+      <Filter>Engine\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -137,14 +138,8 @@
     <ClInclude Include="Engine\Core\Collision.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Controllers\CollisionController.h">
-      <Filter>Engine\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Managers\CollisionManager.h">
       <Filter>Engine\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Views\CollisionView.h">
-      <Filter>Engine\Views</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Core\Components.h">
       <Filter>Engine\Core</Filter>
@@ -161,14 +156,8 @@
     <ClInclude Include="Engine\Graphics\Model.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Controllers\PhysicsController.h">
-      <Filter>Engine\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Graphics\Renderer.h">
       <Filter>Engine\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Views\RenderView.h">
-      <Filter>Engine\Views</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\SceneManager.h">
       <Filter>Engine\Managers</Filter>
@@ -185,10 +174,27 @@
     <ClInclude Include="Engine\Graphics\Vertex.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Game\GameComponents.h" />
-    <ClInclude Include="Game\Controllers\PlayerController.h" />
-    <ClInclude Include="Engine\Graphics\Renderer2D.h" />
-    <ClInclude Include="Engine\Math\MathUtil.h" />
+    <ClInclude Include="Game\GameComponents.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Math\MathUtil.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Renderer2D.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\CollisionSystem.h">
+      <Filter>Engine\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\PhysicsSystem.h">
+      <Filter>Engine\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\PlayerSystem.h">
+      <Filter>Engine\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Systems\RenderSystem.h">
+      <Filter>Engine\Systems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
@@ -221,17 +227,20 @@
     <Filter Include="Engine\Storage">
       <UniqueIdentifier>{aaf50c06-cc55-4208-af09-e8a48ad24d46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Views">
-      <UniqueIdentifier>{43e81358-c94d-455b-ab6a-a082116f0a6e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Controllers">
-      <UniqueIdentifier>{d6de39ab-e740-48af-b889-6daa0ff64259}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Math">
       <UniqueIdentifier>{4c6fdfb3-ed3f-49a8-b3ce-4fdc57a85a2c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Events">
       <UniqueIdentifier>{4f4ea57f-ce1b-47f6-b121-9864c93112f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Controllers">
+      <UniqueIdentifier>{6ac214ee-8fea-450b-84c4-e68b2487b7b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Views">
+      <UniqueIdentifier>{4ef1e217-e00e-4b4b-adf1-e8059d6f6de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Systems">
+      <UniqueIdentifier>{a3e25f73-bb89-4141-ab01-41811c77805e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
