@@ -5,7 +5,7 @@
 #include "Engine/Managers/CollisionManager.h"
 #include "Engine/Managers/GraphicsManager.h"
 
-#include "Engine/Systems/CollisionSystem.h"
+#include "Engine/Systems/CollisionDetectionSystem.h"
 #include "Engine/Systems/PhysicsSystem.h"
 #include "Engine/Systems/RenderSystem.h"
 class Scene
@@ -51,7 +51,7 @@ protected:
 	//Could be made static if changed a bit
 	//Currently systems either need access to the registry or only to the specific components it needs
 	RenderSystem m_renderSystem;
-	CollisionSystem m_collisionSystem;
+	CollisionDetectionSystem m_collisionSystem;
 	PhysicsSystem m_physicsSystem;
 
 

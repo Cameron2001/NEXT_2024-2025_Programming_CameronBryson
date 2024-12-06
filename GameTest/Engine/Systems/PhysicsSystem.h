@@ -11,10 +11,14 @@ public:
 	void Update(const float dt);
 	void Shutdown();
 private:
-	std::weak_ptr<ComponentArray<TransformComponent>> m_transformComponents; //Write
+	std::weak_ptr<ComponentArray<TransformComponent>> m_transformComponents; //Read and write
 	std::weak_ptr<ComponentArray<RigidBodyComponent>> m_rigidBodyComponents; //Read and write
-	//Things we need:
-	//Transform components
-	//RigidBody components
 };
 
+//Read:
+//transform
+//rigidbody
+
+//Write:
+//transform
+//rigidbody

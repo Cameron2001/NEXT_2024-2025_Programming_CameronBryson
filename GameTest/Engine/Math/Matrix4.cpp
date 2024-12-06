@@ -27,14 +27,12 @@ Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRati
 	Matrix4 perspectiveMatrix;
 	float radFov = MathUtil::DegreesToRadians(fov);
 	float tanHalfFOV = tanf(radFov / 2.0f);
-	float zRange = zNear - zFar;
 
 	perspectiveMatrix.Set(0, 0, 1.0f / (aspectRatio * tanHalfFOV));
 	perspectiveMatrix.Set(1, 1, 1.0f / tanHalfFOV);
-	perspectiveMatrix.Set(2, 2, (-zNear - zFar) / zRange);
-	perspectiveMatrix.Set(2, 3, (2.0f * zFar * zNear) / zRange);
-	perspectiveMatrix.Set(3, 2, -1.0f);
-	perspectiveMatrix.Set(3, 3, 0.0f);
+	perspectiveMatrix.Set(2, 2, -(zFar + zNear) / (zFar-zNear));
+	perspectiveMatrix.Set(2, 3, -1);
+	perspectiveMatrix.Set(3, 2, -(2.0f*zFar*zNear) / (zFar-zNear));
 	return perspectiveMatrix;
 }
 
@@ -137,6 +135,16 @@ FVector3 Matrix4::GetForward() const
 	return FVector3{ m[8], m[9], m[10] };
 }
 
+Matrix4 Matrix4::Inverse() const
+{
+	return Matrix4();
+}
+
+Matrix4 Matrix4::Transpose() const
+{
+	return Matrix4();
+}
+
 Matrix4 Matrix4::operator*(const Matrix4& obj) const
 {
 	Matrix4 result;
@@ -161,11 +169,11 @@ FVector3 Matrix4::operator*(const FVector3& obj) const
 	float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * 1.0f;
 	float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * 1.0f;
 	float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * 1.0f;
-	if (w != 0.0f && w != 1.0f)
+	if (w != 0.0f)
 	{
 		x /= w;
 		y /= w;
 		z /= w;
 	}
-	return FVector3{ x, y, z };
+	return FVector3{ x, y, z};
 }

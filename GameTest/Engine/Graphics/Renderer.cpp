@@ -1,32 +1,53 @@
 #include "stdafx.h"
+#include "Mesh.h"
+#include "Model.h"
 #include "Renderer.h"
 #include "Renderer2D.h"
-//We are using virtual res so we do not need to convert to NDC
+#include <Engine/Math/Matrix4.h>
+#include <Engine/Math/Vector3.h>
+#include <Engine/Math/Vector4.h>
+#include <limits>
+#include "Camera.h"
 void Renderer::RenderMesh(const Mesh& mesh, const Matrix4& MVP)
 {
-	for (int i = 0; i < mesh.indices.size(); i += 2)
+	for (const auto& face : mesh.faces)
 	{
-		int index = mesh.indices[i];
-		int nextIndex = mesh.indices[i + 1];
+		FVector3 mvpVertex0 = MVP * mesh.vertices[face.index1].position;
+		FVector3 mvpVertex1 = MVP * mesh.vertices[face.index2].position;
+		FVector3 mvpVertex2 = MVP * mesh.vertices[face.index3].position;
 
-		FVector2 screenPoint = ProjectPointToScreen(mesh.vertices[index].position, MVP);
-		FVector2 nextScreenPoint = ProjectPointToScreen(mesh.vertices[nextIndex].position, MVP);
+		if (!IsOnScreen(mvpVertex0) || !IsOnScreen(mvpVertex1) || !IsOnScreen(mvpVertex2))
+		{
+			continue;
+		}
+		//Backface culling
+		float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) - ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
+		if (determinant > 0)
+		{
+			continue;
+		}
+		Renderer2D::DrawLine(FVector2{ mvpVertex0.X, mvpVertex0.Y }, FVector2{ mvpVertex1.X, mvpVertex1.Y }, FVector3(1, 1, 1));
+		Renderer2D::DrawLine(FVector2{ mvpVertex1.X, mvpVertex1.Y }, FVector2{ mvpVertex2.X, mvpVertex2.Y }, FVector3(1, 1, 1));
+		Renderer2D::DrawLine(FVector2{ mvpVertex2.X, mvpVertex2.Y }, FVector2{ mvpVertex0.X, mvpVertex0.Y }, FVector3(1, 1, 1));
 
-		Renderer2D::DrawLine(screenPoint, nextScreenPoint, FVector3(1.0f, 1.0f, 1.0f));
+		
 	}
 }
 
 void Renderer::RenderModel(const Model& model, const Matrix4& MVP)
 {
-	for (auto& mesh : model.meshes)
+	for (const auto& mesh : model.meshes)
 	{
 		RenderMesh(mesh, MVP);
 	}
 }
 
-FVector2 Renderer::ProjectPointToScreen(const FVector3& point, const Matrix4& MVP)
+bool Renderer::IsOnScreen(const FVector3& point)
 {
-	FVector3 transformedPoint = MVP * point;
-	return FVector2(transformedPoint.X, transformedPoint.Y);
+	return (point.X >= -1.0f && point.X <= 1.0f) &&
+		(point.Y >= -1.0f && point.Y <= 1.0f) &&
+		(point.Z >= -1.0f && point.Z <= 1.0f);
 }
+
+
 

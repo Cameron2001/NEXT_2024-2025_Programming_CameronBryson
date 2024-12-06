@@ -3,7 +3,7 @@
 #include "Engine/Math/MathUtil.h"
 #include "App/AppSettings.h"
 
-Camera::Camera(const FVector3& position, const FVector3& worldUp, float yaw, float pitch, float FOV) : m_position(position), m_worldUp(worldUp), m_yaw(yaw), m_pitch(pitch), m_FOV(FOV), m_zNear(0.1f), m_zFar(1000.0f)
+Camera::Camera(const FVector3& position, const FVector3& worldUp, float yaw, float pitch, float FOV) : m_position(position), m_worldUp(worldUp), m_yaw(yaw), m_pitch(pitch), m_FOV(FOV), m_zNear(0.1f), m_zFar(100.0f)
 {
 	m_forward = FVector3(0.0f, 0.0f, -1.0f);
 	m_up = FVector3(0.0f, 1.0f, 0.0f);
@@ -58,7 +58,7 @@ const Matrix4& Camera::GetViewMatrix()
 
 const Matrix4& Camera::GetProjectionMatrix()
 {
-	return m_viewMatrix;
+	return m_projectionMatrix;
 }
 
 void Camera::UpdateViewMatrix()

@@ -14,10 +14,10 @@ public:
 	~ComponentArray() = default;
 
 	template<typename... Args>
-	void AddItem(Entity entity, Args&&... args);
-	void RemoveItem(Entity entity) override;
-	bool HasItem(Entity entity) override;
-	T& GetItem(Entity entity);
+	void AddComponent(Entity entity, Args&&... args);
+	void RemoveComponent(Entity entity) override;
+	bool HasComponent(Entity entity) override;
+	T& GetComponent(Entity entity);
 	std::vector<Entity> GetEntities() override;
 	std::vector<Entity> GetEntityIntersection(std::vector<Entity> entities) override;
 private:
@@ -35,14 +35,14 @@ inline ComponentArray<T>::ComponentArray()
 }
 template<typename T>
 template<typename ...Args>
-inline void ComponentArray<T>::AddItem(Entity entity, Args && ...args)
+inline void ComponentArray<T>::AddComponent(Entity entity, Args && ...args)
 {
 	m_DenseArray.emplace_back(entity);
 	m_componentArray.emplace_back(std::forward<Args>(args)...);
 	m_SparseArray[entity] = m_DenseArray.size() - 1;
 }
 template<typename T>
-inline void ComponentArray<T>::RemoveItem(Entity entity)
+inline void ComponentArray<T>::RemoveComponent(Entity entity)
 {
 	Entity entityIndex = m_SparseArray[entity];
 	Entity lastIndex = m_DenseArray.size() - 1;
@@ -59,13 +59,13 @@ inline void ComponentArray<T>::RemoveItem(Entity entity)
 }
 
 template<typename T>
-inline bool ComponentArray<T>::HasItem(Entity entity)
+inline bool ComponentArray<T>::HasComponent(Entity entity)
 {
 	return m_SparseArray[entity] < m_DenseArray.size() && m_DenseArray[m_SparseArray[entity]] == entity;
 }
 
 template<typename T>
-inline T& ComponentArray<T>::GetItem(Entity entity)
+inline T& ComponentArray<T>::GetComponent(Entity entity)
 {
 	Entity index = m_SparseArray[entity];
 	return m_componentArray[index];

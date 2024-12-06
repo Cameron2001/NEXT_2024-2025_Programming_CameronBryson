@@ -25,6 +25,9 @@ public:
 
 	FVector3& operator*=(const float obj);
 	FVector3& operator/=(const float obj);
+
+	bool operator==(const FVector3& obj) const;
+
 public:
 	float Length() const;
 	float LengthSquared() const;

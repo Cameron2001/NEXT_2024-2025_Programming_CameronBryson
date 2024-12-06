@@ -55,25 +55,25 @@ inline void Registry::CreateComponentArray()
 template<typename T, typename ...Args>
 inline void Registry::AddComponent(Entity entity, Args && ...args)
 {
-	GetComponentArray<T>()->AddItem(entity, std::forward<Args>(args)...);
+	GetComponentArray<T>()->AddComponent(entity, std::forward<Args>(args)...);
 }
 
 template<typename T>
 inline void Registry::RemoveComponent(Entity entity)
 {
-	GetComponentArray<T>()->RemoveItem(entity);
+	GetComponentArray<T>()->RemoveComponent(entity);
 }
 
 template<typename T>
 inline T& Registry::GetComponent(Entity entity)
 {
-	return GetComponentArray<T>().GetItem(entity);
+	return GetComponentArray<T>().GetComponent(entity);
 }
 
 template<typename T>
 inline bool Registry::HasComponent(Entity entity)
 {
-	return GetComponentArray<T>().HasItem(entity);
+	return GetComponentArray<T>().HasComponent(entity);
 }
 
 template<typename ...T>

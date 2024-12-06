@@ -21,9 +21,9 @@ void Registry::DestroyEntity(Entity entity)
 {
 	for (auto& componentArray : m_componentArrays)
 	{
-		if (componentArray.second->HasItem(entity))
+		if (componentArray.second->HasComponent(entity))
 		{
-			componentArray.second->RemoveItem(entity);
+			componentArray.second->RemoveComponent(entity);
 		}
 	}
 	m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity), m_entities.end());

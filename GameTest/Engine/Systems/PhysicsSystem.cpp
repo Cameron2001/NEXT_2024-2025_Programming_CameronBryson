@@ -20,6 +20,18 @@ void PhysicsSystem::Update(const float dt)
 	{
 		return;
 	}
+	auto IDs = transformComponents->GetEntityIntersection(rigidBodyComponents->GetEntities());
+	for (auto ID : IDs)
+	{
+		auto& transform = transformComponents->GetComponent(ID);
+		auto& rigidBody = rigidBodyComponents->GetComponent(ID);
+		rigidBody.linearVelocity += rigidBody.linearAcceleration * dt;
+		rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;
+		transform.Position += rigidBody.linearVelocity * dt;
+		transform.Rotation += rigidBody.angularVelocity * dt;
+		rigidBody.linearAcceleration = FVector3{ 0,0,0 };
+		rigidBody.angularAcceleration = FVector3{ 0,0,0 };
+	}
 }
 
 void PhysicsSystem::Shutdown()

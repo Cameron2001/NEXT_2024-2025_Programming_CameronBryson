@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Math/Vector3.h"
+#include "Engine/Math/Vector4.h"
 //eulerAngleXYZ
 //Get Axes
 //perspective
@@ -25,6 +26,8 @@ public:
 	FVector3 GetRight() const;
 	FVector3 GetUp() const;
 	FVector3 GetForward() const;
+	Matrix4 Inverse() const;
+	Matrix4 Transpose() const; 
 	Matrix4 operator*(const Matrix4& obj) const;
 	FVector3 operator*(const FVector3& obj) const;
 

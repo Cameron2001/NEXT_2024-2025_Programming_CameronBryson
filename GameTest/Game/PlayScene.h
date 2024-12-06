@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Core/Scene.h"
+#include "Game/PlayerSystem.h"
 class PlayScene : public Scene
 {
 public:
@@ -13,7 +14,10 @@ public:
 	virtual void LateRender() override;
 	virtual void Shutdown() override;
 	virtual void LateShutdown() override;
+	void Test(int value);
 private:
 	void InitComponentArrays();
+private:
+	PlayerSystem m_playerSystem;
 };
 

@@ -15,5 +15,9 @@ private:
 	std::weak_ptr<ComponentArray<RigidBodyComponent>> m_rigidbodyComponentArray;
 
 };
-//required compoenents:
+//Read:
+//Player
+
+//Write:
+//rigidbody
 

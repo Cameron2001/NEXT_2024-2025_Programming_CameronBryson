@@ -2,22 +2,50 @@
 #include <functional>
 #include <vector>
 #include <algorithm>
+
+//Need to make this safer from dangling pointers and shit
 template <typename... Args>
 class Event
 {
 public:
-	using Listener = std::function<void(Args...)>;
+	using ListenerFunc = std::function<void(Args...)>;
 
-	void AddListener(const Listener& listener)
+	struct Listener
 	{
+		void* owner;
+		ListenerFunc func;
+
+		bool operator==(const Listener& other) const
+		{
+			return owner == other.owner;
+		}
+	};
+	template<typename T>
+	void AddListener(T* instance, void (T::* memberFn)(Args...))
+	{
+		Listener listener{
+			instance,
+			[instance, memberFn](Args... args) { (instance->*memberFn)(args...); }
+		};
 		m_listeners.push_back(listener);
 	}
-	template<typename... CallArgs>
-	void Notify(CallArgs... args)
+	void RemoveListenersByOwner(void* owner)
+	{
+		m_listeners.erase(
+			std::remove_if(m_listeners.begin(), m_listeners.end(),
+				[owner](const Listener& listener)
+				{
+					return listener.owner == owner;
+				}
+			),
+			m_listeners.end()
+		);
+	}
+	void Notify(Args... args)
 	{
 		for (auto& listener : m_listeners)
 		{
-			listener(std::forward<CallArgs>(args)...);
+			listener.func(std::forward<Args>(args)...);
 		}
 	}
 

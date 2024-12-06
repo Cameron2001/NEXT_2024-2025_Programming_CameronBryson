@@ -43,13 +43,13 @@ struct SphereBoundsComponent
 };
 struct RigidBodyComponent
 {
-
-	float linearDrag;
-	FVector3 linearVelocity;
-	FVector3 linearAcceleration;
-	float angularDrag;
-	FVector3 angularVelocity;
-	FVector3 angularAcceleration;
+	RigidBodyComponent() = default;
+	float linearDrag = 0;
+	FVector3 linearVelocity = { 0,0,0 };
+	FVector3 linearAcceleration = { 0,0,0 };
+	float angularDrag = 0;
+	FVector3 angularVelocity = { 0,0,0 };
+	FVector3 angularAcceleration = { 0,0,0 };
 };
 struct TextComponent
 {

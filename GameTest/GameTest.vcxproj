@@ -187,9 +187,10 @@
     <ClInclude Include="App\SimpleSound.h" />
     <ClInclude Include="App\SimpleSprite.h" />
     <ClInclude Include="Engine\Core\Collision.h" />
+    <ClInclude Include="Engine\Graphics\Face.h" />
     <ClInclude Include="Engine\Managers\CollisionManager.h" />
     <ClInclude Include="Engine\Math\MathUtil.h" />
-    <ClInclude Include="Engine\Systems\CollisionSystem.h" />
+    <ClInclude Include="Engine\Systems\CollisionDetectionSystem.h" />
     <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
     <ClInclude Include="Engine\Systems\RenderSystem.h" />
     <ClInclude Include="Engine\Managers\AudioManager.h" />
@@ -218,6 +219,7 @@
     <ClInclude Include="stb_image\stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Engine\Core\Threadpool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\app.cpp" />
@@ -226,7 +228,7 @@
     <ClCompile Include="App\SimpleSound.cpp" />
     <ClCompile Include="App\SimpleSprite.cpp" />
     <ClCompile Include="Engine\Managers\CollisionManager.cpp" />
-    <ClCompile Include="Engine\Systems\CollisionSystem.cpp" />
+    <ClCompile Include="Engine\Systems\CollisionDetectionSystem.cpp" />
     <ClCompile Include="Engine\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Engine\Systems\RenderSystem.cpp" />
     <ClCompile Include="Engine\Managers\AudioManager.cpp" />
@@ -235,7 +237,6 @@
     <ClCompile Include="Engine\Math\Vector2.cpp" />
     <ClCompile Include="Engine\Math\Vector3.cpp" />
     <ClCompile Include="Engine\Math\Vector4.cpp" />
-    <ClCompile Include="Engine\Core\Event.cpp" />
     <ClCompile Include="GameTest.cpp" />
     <ClCompile Include="Engine\Managers\GraphicsManager.cpp" />
     <ClCompile Include="Game\PlayerSystem.cpp" />

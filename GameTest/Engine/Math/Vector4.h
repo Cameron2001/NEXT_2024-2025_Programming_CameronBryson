@@ -4,8 +4,8 @@ class FVector4
 public:
 	float X;
 	float Y;
+	float Z;
 	float W;
-	float H;
 public:
 	FVector4();
 	FVector4(float X, float Y, float W, float H);
@@ -31,8 +31,8 @@ class IVector4 {
 public:
 	int X;
 	int Y;
+	int Z;
 	int W;
-	int H;
 public:
 	IVector4();
 	IVector4(int X, int Y, int W, int H);

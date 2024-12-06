@@ -8,7 +8,7 @@ Scene::Scene()
 	m_audioManager = std::make_shared<AudioManager>();
 	m_graphicsManager = std::make_shared<GraphicsManager>();
 	m_collisionManager = std::make_shared<CollisionManager>();
-	m_camera = std::make_shared<Camera>(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 45.0f);
+	m_camera = std::make_shared<Camera>(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 90.0f);
 }
 
 void Scene::Init()

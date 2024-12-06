@@ -33,9 +33,6 @@
     <ClCompile Include="Engine\Storage\Registry.cpp">
       <Filter>Engine\Storage</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Event.cpp">
-      <Filter>Engine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Managers\AudioManager.cpp">
       <Filter>Engine\Managers</Filter>
     </ClCompile>
@@ -69,17 +66,17 @@
     <ClCompile Include="Engine\Graphics\Renderer2D.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\CollisionSystem.cpp">
+    <ClCompile Include="Engine\Systems\CollisionDetectionSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Systems\PhysicsSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\PlayerSystem.cpp">
-      <Filter>Engine\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Systems\RenderSystem.cpp">
       <Filter>Engine\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\PlayerSystem.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -183,18 +180,22 @@
     <ClInclude Include="Engine\Graphics\Renderer2D.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Systems\CollisionSystem.h">
+    <ClInclude Include="Engine\Systems\CollisionDetectionSystem.h">
       <Filter>Engine\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Systems\PhysicsSystem.h">
       <Filter>Engine\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\PlayerSystem.h">
-      <Filter>Engine\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Systems\RenderSystem.h">
       <Filter>Engine\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="Game\PlayerSystem.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Core\Threadpool.h">
+      <Filter>Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Graphics\Face.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
@@ -232,12 +233,6 @@
     </Filter>
     <Filter Include="Engine\Events">
       <UniqueIdentifier>{4f4ea57f-ce1b-47f6-b121-9864c93112f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Controllers">
-      <UniqueIdentifier>{6ac214ee-8fea-450b-84c4-e68b2487b7b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Views">
-      <UniqueIdentifier>{4ef1e217-e00e-4b4b-adf1-e8059d6f6de3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Systems">
       <UniqueIdentifier>{a3e25f73-bb89-4141-ab01-41811c77805e}</UniqueIdentifier>
