@@ -1,23 +1,23 @@
 #pragma once
 #include "Engine/Core/Scene.h"
 #include "Game/PlayerSystem.h"
+
 class PlayScene : public Scene
 {
 public:
-	PlayScene();
-	virtual ~PlayScene() = default;
-	virtual void Init() override;
-	virtual void LateInit() override;
-	virtual void Update(const float dt) override;
-	virtual void LateUpdate(const float dt) override;
-	virtual void Render() override;
-	virtual void LateRender() override;
-	virtual void Shutdown() override;
-	virtual void LateShutdown() override;
-	void Test(int value);
-private:
-	void InitComponentArrays();
-private:
-	PlayerSystem m_playerSystem;
-};
+    PlayScene();
+    ~PlayScene() override = default;
+    void Init() override;
+    void LateInit() override;
+    void Update(float dt) override;
+    void LateUpdate(float dt) override;
+    void Render() override;
+    void LateRender() override;
+    void Shutdown() override;
+    void LateShutdown() override;
+    void Test(int value);
 
+private:
+    void InitComponentArrays();
+    PlayerSystem m_playerSystem;
+};

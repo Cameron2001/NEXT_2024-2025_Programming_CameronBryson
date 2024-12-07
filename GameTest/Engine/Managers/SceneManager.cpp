@@ -4,7 +4,7 @@
 
 std::unique_ptr<Scene> SceneManager::m_currentScene = nullptr;
 
-Scene& SceneManager::GetCurrentScene()
+Scene &SceneManager::GetCurrentScene()
 {
-	return *m_currentScene;
+    return *m_currentScene;
 }

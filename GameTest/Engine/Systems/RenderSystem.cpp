@@ -8,6 +8,7 @@
 #include <Engine/Math/Vector3.h>
 #include <Engine/Storage/ComponentArray.h>
 #include <vector>
+
 RenderSystem::RenderSystem()
 {
 }
@@ -24,14 +25,14 @@ void RenderSystem::Init(std::shared_ptr<GraphicsManager> graphicsManager, std::s
     m_textComponentArray = textComponentArray;
     const FVector3 half_extents(1.0f, 1.0f, 1.0f);
     const std::vector<Vertex> cubeVertices = {
-       {-half_extents.X, -half_extents.Y, -half_extents.Z},
-       { half_extents.X, -half_extents.Y, -half_extents.Z},
-       { half_extents.X,  half_extents.Y, -half_extents.Z},
-       {-half_extents.X,  half_extents.Y, -half_extents.Z},
-       {-half_extents.X, -half_extents.Y,  half_extents.Z},
-       { half_extents.X, -half_extents.Y,  half_extents.Z},
-       { half_extents.X,  half_extents.Y,  half_extents.Z},
-       {-half_extents.X,  half_extents.Y,  half_extents.Z}
+        {-half_extents.X, -half_extents.Y, -half_extents.Z},
+        {half_extents.X, -half_extents.Y, -half_extents.Z},
+        {half_extents.X, half_extents.Y, -half_extents.Z},
+        {-half_extents.X, half_extents.Y, -half_extents.Z},
+        {-half_extents.X, -half_extents.Y, half_extents.Z},
+        {half_extents.X, -half_extents.Y, half_extents.Z},
+        {half_extents.X, half_extents.Y, half_extents.Z},
+        {-half_extents.X, half_extents.Y, half_extents.Z}
     };
 
     // Define cube faces using quad_indices (triplets of indices)
@@ -66,7 +67,7 @@ void RenderSystem::Render()
     {
         return;
     }
-	auto viewProjectionMatrix = camera->GetViewMatrix() * camera->GetProjectionMatrix();
+    auto viewProjectionMatrix = camera->GetViewMatrix() * camera->GetProjectionMatrix();
     auto transformModelIDs = transformComponentArray->GetEntityIntersection(modelComponentArray->GetEntities());
     for (auto ID : transformModelIDs)
     {
@@ -77,7 +78,7 @@ void RenderSystem::Render()
                            Matrix4::CreateScaleMatrix(transform.Scale) *
                            Matrix4::CreateEulerAngleMatrixXYZ(transform.Rotation);
         auto mvpMatrix = viewProjectionMatrix * modelMatrix;
-        Renderer::RenderModel(modelData,mvpMatrix);
+        Renderer::RenderModel(modelData, mvpMatrix);
     }
 }
 
