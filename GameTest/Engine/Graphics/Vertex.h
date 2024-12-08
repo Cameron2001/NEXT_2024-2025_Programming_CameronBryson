@@ -12,6 +12,6 @@ struct Vertex
     }
 
     FVector3 position;
-    //FVector3 normal;
+    FVector3 normal = {0, 0, 0};
     //Can be expanded later
 };

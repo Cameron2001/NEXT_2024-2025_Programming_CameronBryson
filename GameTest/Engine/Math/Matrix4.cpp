@@ -33,6 +33,7 @@ Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRati
     perspectiveMatrix.Set(2, 2, -(zFar + zNear) / (zFar - zNear));
     perspectiveMatrix.Set(2, 3, -1);
     perspectiveMatrix.Set(3, 2, -(2.0f * zFar * zNear) / (zFar - zNear));
+    perspectiveMatrix.Set(3, 3, 0);
     return perspectiveMatrix;
 }
 

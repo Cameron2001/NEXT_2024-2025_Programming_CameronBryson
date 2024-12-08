@@ -196,6 +196,7 @@
       <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Graphics\Face.h" />
+    <ClInclude Include="Engine\Storage\View.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

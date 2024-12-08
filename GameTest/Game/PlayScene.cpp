@@ -18,17 +18,17 @@ void PlayScene::Init()
                         m_registry->GetComponentArray<RigidBodyComponent>());
     m_event.AddListener(this, &PlayScene::Test);
     auto player = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -1.0f), FVector3(45.0f, 45.0f, 45.0f),
-                                                 FVector3(0.2f, 0.2f, 0.2f));
+    m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -1.0f), FVector3(0.0f, 0.0f, 0.0f),
+                                                 FVector3(0.1f, 0.1f, 0.1f));
     m_registry->AddComponent<PlayerComponent>(player, 0.0000001);
-    m_registry->AddComponent<ModelComponent>(player, "Cube");
+    m_registry->AddComponent<ModelComponent>(player, "ShipOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
     m_event.Notify(10);
 
     auto cube = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(cube, FVector3(0.1f, 0.2f, -0.5f), FVector3(20.0f, 15.0f, 10.0f),
-                                                 FVector3(0.15f, 0.15f, 0.15f));
-    m_registry->AddComponent<ModelComponent>(cube, "Cube");
+    m_registry->AddComponent<TransformComponent>(cube, FVector3(0.1f, 0.2f, -15.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.5f, 0.5f, 0.5f));
+    m_registry->AddComponent<ModelComponent>(cube, "CubeOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube);
 
     m_event.Notify(15);

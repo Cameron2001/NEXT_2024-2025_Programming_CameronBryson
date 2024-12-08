@@ -42,34 +42,54 @@ public:
 private:
     std::vector<Entity> m_entities;
     std::vector<Entity> m_freeEntities;
-    std::unordered_map<std::type_index, std::shared_ptr<IComponentArray>> m_componentArrays;
+    //std::unordered_map<std::type_index, std::shared_ptr<IComponentArray>> m_componentArrays;
+    std::vector<std::shared_ptr<IComponentArray>> m_componentArrays;
+
+private:
+    struct ComponentCounter
+    {
+        static unsigned int counter;
+    };
+
+    template <typename T> static unsigned int GetComponentID()
+    {
+        static unsigned int id = ComponentCounter::counter++;
+        return id;
+    }
+
 
 };
 
-template <typename T>
-void Registry::CreateComponentArray()
+template <typename T> void Registry::CreateComponentArray()
 {
-    m_componentArrays.try_emplace(std::type_index(typeid(T)), std::make_shared<ComponentArray<T>>());
+    auto id = GetComponentID<T>();
+    // Resize if needed
+    if (id >= m_componentArrays.size())
+    {
+        m_componentArrays.resize(id + 1);
+    }
+    // Create new component array
+    m_componentArrays[id] = std::make_shared<ComponentArray<T>>();
 }
-
+//just redirection
 template <typename T, typename... Args>
 void Registry::AddComponent(Entity entity, Args &&... args)
 {
     GetComponentArray<T>()->AddComponent(entity, std::forward<Args>(args)...);
 }
-
+//just redirection
 template <typename T>
 void Registry::RemoveComponent(Entity entity)
 {
     GetComponentArray<T>()->RemoveComponent(entity);
 }
-
+//just redirection
 template <typename T>
 T &Registry::GetComponent(Entity entity)
 {
     return GetComponentArray<T>().GetComponent(entity);
 }
-
+//just redirection
 template <typename T>
 bool Registry::HasComponent(Entity entity)
 {
@@ -93,19 +113,20 @@ std::vector<Entity> Registry::GetEntitiesWithComponents()
     }
     return result;
 }
-
+//just redirection
 template <typename T>
 std::shared_ptr<ComponentArray<T>> Registry::GetComponentArray()
 {
+    auto typeID = GetComponentID<T>();
     if (!HasComponentArray<T>())
     {
         CreateComponentArray<T>();
     }
-    return std::static_pointer_cast<ComponentArray<T>>(m_componentArrays[std::type_index(typeid(T))]);
+    return std::static_pointer_cast<ComponentArray<T>>(m_componentArrays[typeID]);
 }
 
-template <typename T>
-bool Registry::HasComponentArray()
+template <typename T> bool Registry::HasComponentArray()
 {
-    return m_componentArrays.find(std::type_index(typeid(T))) != m_componentArrays.end();
+    auto id = GetComponentID<T>();
+    return id < m_componentArrays.size() && m_componentArrays[id] != nullptr;
 }

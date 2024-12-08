@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Registry.h"
 #include <numeric>
-
+unsigned int Registry::ComponentCounter::counter = 0;
 Registry::Registry()
 {
     m_entities.reserve(MAX_ENTITIES);
@@ -22,9 +22,9 @@ void Registry::DestroyEntity(Entity entity)
 {
     for (auto &componentArray : m_componentArrays)
     {
-        if (componentArray.second->HasComponent(entity))
+        if (componentArray->HasComponent(entity))
         {
-            componentArray.second->RemoveComponent(entity);
+            componentArray->RemoveComponent(entity);
         }
     }
     m_entities.erase(std::remove(m_entities.begin(), m_entities.end(), entity), m_entities.end());

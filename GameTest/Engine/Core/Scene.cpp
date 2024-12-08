@@ -14,6 +14,7 @@ Scene::Scene()
 void Scene::Init()
 {
     InitComponentArrays();
+    m_graphicsManager->LoadResources();
     m_renderSystem.Init(m_graphicsManager, m_camera, m_registry->GetComponentArray<TransformComponent>(),
                         m_registry->GetComponentArray<ModelComponent>(),
                         m_registry->GetComponentArray<TextComponent>());

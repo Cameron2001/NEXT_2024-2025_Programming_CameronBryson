@@ -190,6 +190,7 @@
     <ClInclude Include="Engine\Graphics\Face.h" />
     <ClInclude Include="Engine\Managers\CollisionManager.h" />
     <ClInclude Include="Engine\Math\MathUtil.h" />
+    <ClInclude Include="Engine\Storage\View.h" />
     <ClInclude Include="Engine\Systems\CollisionDetectionSystem.h" />
     <ClInclude Include="Engine\Systems\PhysicsSystem.h" />
     <ClInclude Include="Engine\Systems\RenderSystem.h" />

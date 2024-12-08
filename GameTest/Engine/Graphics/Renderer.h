@@ -13,6 +13,7 @@ public:
 
 private:
     static bool IsOnScreen(const FVector3 &point);
+    static std::vector<std::vector<float>> depthBuffer;
 };
 
 //Things we need to render something. MVP matrix, mesh, shader, camera

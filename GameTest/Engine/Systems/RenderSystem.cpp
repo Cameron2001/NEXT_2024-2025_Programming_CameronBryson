@@ -23,36 +23,6 @@ void RenderSystem::Init(std::shared_ptr<GraphicsManager> graphicsManager, std::s
     m_transformComponentArray = transformComponentArray;
     m_modelComponentArray = modelComponentArray;
     m_textComponentArray = textComponentArray;
-    const FVector3 half_extents(1.0f, 1.0f, 1.0f);
-    const std::vector<Vertex> cubeVertices = {
-        {-half_extents.X, -half_extents.Y, -half_extents.Z},
-        {half_extents.X, -half_extents.Y, -half_extents.Z},
-        {half_extents.X, half_extents.Y, -half_extents.Z},
-        {-half_extents.X, half_extents.Y, -half_extents.Z},
-        {-half_extents.X, -half_extents.Y, half_extents.Z},
-        {half_extents.X, -half_extents.Y, half_extents.Z},
-        {half_extents.X, half_extents.Y, half_extents.Z},
-        {-half_extents.X, half_extents.Y, half_extents.Z}
-    };
-
-    // Define cube faces using quad_indices (triplets of indices)
-    const std::vector<Face> cubeFaces = {
-        {0, 1, 3}, {3, 1, 2},
-        {1, 5, 2}, {2, 5, 6},
-        {5, 4, 6}, {6, 4, 7},
-        {4, 0, 7}, {7, 0, 3},
-        {3, 2, 7}, {7, 2, 6},
-        {4, 5, 0}, {0, 5, 1}
-    };
-
-    // Create the cube mesh using vertices and faces
-    Mesh cubeMesh(cubeVertices, cubeFaces);
-
-    // Create the cube model containing the mesh
-    Model cubeModel({cubeMesh});
-
-    // Add the cube model to the graphics manager with the name "Cube"
-    graphicsManager->AddModel("Cube", cubeModel);
 }
 
 void RenderSystem::Render()
@@ -67,7 +37,7 @@ void RenderSystem::Render()
     {
         return;
     }
-    auto viewProjectionMatrix = camera->GetViewMatrix() * camera->GetProjectionMatrix();
+    auto viewProjectionMatrix = camera->GetProjectionMatrix() * camera->GetViewMatrix();
     auto transformModelIDs = transformComponentArray->GetEntityIntersection(modelComponentArray->GetEntities());
     for (auto ID : transformModelIDs)
     {
