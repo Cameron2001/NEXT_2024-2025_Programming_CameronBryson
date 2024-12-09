@@ -198,7 +198,6 @@
     <ClInclude Include="Engine\Graphics\Camera.h" />
     <ClInclude Include="Engine\Core\Components.h" />
     <ClInclude Include="Engine\Graphics\Model.h" />
-    <ClInclude Include="Engine\Graphics\Vertex.h" />
     <ClInclude Include="Engine\Math\Matrix4.h" />
     <ClInclude Include="Engine\Math\Vector2.h" />
     <ClInclude Include="Engine\Math\Vector3.h" />

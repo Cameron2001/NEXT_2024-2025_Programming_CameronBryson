@@ -18,6 +18,5 @@ public:
     void Test(int value);
 
 private:
-    void InitComponentArrays();
     PlayerSystem m_playerSystem;
 };

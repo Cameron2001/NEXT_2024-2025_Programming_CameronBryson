@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include "Engine/Storage/ComponentArray.h"
+#include "View.h"
 
 class Registry
 {
@@ -13,9 +14,6 @@ public:
     Entity CreateEntity();
     void DestroyEntity(Entity entity);
     void ClearRegistry();
-
-    template <typename T>
-    void CreateComponentArray();
 
     template <typename T, typename... Args>
     void AddComponent(Entity entity, Args &&... args);
@@ -33,17 +31,21 @@ public:
     std::vector<Entity> GetEntitiesWithComponents();
 
     template <typename T>
-
-    std::shared_ptr<ComponentArray<T>> GetComponentArray();
+    ComponentArray<T>& GetComponentArray();
 
     template <typename T>
     bool HasComponentArray();
 
+    template <typename... T>
+    View<T...> CreateView()
+    {
+        return View<T...>(this);
+    }
+
 private:
     std::vector<Entity> m_entities;
     std::vector<Entity> m_freeEntities;
-    //std::unordered_map<std::type_index, std::shared_ptr<IComponentArray>> m_componentArrays;
-    std::vector<std::shared_ptr<IComponentArray>> m_componentArrays;
+    std::vector<std::unique_ptr<IComponentArray>> m_componentArrays;
 
 private:
     struct ComponentCounter
@@ -60,28 +62,16 @@ private:
 
 };
 
-template <typename T> void Registry::CreateComponentArray()
-{
-    auto id = GetComponentID<T>();
-    // Resize if needed
-    if (id >= m_componentArrays.size())
-    {
-        m_componentArrays.resize(id + 1);
-    }
-    // Create new component array
-    m_componentArrays[id] = std::make_shared<ComponentArray<T>>();
-}
-//just redirection
 template <typename T, typename... Args>
 void Registry::AddComponent(Entity entity, Args &&... args)
 {
-    GetComponentArray<T>()->AddComponent(entity, std::forward<Args>(args)...);
+    GetComponentArray<T>().AddComponent(entity, std::forward<Args>(args)...);
 }
 //just redirection
 template <typename T>
 void Registry::RemoveComponent(Entity entity)
 {
-    GetComponentArray<T>()->RemoveComponent(entity);
+    GetComponentArray<T>().RemoveComponent(entity);
 }
 //just redirection
 template <typename T>
@@ -99,30 +89,33 @@ bool Registry::HasComponent(Entity entity)
 template <typename... T>
 std::vector<Entity> Registry::GetEntitiesWithComponents()
 {
-    std::vector<Entity> result;
-    if (sizeof...(T) == 0)
+    if constexpr (sizeof...(T) == 0)
     {
-        return result;
+        return std::vector<Entity>();
     }
-    std::vector<std::shared_ptr<IComponentArray>> arrays = {GetComponentArray<T>()...};
-    result = arrays[0]->GetEntities();
-    //would be best to initalize it as the smallest array
+
+    std::vector<IComponentArray *> arrays = {&GetComponentArray<T>()...};
+
+    auto result = arrays[0]->GetEntities();
     for (size_t i = 1; i < arrays.size(); i++)
     {
         result = arrays[i]->GetEntityIntersection(result);
     }
     return result;
 }
-//just redirection
 template <typename T>
-std::shared_ptr<ComponentArray<T>> Registry::GetComponentArray()
+ComponentArray<T>& Registry::GetComponentArray()
 {
-    auto typeID = GetComponentID<T>();
-    if (!HasComponentArray<T>())
+    auto id = GetComponentID<T>();
+    if (id >= m_componentArrays.size())
     {
-        CreateComponentArray<T>();
+        m_componentArrays.resize(id + 1);
     }
-    return std::static_pointer_cast<ComponentArray<T>>(m_componentArrays[typeID]);
+    if (!m_componentArrays[id])
+    {
+        m_componentArrays[id] = std::make_unique<ComponentArray<T>>();
+    }
+    return *static_cast<ComponentArray<T> *>(m_componentArrays[id].get());
 }
 
 template <typename T> bool Registry::HasComponentArray()

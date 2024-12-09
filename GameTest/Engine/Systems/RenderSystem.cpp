@@ -3,53 +3,44 @@
 #include "Engine/Graphics/Renderer.h"
 #include "RenderSystem.h"
 #include <Engine/Core/Components.h>
-#include <Engine/Graphics/Vertex.h>
 #include <Engine/Managers/GraphicsManager.h>
 #include <Engine/Math/Vector3.h>
 #include <Engine/Storage/ComponentArray.h>
 #include <vector>
 
-RenderSystem::RenderSystem()
+RenderSystem::RenderSystem(Registry* registry, GraphicsManager* graphicsManager, Camera* camera)
 {
-}
-
-void RenderSystem::Init(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<Camera> camera,
-                        std::shared_ptr<ComponentArray<TransformComponent>> transformComponentArray,
-                        std::shared_ptr<ComponentArray<ModelComponent>> modelComponentArray,
-                        std::shared_ptr<ComponentArray<TextComponent>> textComponentArray)
-{
+    m_registry = registry;
     m_graphicsManager = graphicsManager;
     m_camera = camera;
-    m_transformComponentArray = transformComponentArray;
-    m_modelComponentArray = modelComponentArray;
-    m_textComponentArray = textComponentArray;
+}
+
+void RenderSystem::Init()
+{
 }
 
 void RenderSystem::Render()
 {
-    auto graphicsManager = m_graphicsManager.lock();
-    auto camera = m_camera.lock();
-    auto transformComponentArray = m_transformComponentArray.lock();
-    auto modelComponentArray = m_modelComponentArray.lock();
-    auto textComponentArray = m_textComponentArray.lock();
+    auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
 
-    if (!graphicsManager || !camera || !transformComponentArray || !modelComponentArray || !textComponentArray)
+    auto view = m_registry->CreateView<TransformComponent, ModelComponent>();
+
+    for (auto it = view.begin(); it != view.end(); ++it)
     {
-        return;
-    }
-    auto viewProjectionMatrix = camera->GetProjectionMatrix() * camera->GetViewMatrix();
-    auto transformModelIDs = transformComponentArray->GetEntityIntersection(modelComponentArray->GetEntities());
-    for (auto ID : transformModelIDs)
-    {
-        auto &transform = transformComponentArray->GetComponent(ID);
-        auto &model = modelComponentArray->GetComponent(ID);
-        auto &modelData = graphicsManager->GetModel(model.modelName);
+        auto &transform = std::get<0>(*it);
+        auto &model = std::get<1>(*it);
+
+        auto &modelData = m_graphicsManager->GetModel(model.modelName);
+
         auto modelMatrix = Matrix4::CreateTranslationMatrix(transform.Position) *
                            Matrix4::CreateScaleMatrix(transform.Scale) *
                            Matrix4::CreateEulerAngleMatrixXYZ(transform.Rotation);
+        auto normalMatrix = modelMatrix.Inverse().Transpose();
         auto mvpMatrix = viewProjectionMatrix * modelMatrix;
-        Renderer::RenderModel(modelData, mvpMatrix);
+
+        Renderer::QueueModel(modelData, mvpMatrix,normalMatrix);
     }
+    Renderer::SubmitQueue();
 }
 
 void RenderSystem::Shutdown()

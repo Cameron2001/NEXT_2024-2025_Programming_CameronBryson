@@ -2,20 +2,19 @@
 #include <memory>
 #include "Engine/Storage/ComponentArray.h"
 #include "Engine/Core/Components.h"
+#include <Engine/Storage/Registry.h>
 
 class PhysicsSystem
 {
 public:
-    PhysicsSystem();
+    PhysicsSystem(Registry* registry);
     ~PhysicsSystem() = default;
-    void Init(std::shared_ptr<ComponentArray<TransformComponent>> transformComponentArray,
-              std::shared_ptr<ComponentArray<RigidBodyComponent>> rigidbodyComponentArray);
+    void Init();
     void Update(float dt);
     void Shutdown();
 
 private:
-    std::weak_ptr<ComponentArray<TransformComponent>> m_transformComponents; //Read and write
-    std::weak_ptr<ComponentArray<RigidBodyComponent>> m_rigidBodyComponents; //Read and write
+    Registry *m_registry;
 };
 
 //Read:

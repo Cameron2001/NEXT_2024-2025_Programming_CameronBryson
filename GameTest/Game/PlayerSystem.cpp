@@ -2,25 +2,20 @@
 #include "PlayerSystem.h"
 #include <App/app.h>
 
-PlayerSystem::PlayerSystem()
+PlayerSystem::PlayerSystem(Registry* registry)
 {
+    m_registry = registry;
 }
 
-void PlayerSystem::Init(std::shared_ptr<ComponentArray<PlayerComponent>> playerComponentArray,
-                        std::shared_ptr<ComponentArray<RigidBodyComponent>> rigidbodyComponentArray)
+void PlayerSystem::Init()
 {
-    m_playerComponentArray = playerComponentArray;
-    m_rigidbodyComponentArray = rigidbodyComponentArray;
 }
 
 void PlayerSystem::Update(float dt)
 {
-    auto playerComponentArray = m_playerComponentArray.lock();
-    auto rigidbodyComponentArray = m_rigidbodyComponentArray.lock();
-    if (!playerComponentArray || !rigidbodyComponentArray)
-    {
-        return;
-    }
+    auto view = m_registry->CreateView<PlayerComponent, RigidBodyComponent>();
+
+    // Get input states
     bool W = App::IsKeyPressed('W');
     bool A = App::IsKeyPressed('A');
     bool S = App::IsKeyPressed('S');
@@ -30,47 +25,35 @@ void PlayerSystem::Update(float dt)
     bool R = App::IsKeyPressed('R');
     bool F = App::IsKeyPressed('F');
     bool V = App::IsKeyPressed('V');
+
     constexpr float rotationSpeed = 0.000001f;
-    auto playerIDs = playerComponentArray->GetEntities();
-    for (auto playerID : playerIDs)
+
+    // Update each player entity
+    for (auto it = view.begin(); it != view.end(); ++it)
     {
-        auto &player = playerComponentArray->GetComponent(playerID);
-        auto &rigidbody = rigidbodyComponentArray->GetComponent(playerID);
+        auto &player = std::get<0>(*it);
+        auto &rigidbody = std::get<1>(*it);
+
+        // Movement
         if (W)
-        {
             rigidbody.linearAcceleration += FVector3{0, 1, 0} * player.moveSpeed * dt;
-        }
         if (S)
-        {
             rigidbody.linearAcceleration -= FVector3{0, 1, 0} * player.moveSpeed * dt;
-        }
         if (A)
-        {
             rigidbody.linearAcceleration -= FVector3{1, 0, 0} * player.moveSpeed * dt;
-        }
         if (D)
-        {
             rigidbody.linearAcceleration += FVector3{1, 0, 0} * player.moveSpeed * dt;
-        }
         if (Q)
-        {
             rigidbody.linearAcceleration -= FVector3{0, 0, 1} * player.moveSpeed * dt;
-        }
         if (E)
-        {
             rigidbody.linearAcceleration += FVector3{0, 0, 1} * player.moveSpeed * dt;
-        }
+
+        // Rotation
         if (R)
-        {
             rigidbody.angularAcceleration += FVector3{0, 0, 1} * rotationSpeed * dt;
-        }
         if (F)
-        {
             rigidbody.angularAcceleration += FVector3{0, 1, 0} * rotationSpeed * dt;
-        }
         if (V)
-        {
             rigidbody.angularAcceleration += FVector3{1, 0, 0} * rotationSpeed * dt;
-        }
     }
 }

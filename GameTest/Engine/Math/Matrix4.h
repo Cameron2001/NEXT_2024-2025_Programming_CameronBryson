@@ -29,6 +29,8 @@ public:
     Matrix4 Transpose() const;
     Matrix4 operator*(const Matrix4 &obj) const;
     FVector3 operator*(const FVector3 &obj) const;
+    FVector4 operator*(const FVector4 &obj) const;
+    FVector3 TransformWithPerspectiveDivide(const FVector3 &obj) const;
 
 
 };

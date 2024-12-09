@@ -70,7 +70,7 @@ void Camera::UpdateViewMatrix()
 
 void Camera::UpdateProjectionMatrix()
 {
-    m_projectionMatrix = m_projectionMatrix.CreatePerspectiveMatrix(m_FOV, APP_VIRTUAL_WIDTH / APP_INIT_WINDOW_HEIGHT,
+    m_projectionMatrix = m_projectionMatrix.CreatePerspectiveMatrix(m_FOV, static_cast<float>(APP_VIRTUAL_WIDTH) / static_cast<float>(APP_INIT_WINDOW_HEIGHT),
                                                                     m_zNear, m_zFar);
 }
 

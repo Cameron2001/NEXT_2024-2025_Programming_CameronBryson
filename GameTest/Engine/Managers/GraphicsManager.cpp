@@ -8,9 +8,9 @@
 void GraphicsManager::LoadResources()
 {
     LoadModel("CubeOBJ", "assets/cube.obj");
-    LoadModel("MonkeyOBJ", "assets/monkey.obj");
-    LoadModel("SphereOBJ", "assets/sphere.obj");
-    LoadModel("ShipOBJ", "assets/ship.obj");
+    //LoadModel("MonkeyOBJ", "assets/monkey.obj");
+    //LoadModel("SphereOBJ", "assets/sphere.obj");
+    //LoadModel("ShipOBJ", "assets/ship.obj");
 
 }
 
@@ -34,8 +34,6 @@ void GraphicsManager::LoadModel(const std::string &modelName, const std::string 
     std::vector<Mesh> meshes;
     std::vector<FVector3> tempPositions;
     std::vector<FVector3> tempNormals;
-    std::vector<unsigned int> vertexIndices, normalIndices;
-    std::vector<Vertex> vertices;
     std::vector<Face> faces;
     std::string currentMeshName = "Default";
     std::string line;
@@ -49,10 +47,9 @@ void GraphicsManager::LoadModel(const std::string &modelName, const std::string 
         if (prefix == "o" || prefix == "g")
         {
             // If vertices and faces have been collected, create a new mesh
-            if (!vertices.empty() && !faces.empty())
+            if (!faces.empty())
             {
-                meshes.emplace_back(vertices, faces);
-                vertices.clear();
+                meshes.emplace_back(faces);
                 faces.clear();
             }
             lineStream >> currentMeshName;
@@ -71,33 +68,44 @@ void GraphicsManager::LoadModel(const std::string &modelName, const std::string 
         }
         else if (prefix == "f")
         {
-            unsigned int vertexIndex[3]{}, normalIndex[3]{};
+            unsigned int vertexIndex[3], normalIndex[3];
             char slash;
+
+            // Parse face indices
             for (int i = 0; i < 3; ++i)
             {
                 lineStream >> vertexIndex[i] >> slash >> slash >> normalIndex[i];
-                vertexIndices.push_back(vertexIndex[i] - 1);
-                normalIndices.push_back(normalIndex[i] - 1);
+                vertexIndex[i]--; // OBJ indices start at 1
+                normalIndex[i]--;
             }
+
+            // Create vertices with positions and normals
+            FVector3 vertex0 = tempPositions[vertexIndex[0]];
+            FVector3 vertex1 = tempPositions[vertexIndex[1]];
+            FVector3 vertex2 = tempPositions[vertexIndex[2]];
+
+            FVector3 edge1 = vertex1 - vertex0;
+            FVector3 edge2 = vertex2 - vertex0;
+
+            FVector3 faceNormal = edge1.Cross(edge2);
+            FVector3 vertexNormal =
+                tempNormals[normalIndex[0]] + tempNormals[normalIndex[1]] + tempNormals[normalIndex[2]] / 3.0f;
+
+            float dot = faceNormal.Dot(vertexNormal);
+            if (dot < 0.0f)
+            {
+                faceNormal = faceNormal*-1.0f;
+            }
+
+            // Create face with actual vertices
+            faces.emplace_back(tempPositions[vertexIndex[0]], tempPositions[vertexIndex[1]],
+                                   tempPositions[vertexIndex[2]],faceNormal);
         }
     }
-    for (size_t i = 0; i < vertexIndices.size(); ++i)
-    {
-        Vertex vertex(tempPositions[vertexIndices[i]]);
-        vertex.normal = tempNormals[normalIndices[i]];
-        vertices.push_back(vertex);
-    }
 
-    for (size_t i = 0; i < vertexIndices.size(); i += 3)
+    if (!faces.empty())
     {
-        faces.emplace_back(static_cast<unsigned int>(i), static_cast<unsigned int>(i + 1),
-                           static_cast<unsigned int>(i + 2));
-    }
-
-    if (!vertices.empty() && !faces.empty())
-    {
-        meshes.emplace_back(vertices, faces);
-        vertices.clear();
+        meshes.emplace_back(faces);
         faces.clear();
     }
 

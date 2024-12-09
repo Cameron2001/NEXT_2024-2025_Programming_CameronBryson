@@ -1,6 +1,8 @@
 #include "stdafx.h"
-#include "Matrix4.h"
 #include "MathUtil.h"
+#include "Matrix4.h"
+#include "Vector4.h"
+#include <algorithm>
 
 Matrix4::Matrix4()
 {
@@ -138,12 +140,100 @@ FVector3 Matrix4::GetForward() const
 
 Matrix4 Matrix4::Inverse() const
 {
-    return Matrix4();
+    Matrix4 inv;
+    float m[16];
+    memcpy(m, this->m, 16 * sizeof(float));
+
+    int indxc[4], indxr[4], ipiv[4] = {0};
+    int i, icol = 0, irow = 0, j, k, l, ll;
+    float big, dum, pivinv, temp;
+
+    for (i = 0; i < 4; i++)
+    {
+        big = 0.0f;
+        for (j = 0; j < 4; j++)
+        {
+            if (ipiv[j] != 1)
+            {
+                for (k = 0; k < 4; k++)
+                {
+                    if (ipiv[k] == 0)
+                    {
+                        if (fabs(m[j * 4 + k]) >= big)
+                        {
+                            big = fabs(m[j * 4 + k]);
+                            irow = j;
+                            icol = k;
+                        }
+                    }
+                }
+            }
+        }
+        ++(ipiv[icol]);
+
+        if (irow != icol)
+        {
+            for (l = 0; l < 4; l++)
+            {
+                std::swap(m[irow * 4 + l], m[icol * 4 + l]);
+                std::swap(inv.m[irow * 4 + l], inv.m[icol * 4 + l]);
+            }
+        }
+
+        indxr[i] = irow;
+        indxc[i] = icol;
+
+        if (m[icol * 4 + icol] == 0.0f)
+            return Matrix4(); // Singular matrix, return identity as per your convention
+
+        pivinv = 1.0f / m[icol * 4 + icol];
+        m[icol * 4 + icol] = 1.0f;
+        for (l = 0; l < 4; l++)
+            m[icol * 4 + l] *= pivinv;
+        for (l = 0; l < 4; l++)
+            inv.m[icol * 4 + l] *= pivinv;
+
+        for (ll = 0; ll < 4; ll++)
+        {
+            if (ll != icol)
+            {
+                dum = m[ll * 4 + icol];
+                m[ll * 4 + icol] = 0.0f;
+                for (l = 0; l < 4; l++)
+                {
+                    m[ll * 4 + l] -= m[icol * 4 + l] * dum;
+                    inv.m[ll * 4 + l] -= inv.m[icol * 4 + l] * dum;
+                }
+            }
+        }
+    }
+
+    for (l = 3; l >= 0; l--)
+    {
+        if (indxr[l] != indxc[l])
+        {
+            for (k = 0; k < 4; k++)
+            {
+                std::swap(m[k * 4 + indxr[l]], m[k * 4 + indxc[l]]);
+            }
+        }
+    }
+
+    return inv;
 }
+
 
 Matrix4 Matrix4::Transpose() const
 {
-    return Matrix4();
+    Matrix4 result;
+    for (int row = 0; row < 4; ++row)
+    {
+        for (int col = 0; col < 4; ++col)
+        {
+            result.m[row * 4 + col] = m[col * 4 + row];
+        }
+    }
+    return result;
 }
 
 Matrix4 Matrix4::operator*(const Matrix4 &obj) const
@@ -170,6 +260,26 @@ FVector3 Matrix4::operator*(const FVector3 &obj) const
     float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * 1.0f;
     float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * 1.0f;
     float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * 1.0f;
+    return FVector3{x, y, z};
+}
+
+FVector4 Matrix4::operator*(const FVector4 &obj) const
+{
+    float x = m[0] * obj.X + m[4] * obj.Y + m[8] * obj.Z + m[12] * obj.W;
+    float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * obj.W;
+    float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * obj.W;
+    float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * obj.W;
+    return FVector4{x, y, z, w};
+}
+
+FVector3 Matrix4::TransformWithPerspectiveDivide(const FVector3 &obj) const
+{
+    float x = m[0] * obj.X + m[4] * obj.Y + m[8] * obj.Z + m[12] * 1.0f;
+    float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * 1.0f;
+    float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * 1.0f;
+    float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * 1.0f;
+
+    // Perspective divide when requested
     if (w != 0.0f)
     {
         x /= w;

@@ -6,22 +6,20 @@
 Event<int> m_event;
 Threadpool m_threadpool(4);
 
-PlayScene::PlayScene() : Scene()
+PlayScene::PlayScene() : Scene() , m_playerSystem(m_registry.get())
 {
 }
 
 void PlayScene::Init()
 {
     Scene::Init();
-    InitComponentArrays();
-    m_playerSystem.Init(m_registry->GetComponentArray<PlayerComponent>(),
-                        m_registry->GetComponentArray<RigidBodyComponent>());
+    m_playerSystem.Init();
     m_event.AddListener(this, &PlayScene::Test);
     auto player = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -1.0f), FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(0.1f, 0.1f, 0.1f));
     m_registry->AddComponent<PlayerComponent>(player, 0.0000001);
-    m_registry->AddComponent<ModelComponent>(player, "ShipOBJ");
+    m_registry->AddComponent<ModelComponent>(player, "CubeOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
     m_event.Notify(10);
 
@@ -77,11 +75,5 @@ void PlayScene::LateShutdown()
 
 void PlayScene::Test(int value)
 {
-
-}
-
-void PlayScene::InitComponentArrays()
-{
-    m_registry->CreateComponentArray<PlayerComponent>();
 
 }

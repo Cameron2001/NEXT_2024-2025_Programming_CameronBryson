@@ -168,9 +168,6 @@
     <ClInclude Include="Engine\Math\Vector4.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Vertex.h">
-      <Filter>Engine\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Game\GameComponents.h">
       <Filter>Game</Filter>
     </ClInclude>

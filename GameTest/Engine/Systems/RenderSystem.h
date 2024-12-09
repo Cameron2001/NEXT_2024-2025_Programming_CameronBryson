@@ -5,25 +5,21 @@
 #include "Engine/Storage/ComponentArray.h"
 #include "Engine/Core/Components.h"
 #include "Engine/Graphics/Camera.h"
+#include <Engine/Storage/Registry.h>
 
 class RenderSystem
 {
 public:
-    RenderSystem();
+    RenderSystem(Registry* registry, GraphicsManager* graphicsManager, Camera* camera);
     ~RenderSystem() = default;
-    void Init(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<Camera> camera,
-              std::shared_ptr<ComponentArray<TransformComponent>> transformComponentArray,
-              std::shared_ptr<ComponentArray<ModelComponent>> modelComponentArray,
-              std::shared_ptr<ComponentArray<TextComponent>> textComponentArray);
+    void Init();
     void Render();
     void Shutdown();
 
 private:
-    std::weak_ptr<GraphicsManager> m_graphicsManager; //Read
-    std::weak_ptr<Camera> m_camera; //Read
-    std::weak_ptr<ComponentArray<TransformComponent>> m_transformComponentArray; //Read
-    std::weak_ptr<ComponentArray<ModelComponent>> m_modelComponentArray; //Read
-    std::weak_ptr<ComponentArray<TextComponent>> m_textComponentArray; //Read
+    Registry *m_registry;
+    GraphicsManager *m_graphicsManager;
+    Camera *m_camera;
 };
 
 

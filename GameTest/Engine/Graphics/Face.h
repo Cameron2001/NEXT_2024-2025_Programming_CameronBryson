@@ -3,9 +3,12 @@
 
 struct Face
 {
-    Face(unsigned int index1, unsigned int index2, unsigned int index3) : index1(index1), index2(index2), index3(index3)
+    Face(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2, const FVector3 &normal)
+        : v0(v0), v1(v1), v2(v2), normal(normal)
     {
     }
-
-    unsigned int index1, index2, index3;
+    FVector3 v0;
+    FVector3 v1;
+    FVector3 v2;
+    FVector3 normal;
 };

@@ -1,35 +1,34 @@
 #include "stdafx.h"
 #include "PhysicsSystem.h"
+#include "Engine/Storage/View.h"
 
-PhysicsSystem::PhysicsSystem()
+PhysicsSystem::PhysicsSystem(Registry* registry)
 {
+    m_registry = registry;
 }
 
 
-void PhysicsSystem::Init(std::shared_ptr<ComponentArray<TransformComponent>> transformComponentArray,
-                         std::shared_ptr<ComponentArray<RigidBodyComponent>> rigidbodyComponentArray)
+void PhysicsSystem::Init()
 {
-    m_transformComponents = transformComponentArray;
-    m_rigidBodyComponents = rigidbodyComponentArray;
 }
 
 void PhysicsSystem::Update(const float dt)
 {
-    auto transformComponents = m_transformComponents.lock();
-    auto rigidBodyComponents = m_rigidBodyComponents.lock();
-    if (!transformComponents || !rigidBodyComponents)
+    auto view = m_registry->CreateView<TransformComponent, RigidBodyComponent>();
+
+    for (auto it = view.begin(); it != view.end(); ++it)
     {
-        return;
-    }
-    auto IDs = transformComponents->GetEntityIntersection(rigidBodyComponents->GetEntities());
-    for (auto ID : IDs)
-    {
-        auto &transform = transformComponents->GetComponent(ID);
-        auto &rigidBody = rigidBodyComponents->GetComponent(ID);
+        auto &transform = std::get<0>(*it);
+        auto &rigidBody = std::get<1>(*it);
+        // Update velocities
         rigidBody.linearVelocity += rigidBody.linearAcceleration * dt;
         rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;
+
+        // Update transform
         transform.Position += rigidBody.linearVelocity * dt;
         transform.Rotation += rigidBody.angularVelocity * dt;
+
+        // Reset accelerations
         rigidBody.linearAcceleration = FVector3{0, 0, 0};
         rigidBody.angularAcceleration = FVector3{0, 0, 0};
     }

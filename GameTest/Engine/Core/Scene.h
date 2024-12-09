@@ -24,7 +24,6 @@ public:
     virtual void LateShutdown();
 
 private:
-    void InitComponentArrays();
 
 protected:
     //Who do I want to have access to the members
