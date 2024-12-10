@@ -17,15 +17,15 @@ void PlayScene::Init()
     m_event.AddListener(this, &PlayScene::Test);
     auto player = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -1.0f), FVector3(0.0f, 0.0f, 0.0f),
-                                                 FVector3(0.1f, 0.1f, 0.1f));
+                                                 FVector3(0.15f, 0.15f, 0.15f));
     m_registry->AddComponent<PlayerComponent>(player, 0.0000001);
     m_registry->AddComponent<ModelComponent>(player, "CubeOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
     m_event.Notify(10);
 
     auto cube = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(cube, FVector3(0.1f, 0.2f, -15.0f), FVector3(20.0f, 15.0f, 10.0f),
-                                                 FVector3(0.5f, 0.5f, 0.5f));
+    m_registry->AddComponent<TransformComponent>(cube, FVector3(0.1f, 0.2f, -10.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
     m_registry->AddComponent<ModelComponent>(cube, "CubeOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube);
 

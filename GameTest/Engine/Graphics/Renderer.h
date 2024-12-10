@@ -4,15 +4,23 @@
 #include "Engine/Graphics/Model.h"
 #include "Engine/Math/Matrix4.h"
 #include "Engine/Math/Vector3.h"
-struct Edge
+enum ClipEdge
 {
-    FVector3 start;
-    FVector3 end;
-    Edge(const FVector3 &start, const FVector3 &end) : start(start), end(end)
+    LEFT,
+    RIGHT,
+    BOTTOM,
+    TOP
+};
+struct RenderFace
+{
+    Face face;
+    float averageDepth; // Used for depth sorting
+
+    RenderFace(const Face &f, float depth) : face(f), averageDepth(depth)
     {
     }
-    bool isVisable = true;
 };
+
 class Renderer
 {
 public:
@@ -23,14 +31,16 @@ public:
 
 private:
     static bool IsOnScreen(const FVector3 &point);
-    static bool IsEdgeBehindFace(const Edge &edge, const Face &face);
-    static bool IsPointBehindFace(const FVector3 &point, const Face &face);
-    static bool IntersectEdgeWithFace(const Edge &edge, const Face &face, FVector3& intersectionOut);
-    static std::vector<Edge> RenderQueue;
-    // All faces for this draw call are needed to check if edges are behind it
-    static std::vector<Face> Faces;
-    //this needs to be fixed because right now faces act as indices
-    //Maybe make faces store the direct vertices
+
+    static std::vector<RenderFace> QueuedFaces;
+
+    // Sutherland-Hodgman Clipping Methods
+    static std::vector<FVector3> ClipPolygon(const std::vector<FVector3> &subjectPolygon,
+                                             const std::vector<std::vector<FVector3>> &occluders);
+    static bool ComputeIntersection(const FVector3 &p1, const FVector3 &p2, ClipEdge edge, FVector3 &intersect);
+    static std::vector<float> GetOcclusionPoints(const FVector3 &start, const FVector3 &end,
+                                                 const std::vector<RenderFace> &occluders);
+    static std::vector<std::pair<FVector3, FVector3>> GetVisibleSegments(const FVector3 &start, const FVector3 &end,
+                                                                         const std::vector<RenderFace> &occluders);
 };
 
-//Things we need to render something. MVP matrix, mesh, shader, camera
