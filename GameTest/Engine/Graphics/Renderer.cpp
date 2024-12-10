@@ -1,16 +1,25 @@
 #include "stdafx.h"
+#include "Camera.h"
 #include "Mesh.h"
 #include "Model.h"
 #include "Renderer.h"
 #include "Renderer2D.h"
+#include <algorithm>
 #include <Engine/Math/Matrix4.h>
 #include <Engine/Math/Vector3.h>
 #include <Engine/Math/Vector4.h>
+#include <cmath>
 #include <limits>
-#include "Camera.h"
+#include <unordered_set>
+#include <utility>
+#include <array>
+#include <vector>
 #include <algorithm>
+using Segment = std::pair<FVector2, FVector2>;
+using FaceList = std::vector<RenderFace>;
+using PointList = std::vector<FVector2>;
 const FVector3 VIEW_DIRECTION(0.0f, 0.0f, 1.0f);
-const float NDC = 0.75f;
+const float NDC = 0.50f;
 const float xNDCMax = NDC;
 const float xNDCMin = -NDC;
 const float yNDCMax = NDC;
@@ -56,69 +65,68 @@ void Renderer::QueueModel(const Model &model, const Matrix4 &MVP)
 
 bool Renderer::IsOnScreen(const FVector3 &point)
 {
-    return (point.X >= xNDCMin && point.X <= xNDCMax ) &&
-           (point.Y >= yNDCMin && point.Y <= yNDCMax );
+    return (point.X >= xNDCMin - EPSILON && point.X <= xNDCMax + EPSILON) &&
+           (point.Y >= yNDCMin - EPSILON && point.Y <= yNDCMax + EPSILON);
 }
 
-std::vector<FVector2> Renderer::ClipPolygon(const std::vector<FVector2> &subjectPolygon,
-                                            const std::vector<std::vector<FVector2>> &occluders)
+
+bool Renderer::IsInside(const FVector2 &point, ClipEdge edge)
+{
+    switch (edge)
+    {
+    case LEFT:
+        return point.X >= xNDCMin - EPSILON;
+    case RIGHT:
+        return point.X <= xNDCMax + EPSILON;
+    case BOTTOM:
+        return point.Y >= yNDCMin - EPSILON;
+    case TOP:
+        return point.Y <= yNDCMax + EPSILON;
+    }
+    return false;
+}
+
+std::vector<FVector2> Renderer::ClipPolygon(const std::vector<FVector2> &subjectPolygon)
 {
     std::vector<FVector2> outputList = subjectPolygon;
-    outputList.reserve(subjectPolygon.size());
     const std::vector<ClipEdge> clipEdges = {LEFT, RIGHT, BOTTOM, TOP};
 
     for (const auto &edge : clipEdges)
     {
-        std::vector<FVector2> inputList = outputList;
-        outputList.clear();
-        outputList.reserve(inputList.size());
+        outputList = ClipAgainstEdge(outputList, edge);
 
-        if (inputList.empty())
+        if (outputList.empty())
             break;
+    }
 
-        for (size_t i = 0; i < inputList.size(); ++i)
+    return outputList;
+}
+
+std::vector<FVector2> Renderer::ClipAgainstEdge(const std::vector<FVector2> &inputList, ClipEdge edge)
+{
+    std::vector<FVector2> outputList;
+
+    for (size_t i = 0; i < inputList.size(); ++i)
+    {
+        const FVector2 &current_point = inputList[i];
+        const FVector2 &prev_point = inputList[(i + inputList.size() - 1) % inputList.size()];
+
+        bool current_inside = IsInside(current_point, edge);
+        bool prev_inside = IsInside(prev_point, edge);
+
+        FVector2 intersect;
+
+        if (current_inside)
         {
-            const FVector2 &current = inputList[i];
-            const FVector2 &prev = inputList[(i + inputList.size() - 1) % inputList.size()];
-
-            bool currentInside;
-            bool prevInside;
-
-            switch (edge)
-            {
-            case LEFT:
-                currentInside = current.X >= xNDCMin;
-                prevInside = prev.X >= xNDCMin;
-                break;
-            case RIGHT:
-                currentInside = current.X <= xNDCMax;
-                prevInside = prev.X <= xNDCMax;
-                break;
-            case BOTTOM:
-                currentInside = current.Y >= yNDCMin;
-                prevInside = prev.Y >= yNDCMin;
-                break;
-            case TOP:
-                currentInside = current.Y <= yNDCMax;
-                prevInside = prev.Y <= yNDCMax;
-                break;
-            }
-
-            FVector2 intersect;
-            bool hasIntersection = ComputeIntersection(prev, current, edge, intersect);
-
-            if (currentInside)
-            {
-                if (!prevInside && hasIntersection)
-                {
-                    outputList.push_back(intersect);
-                }
-                outputList.push_back(current);
-            }
-            else if (prevInside && hasIntersection)
+            if (!prev_inside && ComputeIntersection(prev_point, current_point, edge, intersect))
             {
                 outputList.push_back(intersect);
             }
+            outputList.push_back(current_point);
+        }
+        else if (prev_inside && ComputeIntersection(prev_point, current_point, edge, intersect))
+        {
+            outputList.push_back(intersect);
         }
     }
 
@@ -128,45 +136,53 @@ std::vector<FVector2> Renderer::ClipPolygon(const std::vector<FVector2> &subject
 
 bool Renderer::ComputeIntersection(const FVector2 &p1, const FVector2 &p2, ClipEdge edge, FVector2 &intersect)
 {
-    const float dx1 = p2.X - p1.X;
-    const float dy1 = p2.Y - p1.Y;
+    float t = 0.0f;
+    float denominator = 0.0f;
 
     switch (edge)
     {
     case LEFT:
-        if (dx1 == 0.0f)
+        denominator = p2.X - p1.X;
+        if (std::abs(denominator) < EPSILON)
             return false;
-        intersect.X = xNDCMin;
-        intersect.Y = p1.Y + dy1 * (xNDCMin - p1.X) / dx1;
+        t = (xNDCMin - p1.X) / denominator;
         break;
     case RIGHT:
-        if (dx1 == 0.0f)
+        denominator = p2.X - p1.X;
+        if (std::abs(denominator) < EPSILON)
             return false;
-        intersect.X = xNDCMax;
-        intersect.Y = p1.Y + dy1 * (xNDCMax - p1.X) / dx1;
+        t = (xNDCMax - p1.X) / denominator;
         break;
     case BOTTOM:
-        if (dy1 == 0.0f)
+        denominator = p2.Y - p1.Y;
+        if (std::abs(denominator) < EPSILON)
             return false;
-        intersect.Y = yNDCMin;
-        intersect.X = p1.X + dx1 * (yNDCMin - p1.Y) / dy1;
+        t = (yNDCMin - p1.Y) / denominator;
         break;
     case TOP:
-        if (dy1 == 0.0f)
+        denominator = p2.Y - p1.Y;
+        if (std::abs(denominator) < EPSILON)
             return false;
-        intersect.Y = yNDCMax;
-        intersect.X = p1.X + dx1 * (yNDCMax - p1.Y) / dy1;
+        t = (yNDCMax - p1.Y) / denominator;
         break;
+    default:
+        return false;
     }
 
+    if (t < 0.0f || t > 1.0f)
+        return false;
+
+    intersect = p1 + (p2 - p1) * t;
     return true;
 }
+
+
 
 
 std::vector<float> Renderer::GetOcclusionPoints(const FVector2 &start, const FVector2 &end,
                                                 const std::vector<RenderFace> &occluders)
 {
-    std::vector<float> occlusionTs;
+    std::unordered_set<float> occlusionTs;
 
     const float x1 = start.X;
     const float y1 = start.Y;
@@ -179,7 +195,7 @@ std::vector<float> Renderer::GetOcclusionPoints(const FVector2 &start, const FVe
         const FVector2 &o1 = occluder.v1;
         const FVector2 &o2 = occluder.v2;
 
-        std::vector<std::pair<FVector2, FVector2>> occluderEdges = {{o0, o1}, {o1, o2}, {o2, o0}};
+       std::array<std::pair<FVector2, FVector2>, 3> occluderEdges = {{{o0, o1}, {o1, o2}, {o2, o0}}};
 
         for (const auto &edge : occluderEdges)
         {
@@ -192,36 +208,58 @@ std::vector<float> Renderer::GetOcclusionPoints(const FVector2 &start, const FVe
             const float y4 = p4.Y;
 
             float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-            if (denom == 0.0f)
-                continue; 
+            if (std::abs(denom) < EPSILON)
+                continue;
 
             float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
             float u = ((x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2)) / denom;
 
             if (t >= 0.0f && t <= 1.0f && u >= 0.0f && u <= 1.0f)
             {
-                occlusionTs.push_back(t);
+                occlusionTs.insert(t);
             }
         }
     }
 
+    std::vector<float> occlusionTsVector(occlusionTs.begin(), occlusionTs.end());
+    std::sort(occlusionTsVector.begin(), occlusionTsVector.end());
 
-    std::sort(occlusionTs.begin(), occlusionTs.end());
-    occlusionTs.erase(
-        std::unique(occlusionTs.begin(), occlusionTs.end(), [](float a, float b) { return std::abs(a - b) < EPSILON; }),
-        occlusionTs.end());
-
-    return occlusionTs;
+    return occlusionTsVector;
 }
 
-std::vector<std::pair<FVector2, FVector2>> Renderer::GetVisibleSegments(const FVector2 &start, const FVector2 &end,
-                                                                        const std::vector<RenderFace> &occluders)
+bool Renderer::PointInTriangle(const FVector2 &pt, const FVector2 &v0, const FVector2 &v1, const FVector2 &v2)
 {
-    std::vector<std::pair<FVector2, FVector2>> visibleSegments;
+    FVector2 v0v1 = v1 - v0;
+    FVector2 v0v2 = v2 - v0;
+    FVector2 v0pt = pt - v0;
 
+    // Compute dot products
+    float dot00 = v0v2.Dot(v0v2);
+    float dot01 = v0v2.Dot(v0v1);
+    float dot02 = v0v2.Dot(v0pt);
+    float dot11 = v0v1.Dot(v0v1);
+    float dot12 = v0v1.Dot(v0pt);
+
+    // Compute barycentric coordinates
+    float denom = dot00 * dot11 - dot01 * dot01;
+    if (std::abs(denom) < EPSILON)
+        return false;
+
+    float invDenom = 1.0f / denom;
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    // Check if point is in triangle
+    return (u >= 0.0f) && (v >= 0.0f) && (u + v <= 1.0f);
+}
+
+
+
+std::vector<Segment> Renderer::GetVisibleSegments(const FVector2 &start, const FVector2 &end, const FaceList &occluders)
+{
+    std::vector<Segment> visibleSegments;
 
     std::vector<float> occlusionTs = GetOcclusionPoints(start, end, occluders);
-
 
     if (occlusionTs.empty())
     {
@@ -229,68 +267,43 @@ std::vector<std::pair<FVector2, FVector2>> Renderer::GetVisibleSegments(const FV
         return visibleSegments;
     }
 
-
     occlusionTs.insert(occlusionTs.begin(), 0.0f);
     occlusionTs.push_back(1.0f);
 
-
-    std::sort(occlusionTs.begin(), occlusionTs.end());
-
-    size_t uniqueIdx = 0;
-    for (size_t i = 1; i < occlusionTs.size(); ++i)
-    {
-        if ((occlusionTs[i] - occlusionTs[uniqueIdx]) * (occlusionTs[i] - occlusionTs[uniqueIdx]) >= EPSILON * EPSILON)
-        {
-            ++uniqueIdx;
-            occlusionTs[uniqueIdx] = occlusionTs[i];
-        }
-    }
-    occlusionTs.resize(uniqueIdx + 1);
+    // Remove duplicates and sort (already sorted from GetOcclusionPoints)
+    occlusionTs.erase(
+        std::unique(occlusionTs.begin(), occlusionTs.end(), [](float a, float b) { return std::abs(a - b) < EPSILON; }),
+        occlusionTs.end());
 
     for (size_t i = 0; i < occlusionTs.size() - 1; ++i)
     {
         float tStart = occlusionTs[i];
         float tEnd = occlusionTs[i + 1];
 
-        float tMid = (tStart + tEnd) / 2.0f;
-        FVector2 midpoint(start.X + tMid * (end.X - start.X), start.Y + tMid * (end.Y - start.Y));
+        float tMid = (tStart + tEnd) * 0.5f;
+        FVector2 midpoint = start + (end - start) * tMid ;
 
         bool isOccluded = false;
         for (const auto &occluder : occluders)
         {
-            const FVector2 &v0 = occluder.v0;
-            const FVector2 &v1 = occluder.v1;
-            const FVector2 &v2 = occluder.v2;
-
-
-            float denom = ((v1.Y - v2.Y) * (v0.X - v2.X) + (v2.X - v1.X) * (v0.Y - v2.Y));
-            if (denom == 0.0f)
-                continue; 
-
-            float a = ((v1.Y - v2.Y) * (midpoint.X - v2.X) + (v2.X - v1.X) * (midpoint.Y - v2.Y)) / denom;
-            float b = ((v2.Y - v0.Y) * (midpoint.X - v2.X) + (v0.X - v2.X) * (midpoint.Y - v2.Y)) / denom;
-            float c = 1.0f - a - b;
-
-            if (a >= 0.0f && b >= 0.0f && c >= 0.0f)
+            if (PointInTriangle(midpoint, occluder.v0, occluder.v1, occluder.v2))
             {
                 isOccluded = true;
-                break; 
+                break;
             }
         }
 
-        if (isOccluded)
+        if (!isOccluded)
         {
-            continue;
+            FVector2 segmentStart = start + (end - start) * tStart;
+            FVector2 segmentEnd = start + (end - start) * tEnd;
+            visibleSegments.emplace_back(segmentStart, segmentEnd);
         }
-
-        // Add the visible segment
-        FVector2 segmentStart(start.X + tStart * (end.X - start.X), start.Y + tStart * (end.Y - start.Y));
-        FVector2 segmentEnd(start.X + tEnd * (end.X - start.X), start.Y + tEnd * (end.Y - start.Y));
-        visibleSegments.emplace_back(segmentStart, segmentEnd);
     }
 
     return visibleSegments;
 }
+
 
 
 

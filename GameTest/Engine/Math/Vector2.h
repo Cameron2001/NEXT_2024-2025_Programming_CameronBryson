@@ -7,13 +7,13 @@ public:
     FVector2();
     FVector2(float X, float Y);
     FVector2(const FVector2 &copy);
-    FVector2 Length();
-    FVector2 LengthSquared();
-    FVector2 Normalize();
-    FVector2 Cross(FVector2 obj);
-    FVector2 Clamp(float min, float max);
-    FVector2 Project(FVector2 normal);
-    FVector2 Dot(FVector2 obj);
+    float Length() const;
+    float LengthSquared() const;
+    FVector2 Normalize() const;
+    float Dot(const FVector2 &other) const;
+    float Cross(const FVector2 &other) const;
+    FVector2 Clamp(float min, float max) const;
+    FVector2 Project(const FVector2 &normal) const;
     FVector2 operator+(const FVector2 &obj) const;
     FVector2 operator-(const FVector2 &obj) const;
     FVector2 operator*(const FVector2 &obj) const;
@@ -29,6 +29,8 @@ public:
     FVector2 &operator*=(float obj);
     FVector2 &operator/=(float obj);
 
+    bool operator==(const FVector2 &other) const;
+    bool operator!=(const FVector2 &other) const;
 
 };
 

@@ -35,16 +35,18 @@ public:
 
 private:
     static bool IsOnScreen(const FVector3 &point);
+    static bool IsInside(const FVector2 &point, ClipEdge edge);
 
     static std::vector<RenderFace> QueuedFaces;
 
     // Sutherland-Hodgman Clipping Methods
-    static std::vector<FVector2> ClipPolygon(const std::vector<FVector2> &subjectPolygon,
-                                             const std::vector<std::vector<FVector2>> &occluders);
+    static std::vector<FVector2> ClipPolygon(const std::vector<FVector2> &subjectPolygon);
+    static std::vector<FVector2> ClipAgainstEdge(const std::vector<FVector2> &inputList, ClipEdge edge);
     static bool ComputeIntersection(const FVector2 &p1, const FVector2 &p2, ClipEdge edge, FVector2 &intersect);
     static std::vector<float> GetOcclusionPoints(const FVector2 &start, const FVector2 &end,
                                                  const std::vector<RenderFace> &occluders);
     static std::vector<std::pair<FVector2, FVector2>> GetVisibleSegments(const FVector2 &start, const FVector2 &end,
                                                                          const std::vector<RenderFace> &occluders);
+    static bool PointInTriangle(const FVector2 &pt, const FVector2 &v0, const FVector2 &v1, const FVector2 &v2);
 };
 

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Vector2.h"
+#include <utility>
+#include <cmath>
 
 FVector2::FVector2()
 {
@@ -19,41 +21,54 @@ FVector2::FVector2(const FVector2 &copy)
     this->Y = copy.Y;
 }
 
-FVector2 FVector2::Length()
+float FVector2::Length() const
 {
-    return FVector2();
+    return std::sqrt(X * X + Y * Y);
 }
 
-FVector2 FVector2::LengthSquared()
+float FVector2::LengthSquared() const
 {
-    return FVector2();
+    return X * X + Y * Y;
 }
 
-FVector2 FVector2::Normalize()
+FVector2 FVector2::Normalize() const
 {
-    return FVector2();
+    float len = Length();
+    if (len > 0.0f)
+    {
+        return FVector2(X / len, Y / len);
+    }
+    return FVector2(0.0f, 0.0f); // Return zero vector if length is zero
 }
 
-FVector2 FVector2::Cross(FVector2 obj)
+float FVector2::Dot(const FVector2 &other) const
 {
-    return FVector2();
+    return X * other.X + Y * other.Y;
 }
 
-FVector2 FVector2::Clamp(float min, float max)
+float FVector2::Cross(const FVector2 &other) const
 {
-    return FVector2();
+    return X * other.Y - Y * other.X;
 }
 
-FVector2 FVector2::Project(FVector2 normal)
+FVector2 FVector2::Clamp(float min, float max) const
 {
-    return FVector2();
+    float clampedX = std::max(min, std::min(X, max));
+    float clampedY = std::max(min, std::min(Y, max));
+    return FVector2(clampedX, clampedY);
 }
 
-FVector2 FVector2::Dot(FVector2 obj)
+FVector2 FVector2::Project(const FVector2 &normal) const
 {
-    return FVector2();
+    float dotProduct = this->Dot(normal);
+    float normalLengthSquared = normal.LengthSquared();
+    if (normalLengthSquared > 0.0f)
+    {
+        float scalar = dotProduct / normalLengthSquared;
+        return normal * scalar;
+    }
+    return FVector2(0.0f, 0.0f); // Return zero vector if normal length is zero
 }
-
 FVector2 FVector2::operator+(const FVector2 &obj) const
 {
     return {this->X + obj.X, this->Y + obj.Y};
