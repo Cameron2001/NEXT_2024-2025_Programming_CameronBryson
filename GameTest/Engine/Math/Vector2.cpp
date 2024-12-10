@@ -141,6 +141,11 @@ FVector2 &FVector2::operator/=(const float obj)
     return *this;
 }
 
+bool FVector2::operator==(const FVector2 &other) const
+{
+    return this->X == other.X && this->Y == other.Y;
+}
+
 IVector2::IVector2()
 {
     this->X = 0;

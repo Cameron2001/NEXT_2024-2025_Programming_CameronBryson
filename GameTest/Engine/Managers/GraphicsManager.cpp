@@ -8,9 +8,10 @@
 void GraphicsManager::LoadResources()
 {
     LoadModel("CubeOBJ", "assets/cube.obj");
-    LoadModel("MonkeyOBJ", "assets/monkey.obj");
+    //LoadModel("MonkeyOBJ", "assets/monkey.obj");
     LoadModel("SphereOBJ", "assets/sphere.obj");
     LoadModel("ShipOBJ", "assets/ship.obj");
+    LoadModel("PyramidOBJ", "assets/pyramid.obj");
 
 }
 

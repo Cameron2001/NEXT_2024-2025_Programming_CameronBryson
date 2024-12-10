@@ -5,13 +5,6 @@
 #include "Engine/Math/Matrix4.h"
 #include "Engine/Math/Vector3.h"
 #include "Engine/Math/Vector2.h"
-enum ClipEdge
-{
-    LEFT,
-    RIGHT,
-    BOTTOM,
-    TOP
-};
 struct RenderFace
 {
     FVector2 v0;
@@ -35,18 +28,13 @@ public:
 
 private:
     static bool IsOnScreen(const FVector3 &point);
-    static bool IsInside(const FVector2 &point, ClipEdge edge);
+    static bool IsPointInsideEdge(const FVector2 &point, const FVector2& edgeStart, const FVector2& edgeEnd);
 
     static std::vector<RenderFace> QueuedFaces;
 
     // Sutherland-Hodgman Clipping Methods
-    static std::vector<FVector2> ClipPolygon(const std::vector<FVector2> &subjectPolygon);
-    static std::vector<FVector2> ClipAgainstEdge(const std::vector<FVector2> &inputList, ClipEdge edge);
-    static bool ComputeIntersection(const FVector2 &p1, const FVector2 &p2, ClipEdge edge, FVector2 &intersect);
-    static std::vector<float> GetOcclusionPoints(const FVector2 &start, const FVector2 &end,
-                                                 const std::vector<RenderFace> &occluders);
-    static std::vector<std::pair<FVector2, FVector2>> GetVisibleSegments(const FVector2 &start, const FVector2 &end,
-                                                                         const std::vector<RenderFace> &occluders);
-    static bool PointInTriangle(const FVector2 &pt, const FVector2 &v0, const FVector2 &v1, const FVector2 &v2);
+    static std::vector<FVector2> SutherlandHodgmanClip(const std::vector<FVector2> &subjectPolygon, const std::vector<FVector2>&occluderPolygon);
+    static FVector2 ComputeIntersection(const FVector2 &edgeAStart, const FVector2 &edgeAEnd, const FVector2 &edgeBStart,
+                                    const FVector2 &edgeBEnd);
 };
 

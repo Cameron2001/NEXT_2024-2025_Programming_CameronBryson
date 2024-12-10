@@ -24,9 +24,9 @@ void PlayScene::Init()
     m_event.Notify(10);
 
     auto cube = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(cube, FVector3(0.1f, 0.2f, -10.0f), FVector3(20.0f, 15.0f, 10.0f),
+    m_registry->AddComponent<TransformComponent>(cube, FVector3(0.1f, 0.1f, -3.0f), FVector3(20.0f, 15.0f, 10.0f),
                                                  FVector3(0.15f, 0.15f, 0.51f));
-    m_registry->AddComponent<ModelComponent>(cube, "CubeOBJ");
+    m_registry->AddComponent<ModelComponent>(cube, "PyramidOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube);
 
     m_event.Notify(15);
