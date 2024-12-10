@@ -18,40 +18,39 @@ const float yNDCMin = -NDC;
 const float EPSILON = 0.001f;
 std::vector<RenderFace> Renderer::QueuedFaces;
 
-void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP, const Matrix4& normalMatrix )
+void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
     for (const auto &face : mesh.faces)
     {
-        //Transformed vertices
+        // Transformed vertices
         FVector3 mvpVertex0 = MVP.TransformWithPerspectiveDivide(face.v0);
         FVector3 mvpVertex1 = MVP.TransformWithPerspectiveDivide(face.v1);
         FVector3 mvpVertex2 = MVP.TransformWithPerspectiveDivide(face.v2);
-        
 
         // Within ndc space
         if (!IsOnScreen(mvpVertex0) && !IsOnScreen(mvpVertex1) && !IsOnScreen(mvpVertex2))
         {
             continue;
         }
-        //Backface culling
-        float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) - (
-                                (mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
+        // Backface culling
+        float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
+                            ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
         if (determinant < EPSILON)
         {
             continue;
         }
-        float avgDepth = (mvpVertex0.Z + mvpVertex1.Z + mvpVertex2.Z) / 3.0f;
-        Face newFace = {mvpVertex0, mvpVertex1, mvpVertex2};
-        QueuedFaces.emplace_back(newFace, avgDepth);
+        float minDepth = std::min({mvpVertex0.Z, mvpVertex1.Z, mvpVertex2.Z});
+        QueuedFaces.emplace_back(FVector2{mvpVertex0.X, mvpVertex0.Y}, FVector2{mvpVertex1.X, mvpVertex1.Y},
+                                  FVector2{mvpVertex2.X, mvpVertex2.Y}, minDepth);
         //QueuedFaces.emplace_back(mvpVertex0, mvpVertex1, mvpVertex2,viewNormal);
     }
 }
 
-void Renderer::QueueModel(const Model &model, const Matrix4 &MVP, const Matrix4& normalMatrix)
+void Renderer::QueueModel(const Model &model, const Matrix4 &MVP)
 {
     for (const auto &mesh : model.meshes)
     {
-        QueueMesh(mesh, MVP, normalMatrix);
+        QueueMesh(mesh, MVP);
     }
 }
 
@@ -61,16 +60,16 @@ bool Renderer::IsOnScreen(const FVector3 &point)
            (point.Y >= yNDCMin && point.Y <= yNDCMax );
 }
 
-std::vector<FVector3> Renderer::ClipPolygon(const std::vector<FVector3> &subjectPolygon,
-                                            const std::vector<std::vector<FVector3>> &occluders)
+std::vector<FVector2> Renderer::ClipPolygon(const std::vector<FVector2> &subjectPolygon,
+                                            const std::vector<std::vector<FVector2>> &occluders)
 {
-    std::vector<FVector3> outputList = subjectPolygon;
+    std::vector<FVector2> outputList = subjectPolygon;
     outputList.reserve(subjectPolygon.size());
     const std::vector<ClipEdge> clipEdges = {LEFT, RIGHT, BOTTOM, TOP};
 
     for (const auto &edge : clipEdges)
     {
-        std::vector<FVector3> inputList = outputList;
+        std::vector<FVector2> inputList = outputList;
         outputList.clear();
         outputList.reserve(inputList.size());
 
@@ -79,8 +78,8 @@ std::vector<FVector3> Renderer::ClipPolygon(const std::vector<FVector3> &subject
 
         for (size_t i = 0; i < inputList.size(); ++i)
         {
-            const FVector3 &current = inputList[i];
-            const FVector3 &prev = inputList[(i + inputList.size() - 1) % inputList.size()];
+            const FVector2 &current = inputList[i];
+            const FVector2 &prev = inputList[(i + inputList.size() - 1) % inputList.size()];
 
             bool currentInside;
             bool prevInside;
@@ -105,7 +104,7 @@ std::vector<FVector3> Renderer::ClipPolygon(const std::vector<FVector3> &subject
                 break;
             }
 
-            FVector3 intersect;
+            FVector2 intersect;
             bool hasIntersection = ComputeIntersection(prev, current, edge, intersect);
 
             if (currentInside)
@@ -127,7 +126,7 @@ std::vector<FVector3> Renderer::ClipPolygon(const std::vector<FVector3> &subject
 }
 
 
-bool Renderer::ComputeIntersection(const FVector3 &p1, const FVector3 &p2, ClipEdge edge, FVector3 &intersect)
+bool Renderer::ComputeIntersection(const FVector2 &p1, const FVector2 &p2, ClipEdge edge, FVector2 &intersect)
 {
     const float dx1 = p2.X - p1.X;
     const float dy1 = p2.Y - p1.Y;
@@ -160,12 +159,11 @@ bool Renderer::ComputeIntersection(const FVector3 &p1, const FVector3 &p2, ClipE
         break;
     }
 
-    intersect.Z = 0.0f;
     return true;
 }
 
 
-std::vector<float> Renderer::GetOcclusionPoints(const FVector3 &start, const FVector3 &end,
+std::vector<float> Renderer::GetOcclusionPoints(const FVector2 &start, const FVector2 &end,
                                                 const std::vector<RenderFace> &occluders)
 {
     std::vector<float> occlusionTs;
@@ -177,16 +175,16 @@ std::vector<float> Renderer::GetOcclusionPoints(const FVector3 &start, const FVe
 
     for (const auto &occluder : occluders)
     {
-        const FVector3 &o0 = occluder.face.v0;
-        const FVector3 &o1 = occluder.face.v1;
-        const FVector3 &o2 = occluder.face.v2;
+        const FVector2 &o0 = occluder.v0;
+        const FVector2 &o1 = occluder.v1;
+        const FVector2 &o2 = occluder.v2;
 
-        std::vector<std::pair<FVector3, FVector3>> occluderEdges = {{o0, o1}, {o1, o2}, {o2, o0}};
+        std::vector<std::pair<FVector2, FVector2>> occluderEdges = {{o0, o1}, {o1, o2}, {o2, o0}};
 
         for (const auto &edge : occluderEdges)
         {
-            const FVector3 &p3 = edge.first;
-            const FVector3 &p4 = edge.second;
+            const FVector2 &p3 = edge.first;
+            const FVector2 &p4 = edge.second;
 
             const float x3 = p3.X;
             const float y3 = p3.Y;
@@ -216,10 +214,10 @@ std::vector<float> Renderer::GetOcclusionPoints(const FVector3 &start, const FVe
     return occlusionTs;
 }
 
-std::vector<std::pair<FVector3, FVector3>> Renderer::GetVisibleSegments(const FVector3 &start, const FVector3 &end,
+std::vector<std::pair<FVector2, FVector2>> Renderer::GetVisibleSegments(const FVector2 &start, const FVector2 &end,
                                                                         const std::vector<RenderFace> &occluders)
 {
-    std::vector<std::pair<FVector3, FVector3>> visibleSegments;
+    std::vector<std::pair<FVector2, FVector2>> visibleSegments;
 
 
     std::vector<float> occlusionTs = GetOcclusionPoints(start, end, occluders);
@@ -255,14 +253,14 @@ std::vector<std::pair<FVector3, FVector3>> Renderer::GetVisibleSegments(const FV
         float tEnd = occlusionTs[i + 1];
 
         float tMid = (tStart + tEnd) / 2.0f;
-        FVector3 midpoint(start.X + tMid * (end.X - start.X), start.Y + tMid * (end.Y - start.Y), 0.0f);
+        FVector2 midpoint(start.X + tMid * (end.X - start.X), start.Y + tMid * (end.Y - start.Y));
 
         bool isOccluded = false;
         for (const auto &occluder : occluders)
         {
-            const FVector3 &v0 = occluder.face.v0;
-            const FVector3 &v1 = occluder.face.v1;
-            const FVector3 &v2 = occluder.face.v2;
+            const FVector2 &v0 = occluder.v0;
+            const FVector2 &v1 = occluder.v1;
+            const FVector2 &v2 = occluder.v2;
 
 
             float denom = ((v1.Y - v2.Y) * (v0.X - v2.X) + (v2.X - v1.X) * (v0.Y - v2.Y));
@@ -286,8 +284,8 @@ std::vector<std::pair<FVector3, FVector3>> Renderer::GetVisibleSegments(const FV
         }
 
         // Add the visible segment
-        FVector3 segmentStart(start.X + tStart * (end.X - start.X), start.Y + tStart * (end.Y - start.Y), 0.0f);
-        FVector3 segmentEnd(start.X + tEnd * (end.X - start.X), start.Y + tEnd * (end.Y - start.Y), 0.0f);
+        FVector2 segmentStart(start.X + tStart * (end.X - start.X), start.Y + tStart * (end.Y - start.Y));
+        FVector2 segmentEnd(start.X + tEnd * (end.X - start.X), start.Y + tEnd * (end.Y - start.Y));
         visibleSegments.emplace_back(segmentStart, segmentEnd);
     }
 
@@ -305,26 +303,26 @@ void Renderer::SubmitQueue()
 
 
     if (!std::is_sorted(QueuedFaces.begin(), QueuedFaces.end(), [](const RenderFace &a, const RenderFace &b) -> bool {
-            return a.averageDepth < b.averageDepth;
+            return a.minDepth < b.minDepth;
         }))
     {
         std::sort(QueuedFaces.begin(), QueuedFaces.end(),
-                  [](const RenderFace &a, const RenderFace &b) -> bool { return a.averageDepth < b.averageDepth; });
+                  [](const RenderFace &a, const RenderFace &b) -> bool { return a.minDepth < b.minDepth; });
     }
 
     std::vector<RenderFace> occluders; 
 
     for (const auto &renderFace : QueuedFaces)
     {
-        const FVector3 *polygon[3] = {&renderFace.face.v0, &renderFace.face.v1, &renderFace.face.v2};
+        const FVector2 *polygon[3] = {&renderFace.v0, &renderFace.v1, &renderFace.v2};
 
         for (size_t j = 0; j < 3; ++j)
         {
-            const FVector3 &start = *polygon[j];
-            const FVector3 &end = *polygon[(j + 1) % 3];
+            const FVector2 &start = *polygon[j];
+            const FVector2 &end = *polygon[(j + 1) % 3];
 
             // Get visible segments after occlusion
-            std::vector<std::pair<FVector3, FVector3>> visibleSegments = GetVisibleSegments(start, end, occluders);
+            std::vector<std::pair<FVector2, FVector2>> visibleSegments = GetVisibleSegments(start, end, occluders);
 
             // Render each visible segment
             for (const auto &segment : visibleSegments)

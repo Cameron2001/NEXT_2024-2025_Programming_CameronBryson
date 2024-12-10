@@ -4,6 +4,7 @@
 #include "Engine/Graphics/Model.h"
 #include "Engine/Math/Matrix4.h"
 #include "Engine/Math/Vector3.h"
+#include "Engine/Math/Vector2.h"
 enum ClipEdge
 {
     LEFT,
@@ -13,10 +14,13 @@ enum ClipEdge
 };
 struct RenderFace
 {
-    Face face;
-    float averageDepth; // Used for depth sorting
+    FVector2 v0;
+    FVector2 v1;
+    FVector2 v2;
+    float minDepth; // Used for depth sorting
 
-    RenderFace(const Face &f, float depth) : face(f), averageDepth(depth)
+    RenderFace(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, float depth)
+        : v0(v0), v1(v1), v2(v2), minDepth(depth)
     {
     }
 };
@@ -24,8 +28,8 @@ struct RenderFace
 class Renderer
 {
 public:
-    static void QueueMesh(const Mesh &mesh, const Matrix4 &MVP,const Matrix4& normalMatrix);
-    static void QueueModel(const Model &model, const Matrix4 &MVP,const Matrix4& normalMatrix);
+    static void QueueMesh(const Mesh &mesh, const Matrix4 &MVP);
+    static void QueueModel(const Model &model, const Matrix4 &MVP);
     static void SubmitQueue();
     static void ClearQueue();
 
@@ -35,12 +39,12 @@ private:
     static std::vector<RenderFace> QueuedFaces;
 
     // Sutherland-Hodgman Clipping Methods
-    static std::vector<FVector3> ClipPolygon(const std::vector<FVector3> &subjectPolygon,
-                                             const std::vector<std::vector<FVector3>> &occluders);
-    static bool ComputeIntersection(const FVector3 &p1, const FVector3 &p2, ClipEdge edge, FVector3 &intersect);
-    static std::vector<float> GetOcclusionPoints(const FVector3 &start, const FVector3 &end,
+    static std::vector<FVector2> ClipPolygon(const std::vector<FVector2> &subjectPolygon,
+                                             const std::vector<std::vector<FVector2>> &occluders);
+    static bool ComputeIntersection(const FVector2 &p1, const FVector2 &p2, ClipEdge edge, FVector2 &intersect);
+    static std::vector<float> GetOcclusionPoints(const FVector2 &start, const FVector2 &end,
                                                  const std::vector<RenderFace> &occluders);
-    static std::vector<std::pair<FVector3, FVector3>> GetVisibleSegments(const FVector3 &start, const FVector3 &end,
+    static std::vector<std::pair<FVector2, FVector2>> GetVisibleSegments(const FVector2 &start, const FVector2 &end,
                                                                          const std::vector<RenderFace> &occluders);
 };
 

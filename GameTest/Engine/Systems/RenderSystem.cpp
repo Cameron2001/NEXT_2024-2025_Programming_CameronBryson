@@ -38,7 +38,7 @@ void RenderSystem::Render()
         auto normalMatrix = modelMatrix.Inverse().Transpose();
         auto mvpMatrix = viewProjectionMatrix * modelMatrix;
 
-        Renderer::QueueModel(modelData, mvpMatrix,normalMatrix);
+        Renderer::QueueModel(modelData, mvpMatrix);
     }
     Renderer::SubmitQueue();
 }
