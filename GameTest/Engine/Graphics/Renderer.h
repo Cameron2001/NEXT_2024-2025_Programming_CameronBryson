@@ -5,18 +5,7 @@
 #include "Engine/Math/Matrix4.h"
 #include "Engine/Math/Vector3.h"
 #include "Engine/Math/Vector2.h"
-struct RenderFace
-{
-    FVector2 v0;
-    FVector2 v1;
-    FVector2 v2;
-    float minDepth; // Used for depth sorting
-
-    RenderFace(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, float depth)
-        : v0(v0), v1(v1), v2(v2), minDepth(depth)
-    {
-    }
-};
+#include "Engine/Graphics/HiddenLine.h"
 
 class Renderer
 {
@@ -27,10 +16,10 @@ public:
     static void ClearQueue();
 
 private:
+    static std::vector<Edge> RenderQueue;
     static bool IsOnScreen(const FVector3 &point);
     static bool IsPointInsideEdge(const FVector2 &point, const FVector2& edgeStart, const FVector2& edgeEnd);
 
-    static std::vector<RenderFace> QueuedFaces;
 
     // Sutherland-Hodgman Clipping Methods
     static std::vector<FVector2> SutherlandHodgmanClip(const std::vector<FVector2> &subjectPolygon, const std::vector<FVector2>&occluderPolygon);

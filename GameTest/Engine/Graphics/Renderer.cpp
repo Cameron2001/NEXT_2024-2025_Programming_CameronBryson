@@ -15,6 +15,7 @@
 #include <array>
 #include <vector>
 #include <algorithm>
+#include "Engine/Graphics/HiddenLine.h"
 const FVector3 VIEW_DIRECTION(0.0f, 0.0f, 1.0f);
 const float NDC = 1.00f;
 const float xNDCMax = NDC;
@@ -22,7 +23,7 @@ const float xNDCMin = -NDC;
 const float yNDCMax = NDC;
 const float yNDCMin = -NDC;
 const float EPSILON = 0.0001f;
-std::vector<RenderFace> Renderer::QueuedFaces;
+std::vector<Edge> Renderer::RenderQueue;
 
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
@@ -46,9 +47,9 @@ void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
             continue;
         }
         float minDepth = std::min({mvpVertex0.Z, mvpVertex1.Z, mvpVertex2.Z});
-        QueuedFaces.emplace_back(FVector2{mvpVertex0.X, mvpVertex0.Y}, FVector2{mvpVertex1.X, mvpVertex1.Y},
-                                  FVector2{mvpVertex2.X, mvpVertex2.Y}, minDepth);
-        //QueuedFaces.emplace_back(mvpVertex0, mvpVertex1, mvpVertex2,viewNormal);
+        RenderQueue.emplace_back(mvpVertex0, mvpVertex1);
+        RenderQueue.emplace_back(mvpVertex1, mvpVertex2);
+        RenderQueue.emplace_back(mvpVertex2, mvpVertex0);
     }
 }
 
@@ -62,45 +63,22 @@ void Renderer::QueueModel(const Model &model, const Matrix4 &MVP)
 
 void Renderer::SubmitQueue()
 {
-    if (QueuedFaces.empty())
+    if (RenderQueue.empty())
         return;
 
-    if (!std::is_sorted(QueuedFaces.begin(), QueuedFaces.end(),
-                        [](const RenderFace &a, const RenderFace &b) -> bool { return a.minDepth < b.minDepth; }))
+    //Get edges
+    HiddenLine hiddenLine;
+    std::vector<Edge> visibleSegments = hiddenLine.EliminateHiddenLines(RenderQueue, {0.0f, 0.0f,0.0f});
+    for (const auto &edge : visibleSegments)
     {
-        std::sort(QueuedFaces.begin(), QueuedFaces.end(),
-                  [](const RenderFace &a, const RenderFace &b) -> bool { return a.minDepth < b.minDepth; });
-    }
-
-    std::vector<RenderFace> occluders;
-
-    for (const auto &renderFace : QueuedFaces)
-    {
-        Renderer2D::DrawPolygon({renderFace.v0, renderFace.v1, renderFace.v2}, FVector3{1.0f, 0.0f, 0.0f});
-        std::vector<FVector2> clippedPolygon = {renderFace.v0, renderFace.v1, renderFace.v2};
-
-        for (const auto &occluder : occluders)
-        {
-            clippedPolygon = SutherlandHodgmanClip(clippedPolygon, {occluder.v0, occluder.v1,occluder.v2});
-            if (clippedPolygon.empty())
-            {
-                break; // The polygon is fully occluded
-            }
-        }
-
-        if (!clippedPolygon.empty())
-        {
-            Renderer2D::DrawPolygon(clippedPolygon, FVector3{1.0f, 1.0f, 1.0f});
-            occluders.push_back(renderFace);
-        }
-
+        Renderer2D::DrawLine(edge.start, edge.end, FVector3{1.0f, 1.0f, 1.0f});
     }
     ClearQueue();
 }
 
 void Renderer::ClearQueue()
 {
-    QueuedFaces.clear();
+    RenderQueue.clear();
 }
 
 bool Renderer::IsOnScreen(const FVector3 &point)
@@ -153,15 +131,15 @@ std::vector<FVector2> Renderer::SutherlandHodgmanClip(const std::vector<FVector2
             {
                 //continue;
             }
-            if (!IsPointInsideEdge(currentVertex, edgeStart, edgeEnd))
+            if (IsPointInsideEdge(currentVertex, edgeStart, edgeEnd))
             {
-                if (IsPointInsideEdge(previousVertex, edgeStart, edgeEnd))
+                if (!IsPointInsideEdge(previousVertex, edgeStart, edgeEnd))
                 {
                     outputList.push_back(ComputeIntersection(edgeStart, edgeEnd, previousVertex, currentVertex));
                 }
                 outputList.push_back(currentVertex);
             }
-            else if (!IsPointInsideEdge(previousVertex, edgeStart, edgeEnd))
+            else if (IsPointInsideEdge(previousVertex, edgeStart, edgeEnd))
             {
                 outputList.push_back(ComputeIntersection(edgeStart, edgeEnd, previousVertex, currentVertex));
             }

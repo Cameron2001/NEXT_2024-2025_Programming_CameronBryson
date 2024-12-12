@@ -78,6 +78,7 @@
     <ClCompile Include="Game\PlayerSystem.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Graphics\HiddenLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -194,6 +195,7 @@
     </ClInclude>
     <ClInclude Include="Engine\Graphics\Face.h" />
     <ClInclude Include="Engine\Storage\View.h" />
+    <ClInclude Include="Engine\Graphics\HiddenLine.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
