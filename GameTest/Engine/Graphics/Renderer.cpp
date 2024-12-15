@@ -15,41 +15,41 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-#include "Engine/Graphics/HiddenLine.h"
+#include "Engine/Math/MathUtil.h"
+#include "HiddenLineRemoval.h"
 const FVector3 VIEW_DIRECTION(0.0f, 0.0f, 1.0f);
 const float NDC = 1.00f;
 const float xNDCMax = NDC;
 const float xNDCMin = -NDC;
 const float yNDCMax = NDC;
 const float yNDCMin = -NDC;
-const float EPSILON = 0.0001f;
-std::vector<Edge> Renderer::RenderQueue;
-
+std::unordered_set<Edge3D> Renderer::uniqueEdges;
+std::vector<Edge3D> Renderer::RenderQueue;
+std::vector<Face> Renderer::m_triangles;
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
     for (const auto &face : mesh.faces)
     {
+
         // Transformed vertices
         FVector3 mvpVertex0 = MVP.TransformWithPerspectiveDivide(face.v0);
         FVector3 mvpVertex1 = MVP.TransformWithPerspectiveDivide(face.v1);
         FVector3 mvpVertex2 = MVP.TransformWithPerspectiveDivide(face.v2);
-
-        // Within ndc space
-        if (!IsOnScreen(mvpVertex0) && !IsOnScreen(mvpVertex1) && !IsOnScreen(mvpVertex2))
-        {
-            //continue;
-        }
-        // Backface culling
         float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
                             ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
-        if (determinant < EPSILON)
+        if (determinant < 0)
         {
             continue;
         }
-        float minDepth = std::min({mvpVertex0.Z, mvpVertex1.Z, mvpVertex2.Z});
-        RenderQueue.emplace_back(mvpVertex0, mvpVertex1);
-        RenderQueue.emplace_back(mvpVertex1, mvpVertex2);
-        RenderQueue.emplace_back(mvpVertex2, mvpVertex0);
+
+        uniqueEdges.emplace(mvpVertex0, mvpVertex1);
+        uniqueEdges.emplace(mvpVertex1, mvpVertex2);
+        uniqueEdges.emplace(mvpVertex2, mvpVertex0);
+
+        m_triangles.emplace_back(mvpVertex0, mvpVertex1, mvpVertex2);
+        //RenderQueue.emplace_back(mvpVertex0, mvpVertex1);
+        //RenderQueue.emplace_back(mvpVertex1, mvpVertex2);
+        //RenderQueue.emplace_back(mvpVertex2, mvpVertex0);
     }
 }
 
@@ -63,28 +63,35 @@ void Renderer::QueueModel(const Model &model, const Matrix4 &MVP)
 
 void Renderer::SubmitQueue()
 {
+    RenderQueue.assign(uniqueEdges.begin(), uniqueEdges.end());
     if (RenderQueue.empty())
         return;
-
-    //Get edges
-    HiddenLine hiddenLine;
-    std::vector<Edge> visibleSegments = hiddenLine.EliminateHiddenLines(RenderQueue, {0.0f, 0.0f,0.0f});
+    for (const auto &edge : RenderQueue)
+    {
+        //Renderer2D::DrawLine(edge.start, edge.end, {0.25f, 0.1f, 0.1f});
+    }
+    HiddenLineRemoval hlr(m_triangles);
+    hlr.runTests();
+    std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
     for (const auto &edge : visibleSegments)
     {
-        Renderer2D::DrawLine(edge.start, edge.end, FVector3{1.0f, 1.0f, 1.0f});
+        Renderer2D::DrawLine(edge.start, edge.end, {1.0f, 1.0f, 1.0f});
     }
     ClearQueue();
 }
 
+
 void Renderer::ClearQueue()
 {
     RenderQueue.clear();
+    uniqueEdges.clear();
+    m_triangles.clear();
 }
 
 bool Renderer::IsOnScreen(const FVector3 &point)
 {
-    return (point.X >= xNDCMin - EPSILON && point.X <= xNDCMax + EPSILON) &&
-           (point.Y >= yNDCMin - EPSILON && point.Y <= yNDCMax + EPSILON);
+    return (point.X >= xNDCMin && point.X <= xNDCMax ) &&
+           (point.Y >= yNDCMin  && point.Y <= yNDCMax );
 }
 
 bool Renderer::IsPointInsideEdge(const FVector2 &point, const FVector2 &edgeStart, const FVector2 &edgeEnd)

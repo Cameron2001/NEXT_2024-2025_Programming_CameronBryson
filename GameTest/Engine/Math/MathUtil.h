@@ -15,4 +15,9 @@ inline float RadiansToDegrees(float radians)
 {
     return radians * (180.0f / PI);
 }
+// Clamps a value between a minimum and maximum range
+template <typename T> inline T Clamp(const T &value, const T &minVal, const T &maxVal)
+{
+    return (value < minVal) ? minVal : ((value > maxVal) ? maxVal : value);
 }
+} // namespace MathUtil
