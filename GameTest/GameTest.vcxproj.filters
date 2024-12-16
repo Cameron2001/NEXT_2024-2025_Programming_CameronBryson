@@ -79,6 +79,8 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Graphics\HiddenLineRemoval.cpp" />
+    <ClCompile Include="Engine\Math\Octree.cpp" />
+    <ClCompile Include="Engine\Math\Quadtree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -198,6 +200,9 @@
     <ClInclude Include="Engine\Graphics\Edge.h" />
     <ClInclude Include="Engine\Graphics\Interval.h" />
     <ClInclude Include="Engine\Graphics\HiddenLineRemoval.h" />
+    <ClInclude Include="Engine\Math\Octree.h" />
+    <ClInclude Include="Engine\Math\Quadtree.h" />
+    <ClInclude Include="Engine\Math\BoundingBox.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

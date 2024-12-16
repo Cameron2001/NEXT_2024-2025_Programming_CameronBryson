@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <memory>
 #include "App/SimpleSound.h"
+#include <string>
 
 class AudioManager
 {
