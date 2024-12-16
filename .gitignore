@@ -7,7 +7,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -31,3 +30,4 @@
 *.out
 *.app
 /GameTest/x64
+*.pdb
