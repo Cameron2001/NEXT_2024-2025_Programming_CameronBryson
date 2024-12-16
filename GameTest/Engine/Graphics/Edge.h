@@ -2,6 +2,7 @@
 #include <Engine/Math/Vector2.h>
 #include <Engine/Math/Vector3.h>
 #include <functional>
+
 struct Edge2D
 {
     Edge2D(const FVector2 &start2D, const FVector2 &end2D) : start(start2D), end(end2D)
@@ -20,6 +21,7 @@ struct Edge2D
         return *this;
     }
 };
+
 struct Edge3D
 {
     Edge3D() = default;
@@ -40,15 +42,14 @@ struct Edge3D
         return *this;
     }
 };
-namespace std
+
+// Hash function for Edge3D
+struct Edge3DHash
 {
-template <> struct hash<Edge3D>
-{
-    size_t operator()(const Edge3D &edge) const
+    std::size_t operator()(const Edge3D &edge) const
     {
-        size_t h1 = hash<float>()(edge.start.X) ^ hash<float>()(edge.start.Y) ^ hash<float>()(edge.start.Z);
-        size_t h2 = hash<float>()(edge.end.X) ^ hash<float>()(edge.end.Y) ^ hash<float>()(edge.end.Z);
+        std::size_t h1 = std::hash<float>()(edge.start.X) ^ std::hash<float>()(edge.start.Y) ^ std::hash<float>()(edge.start.Z);
+        std::size_t h2 = std::hash<float>()(edge.end.X) ^ std::hash<float>()(edge.end.Y) ^ std::hash<float>()(edge.end.Z);
         return h1 ^ h2;
     }
 };
-} // namespace std

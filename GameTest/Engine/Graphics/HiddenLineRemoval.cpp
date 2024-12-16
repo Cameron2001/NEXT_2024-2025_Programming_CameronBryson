@@ -23,12 +23,43 @@ std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines() const
     // Iterate through each triangle from closest to farthest
     for (const auto &triangle : m_triangles)
     {
+        // Early exit: Skip processing if all vertices of the triangle are inside any existing occluder
+        bool isFullyOccluded = false;
+        for (const auto &occluder : occluders)
+        {
+            if (isPointInsideTriangle(triangle.v0, occluder) && isPointInsideTriangle(triangle.v1, occluder) &&
+                isPointInsideTriangle(triangle.v2, occluder))
+            {
+                isFullyOccluded = true;
+                break;
+            }
+        }
+        if (isFullyOccluded)
+        {
+            continue; // Skip processing this fully occluded triangle
+        }
+
         // Define the edges of the current triangle with consistent ordering
         Edge3D edges[3] = {Edge3D(triangle.v0, triangle.v1), Edge3D(triangle.v1, triangle.v2),
                            Edge3D(triangle.v2, triangle.v0)};
 
         for (const auto &edge : edges)
         {
+            // Early exit: Skip processing if both endpoints are inside any occluder
+            bool isEdgeFullyOccluded = false;
+            for (const auto &occluder : occluders)
+            {
+                if (isPointInsideTriangle(edge.start, occluder) && isPointInsideTriangle(edge.end, occluder))
+                {
+                    isEdgeFullyOccluded = true;
+                    break;
+                }
+            }
+            if (isEdgeFullyOccluded)
+            {
+                continue; // Skip processing this fully occluded edge
+            }
+
             // Check if the edge has already been processed
             if (std::find(processedEdges.begin(), processedEdges.end(), edge) != processedEdges.end())
             {
@@ -45,11 +76,13 @@ std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines() const
             {
                 std::vector<Edge3D> tempSegments;
 
+
                 for (const auto &segment : segments)
                 {
                     // Clip the current segment against the occluder triangle
                     auto clipped = clipEdgeAgainstTriangle(segment, occluder);
-                    tempSegments.insert(tempSegments.end(), clipped.begin(), clipped.end());
+                    tempSegments.insert(tempSegments.end(), std::make_move_iterator(clipped.begin()),
+                                        std::make_move_iterator(clipped.end()));
                 }
 
                 segments = tempSegments;
@@ -69,6 +102,7 @@ std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines() const
 
     return visibleEdges;
 }
+
 
 
 

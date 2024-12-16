@@ -17,8 +17,6 @@ public:
     static void ClearQueue();
 
 private:
-    static std::vector<Edge3D> RenderQueue;
-    static std::unordered_set<Edge3D> uniqueEdges;
     static std::vector<Face> m_triangles;
     static bool IsOnScreen(const FVector3 &point);
     static bool IsPointInsideEdge(const FVector2 &point, const FVector2& edgeStart, const FVector2& edgeEnd);

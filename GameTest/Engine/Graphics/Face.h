@@ -11,6 +11,10 @@ struct Face
     {
         normal = {0,0,0};
     }
+    bool operator==(const Face &other) const
+    {
+        return v0 == other.v0 && v1 == other.v1 && v2 == other.v2;
+    }
     FVector3 v0;
     FVector3 v1;
     FVector3 v2;

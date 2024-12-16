@@ -23,8 +23,6 @@ const float xNDCMax = NDC;
 const float xNDCMin = -NDC;
 const float yNDCMax = NDC;
 const float yNDCMin = -NDC;
-std::unordered_set<Edge3D> Renderer::uniqueEdges;
-std::vector<Edge3D> Renderer::RenderQueue;
 std::vector<Face> Renderer::m_triangles;
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
@@ -41,11 +39,6 @@ void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
         {
             continue;
         }
-
-        uniqueEdges.emplace(mvpVertex0, mvpVertex1);
-        uniqueEdges.emplace(mvpVertex1, mvpVertex2);
-        uniqueEdges.emplace(mvpVertex2, mvpVertex0);
-
         m_triangles.emplace_back(mvpVertex0, mvpVertex1, mvpVertex2);
         //RenderQueue.emplace_back(mvpVertex0, mvpVertex1);
         //RenderQueue.emplace_back(mvpVertex1, mvpVertex2);
@@ -63,17 +56,22 @@ void Renderer::QueueModel(const Model &model, const Matrix4 &MVP)
 
 void Renderer::SubmitQueue()
 {
-    RenderQueue.assign(uniqueEdges.begin(), uniqueEdges.end());
-    if (RenderQueue.empty())
+    if (m_triangles.empty())
         return;
-    for (const auto &edge : RenderQueue)
-    {
-        //Renderer2D::DrawLine(edge.start, edge.end, {0.25f, 0.1f, 0.1f});
-    }
+    //hlr.runTests();
     HiddenLineRemoval hlr(m_triangles);
-    hlr.runTests();
     std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
+
+   // Use an unordered_set with the custom hash to filter out duplicate edges
+    std::unordered_set<Edge3D, Edge3DHash> uniqueVisibleEdges;
+    uniqueVisibleEdges.reserve(visibleSegments.size());
+
     for (const auto &edge : visibleSegments)
+    {
+        uniqueVisibleEdges.insert(edge);
+    }
+
+    for (const auto &edge : uniqueVisibleEdges)
     {
         Renderer2D::DrawLine(edge.start, edge.end, {1.0f, 1.0f, 1.0f});
     }
@@ -83,8 +81,6 @@ void Renderer::SubmitQueue()
 
 void Renderer::ClearQueue()
 {
-    RenderQueue.clear();
-    uniqueEdges.clear();
     m_triangles.clear();
 }
 
