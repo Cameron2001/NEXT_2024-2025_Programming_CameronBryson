@@ -7,7 +7,6 @@ Registry::Registry()
     m_entities.reserve(MAX_ENTITIES);
     m_freeEntities.resize(MAX_ENTITIES - 1);
     std::iota(m_freeEntities.begin(), m_freeEntities.end(), 1);
-
 }
 
 Entity Registry::CreateEntity()
@@ -33,5 +32,8 @@ void Registry::DestroyEntity(Entity entity)
 
 void Registry::ClearRegistry()
 {
+}
 
+void Registry::ProcessPendingDeletions()
+{
 }

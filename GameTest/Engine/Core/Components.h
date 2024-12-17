@@ -21,7 +21,6 @@ struct TransformComponent
 
 struct ColliderComponent
 {
-
 };
 
 struct BoxBoundsComponent
@@ -30,8 +29,7 @@ struct BoxBoundsComponent
     {
     }
 
-    BoxBoundsComponent(const FVector3 &extents)
-        : extents(extents)
+    BoxBoundsComponent(const FVector3 &extents) : extents(extents)
     {
     }
 
@@ -44,8 +42,7 @@ struct SphereBoundsComponent
     {
     }
 
-    SphereBoundsComponent(float radius)
-        : radius(radius)
+    SphereBoundsComponent(float radius) : radius(radius)
     {
     }
 
@@ -55,6 +52,15 @@ struct SphereBoundsComponent
 struct RigidBodyComponent
 {
     RigidBodyComponent() = default;
+    RigidBodyComponent(float linearDrag, float angularDrag) : linearDrag(linearDrag), angularDrag(angularDrag)
+    {
+    }
+    RigidBodyComponent(float linearDrag, float angularDrag, const FVector3 &initialLinearAcceleration,
+                       const FVector3 &initialAngularAcceleration)
+        : linearDrag(linearDrag), angularDrag(angularDrag), linearAcceleration(initialLinearAcceleration),
+          angularAcceleration(initialAngularAcceleration)
+    {
+    }
     float linearDrag = 0;
     FVector3 linearVelocity = {0, 0, 0};
     FVector3 linearAcceleration = {0, 0, 0};
@@ -70,10 +76,17 @@ struct TextComponent
 
 struct ModelComponent
 {
-    ModelComponent(const std::string &modelName)
-        : modelName(modelName)
+    ModelComponent(const std::string &modelName) : modelName(modelName)
     {
     }
 
     std::string modelName;
+};
+struct ParticleComponent
+{
+    ParticleComponent(const float lifeTime) : lifetime(lifeTime)
+    {
+    }
+    float lifetime = 0;
+    float age = 0;
 };

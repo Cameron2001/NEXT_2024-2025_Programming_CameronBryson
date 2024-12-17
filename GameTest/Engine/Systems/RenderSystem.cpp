@@ -8,7 +8,7 @@
 #include <Engine/Storage/Registry.h>
 #include <tuple>
 
-RenderSystem::RenderSystem(Registry* registry, GraphicsManager* graphicsManager, Camera* camera)
+RenderSystem::RenderSystem(Registry *registry, GraphicsManager *graphicsManager, Camera *camera)
 {
     m_registry = registry;
     m_graphicsManager = graphicsManager;
@@ -21,15 +21,14 @@ void RenderSystem::Init()
 
 void RenderSystem::Render()
 {
-    m_camera->DrawSkybox();
     auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
 
     auto view = m_registry->CreateView<TransformComponent, ModelComponent>();
 
-    for (auto it = view.begin(); it != view.end(); ++it)
+    for (auto &&entity : view)
     {
-        auto &transform = std::get<0>(*it);
-        auto &model = std::get<1>(*it);
+        auto &transform = std::get<1>(entity);
+        auto &model = std::get<2>(entity);
 
         auto &modelData = m_graphicsManager->GetModel(model.modelName);
 

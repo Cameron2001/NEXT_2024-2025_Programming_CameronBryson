@@ -1,15 +1,20 @@
 #include "stdafx.h"
 #include "Renderer2D.h"
 #include "App/app.h"
-
+int screenWidth = 1280;
+int screenHeight = 720;
 void Renderer2D::DrawLine(const FVector2 &start, const FVector2 &end, const FVector3 &color)
 {
-    App::DrawLine(start.X, start.Y, end.X, end.Y, color.X, color.Y, color.Z);
+    FVector2 startScreen = ndcToScreen(start);
+    FVector2 endScreen = ndcToScreen(end);
+    App::DrawLine(startScreen.X, startScreen.Y, endScreen.X, endScreen.Y, color.X, color.Y, color.Z);
 }
 
 void Renderer2D::DrawLine(const FVector3 &start, const FVector3 &end, const FVector3 &color)
 {
-    App::DrawLine(start.X, start.Y, end.X, end.Y, color.X, color.Y, color.Z);
+    FVector3 startScreen = ndcToScreen(start);
+    FVector3 endScreen = ndcToScreen(end);
+    App::DrawLine(startScreen.X, startScreen.Y, endScreen.X, endScreen.Y, color.X, color.Y, color.Z);
 }
 
 void Renderer2D::DrawPolygon(const std::vector<FVector2> &vertices, const FVector3 &color)
@@ -30,12 +35,38 @@ void Renderer2D::DrawPolygon(const std::vector<FVector3> &vertices, const FVecto
 
 void Renderer2D::PrintText(const std::string &text, const FVector2 &position, const FVector3 &color)
 {
+    App::Print(position.X, position.Y, text.c_str(), color.X, color.Y, color.Z);
 }
 
-void Renderer2D::DrawCircle(const FVector3 &center, float radius, const FVector3 &color)
+void Renderer2D::DrawCross(const FVector2 &center, float radius, const FVector3 &color)
 {
-    App::DrawLine(center.X, center.Y, center.X + radius, center.Y, color.X, color.Y, color.Z);
-    App::DrawLine(center.X, center.Y, center.X, center.Y + radius, color.X, color.Y, color.Z);
-    App::DrawLine(center.X, center.Y, center.X - radius, center.Y, color.X, color.Y, color.Z);
-    App::DrawLine(center.X, center.Y, center.X, center.Y - radius, color.X, color.Y, color.Z);
+    DrawLine(center, FVector2(center.X + radius, center.Y), color);
+    DrawLine(center, FVector2(center.X, center.Y + radius), color);
+    DrawLine(center, FVector2(center.X - radius, center.Y), color);
+    DrawLine(center, FVector2(center.X, center.Y - radius), color);
+}
+
+void Renderer2D::DrawCross(const FVector3 &center, float radius, const FVector3 &color)
+{
+    DrawLine(center, FVector3(center.X + radius, center.Y, center.Z), color);
+    DrawLine(center, FVector3(center.X, center.Y + radius, center.Z), color);
+    DrawLine(center, FVector3(center.X - radius, center.Y, center.Z), color);
+    DrawLine(center, FVector3(center.X, center.Y - radius, center.Z), color);
+}
+
+FVector3 Renderer2D::ndcToScreen(const FVector3 &ndc)
+{
+    FVector3 screen;
+    screen.X = (ndc.X + 1) * 0.5f * screenWidth;
+    screen.Y = (ndc.Y + 1) * 0.5f * screenHeight;
+    screen.Z = ndc.Z; // Z coordinate remains the same
+    return screen;
+}
+
+FVector2 Renderer2D::ndcToScreen(const FVector2 &ndc)
+{
+    FVector2 screen;
+    screen.X = (ndc.X + 1) * 0.5f * screenWidth;
+    screen.Y = (ndc.Y + 1) * 0.5f * screenHeight;
+    return screen;
 }

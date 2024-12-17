@@ -22,8 +22,6 @@ public:
     const Matrix4 &GetViewMatrix();
     const Matrix4 &GetProjectionMatrix();
 
-    void DrawSkybox();
-
 private:
     void UpdateViewMatrix();
     void UpdateProjectionMatrix();
@@ -41,6 +39,4 @@ private:
     float m_FOV;
     float m_zNear;
     float m_zFar;
-
-    std::unique_ptr<CSimpleSprite> m_skybox;
 };

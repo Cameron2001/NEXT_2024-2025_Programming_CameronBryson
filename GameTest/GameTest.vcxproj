@@ -189,7 +189,6 @@
     <ClInclude Include="Engine\Core\Collision.h" />
     <ClInclude Include="Engine\Graphics\Edge.h" />
     <ClInclude Include="Engine\Graphics\Face.h" />
-    <ClInclude Include="Engine\Graphics\Interval.h" />
     <ClInclude Include="Engine\Managers\CollisionManager.h" />
     <ClInclude Include="Engine\Math\BoundingBox.h" />
     <ClInclude Include="Engine\Math\MathUtil.h" />
@@ -222,6 +221,7 @@
     <ClInclude Include="Engine\Graphics\Renderer2D.h" />
     <ClInclude Include="Engine\Math\Octree.h" />
     <ClInclude Include="Engine\Math\Quadtree.h" />
+    <ClInclude Include="Engine\Systems\ParticleSystem.h" />
     <ClInclude Include="stb_image\stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -256,6 +256,7 @@
     <ClCompile Include="Engine\Graphics\Renderer2D.cpp" />
     <ClCompile Include="Engine\Math\Octree.cpp" />
     <ClCompile Include="Engine\Math\Quadtree.cpp" />
+    <ClCompile Include="Engine\Systems\ParticleSystem.cpp" />
     <ClCompile Include="stb_image\stb_image.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

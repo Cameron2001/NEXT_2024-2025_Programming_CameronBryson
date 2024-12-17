@@ -48,10 +48,10 @@ void Renderer::SubmitQueue()
 {
     if (m_triangles.empty())
         return;
-    //for (auto &triangle : m_triangles)
+    // for (auto &triangle : m_triangles)
     //{
-    //    Renderer2D::DrawPolygon({triangle.v0, triangle.v1, triangle.v2}, {1.0f, 1.0f, 1.0f});
-    //}
+    //     Renderer2D::DrawPolygon({triangle.v0, triangle.v1, triangle.v2}, {1.0f, 1.0f, 1.0f});
+    // }
     HiddenLineRemoval hlr(m_triangles);
     std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
 
@@ -59,39 +59,23 @@ void Renderer::SubmitQueue()
     std::unordered_set<Edge3D, Edge3DHash> uniqueVisibleEdges;
     uniqueVisibleEdges.reserve(visibleSegments.size());
     uniqueVisibleEdges.insert(visibleSegments.begin(), visibleSegments.end());
-    int screenWidth = 1280;  
-    int screenHeight = 720; 
     for (const auto &edge : uniqueVisibleEdges)
     {
         Edge3D clippedEdge = LiangBarsky(edge);
         // Check if the clipped edge is valid before drawing
         if (clippedEdge.start != clippedEdge.end)
         {
-            FVector3 startScreen;
-            startScreen.X = (clippedEdge.start.X + 1) * 0.5f * screenWidth;
-            startScreen.Y = (clippedEdge.start.Y + 1) * 0.5f * screenHeight;
-            startScreen.Z = clippedEdge.start.Z; // Z coordinate remains the same
 
-            FVector3 endScreen;
-            endScreen.X = (clippedEdge.end.X + 1) * 0.5f * screenWidth;
-            endScreen.Y = (clippedEdge.end.Y + 1) * 0.5f * screenHeight;
-            endScreen.Z = clippedEdge.end.Z; // Z coordinate remains the same
-
-            Renderer2D::DrawLine(startScreen, endScreen, {1.0f, 1.0f, 1.0f});
+            Renderer2D::DrawLine(clippedEdge.start, clippedEdge.end, {1.0f, 1.0f, 1.0f});
         }
     }
     ClearQueue();
 }
 
-
-
 void Renderer::ClearQueue()
 {
     m_triangles.clear();
 }
-
-
-
 
 Edge3D Renderer::LiangBarsky(const Edge3D &edge)
 {

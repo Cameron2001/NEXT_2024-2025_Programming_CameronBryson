@@ -2,7 +2,7 @@
 #include "PlayerSystem.h"
 #include <App/app.h>
 
-PlayerSystem::PlayerSystem(Registry* registry)
+PlayerSystem::PlayerSystem(Registry *registry)
 {
     m_registry = registry;
 }
@@ -29,10 +29,10 @@ void PlayerSystem::Update(float dt)
     constexpr float rotationSpeed = 0.000001f;
 
     // Update each player entity
-    for (auto it = view.begin(); it != view.end(); ++it)
+    for (auto && entity : view)
     {
-        auto &player = std::get<0>(*it);
-        auto &rigidbody = std::get<1>(*it);
+        auto &player = std::get<1>(entity);
+        auto &rigidbody = std::get<2>(entity);
 
         // Movement
         if (W)

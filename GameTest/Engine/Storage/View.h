@@ -1,4 +1,8 @@
 #pragma once
+#include "Registry.h"
+#include <tuple>
+#include <utility>
+#include <vector>
 class Registry;
 using Entity = unsigned int;
 
@@ -13,7 +17,7 @@ template <typename... Components> class View
     class Iterator
     {
       public:
-        using ValueType = std::tuple<Components &...>;
+        using ValueType = std::tuple<Entity, Components &...>;
 
         Iterator(View *view, size_t index) : m_view(view), m_index(index)
         {
@@ -22,7 +26,7 @@ template <typename... Components> class View
         ValueType operator*()
         {
             Entity e = m_view->m_matchingEntities[m_index];
-            return std::forward_as_tuple(m_view->m_registry->template GetComponent<Components>(e)...);
+            return std::forward_as_tuple(e, m_view->m_registry->template GetComponent<Components>(e)...);
         }
 
         Iterator &operator++()
