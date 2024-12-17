@@ -108,6 +108,11 @@ bool FVector3::operator==(const FVector3 &obj) const
         this->X == obj.X && this->Y == obj.Y && this->Z == obj.Z;
 }
 
+bool FVector3::operator!=(const FVector3 &obj) const
+{
+    return !(*this == obj);
+}
+
 float FVector3::Length() const
 {
     return sqrtf(X * X + Y * Y + Z * Z);

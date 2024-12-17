@@ -3,6 +3,7 @@
 #include "Game/GameComponents.h"
 #include "Engine/Core/Event.h"
 #include "Engine/Core/Threadpool.h"
+#include "App/app.h"
 Event<int> m_event;
 Threadpool m_threadpool(4);
 
@@ -17,7 +18,7 @@ void PlayScene::Init()
     m_event.AddListener(this, &PlayScene::Test);
     auto player = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -1.0f), FVector3(0.0f, 0.0f, 0.0f),
-                                                 FVector3(0.15f, 0.15f, 0.15f));
+                                                 FVector3(0.15f,0.15f, 0.15f));
     m_registry->AddComponent<PlayerComponent>(player, 0.0000001);
     m_registry->AddComponent<ModelComponent>(player, "ShipOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
@@ -46,6 +47,7 @@ void PlayScene::Update(const float dt)
     Scene::Update(dt);
 
     m_playerSystem.Update(dt);
+    
 }
 
 void PlayScene::LateUpdate(const float dt)

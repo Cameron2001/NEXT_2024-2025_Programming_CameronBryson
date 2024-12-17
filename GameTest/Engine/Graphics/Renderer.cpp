@@ -1,28 +1,17 @@
 #include "stdafx.h"
-#include "Renderer.h"
-#include "Camera.h"
+#include "Edge.h"
+#include "Face.h"
+#include "HiddenLineRemoval.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "Renderer.h"
 #include "Renderer2D.h"
 #include <algorithm>
 #include <Engine/Math/Matrix4.h>
 #include <Engine/Math/Vector3.h>
-#include <Engine/Math/Vector4.h>
-#include <cmath>
-#include <limits>
 #include <unordered_set>
-#include <utility>
-#include <array>
 #include <vector>
-#include <algorithm>
-#include "Engine/Math/MathUtil.h"
-#include "HiddenLineRemoval.h"
-const FVector3 VIEW_DIRECTION(0.0f, 0.0f, 1.0f);
-const float NDC = 1.00f;
-const float xNDCMax = NDC;
-const float xNDCMin = -NDC;
-const float yNDCMax = NDC;
-const float yNDCMin = -NDC;
+
 std::vector<Face> Renderer::m_triangles;
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
@@ -33,6 +22,10 @@ void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
         FVector3 mvpVertex0 = MVP.TransformWithPerspectiveDivide(face.v0);
         FVector3 mvpVertex1 = MVP.TransformWithPerspectiveDivide(face.v1);
         FVector3 mvpVertex2 = MVP.TransformWithPerspectiveDivide(face.v2);
+        if (QuickReject(Edge3D(mvpVertex0, mvpVertex1), Edge3D(mvpVertex1, mvpVertex2), Edge3D(mvpVertex2, mvpVertex0)))
+        {
+            continue;
+        }
         float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
                             ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
         if (determinant < 0)
@@ -40,9 +33,6 @@ void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
             continue;
         }
         m_triangles.emplace_back(mvpVertex0, mvpVertex1, mvpVertex2);
-        //RenderQueue.emplace_back(mvpVertex0, mvpVertex1);
-        //RenderQueue.emplace_back(mvpVertex1, mvpVertex2);
-        //RenderQueue.emplace_back(mvpVertex2, mvpVertex0);
     }
 }
 
@@ -58,25 +48,41 @@ void Renderer::SubmitQueue()
 {
     if (m_triangles.empty())
         return;
-    //hlr.runTests();
+    //for (auto &triangle : m_triangles)
+    //{
+    //    Renderer2D::DrawPolygon({triangle.v0, triangle.v1, triangle.v2}, {1.0f, 1.0f, 1.0f});
+    //}
     HiddenLineRemoval hlr(m_triangles);
     std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
 
-   // Use an unordered_set with the custom hash to filter out duplicate edges
+    // Use an unordered_set with the custom hash to filter out duplicate edges
     std::unordered_set<Edge3D, Edge3DHash> uniqueVisibleEdges;
     uniqueVisibleEdges.reserve(visibleSegments.size());
-
-    for (const auto &edge : visibleSegments)
-    {
-        uniqueVisibleEdges.insert(edge);
-    }
-
+    uniqueVisibleEdges.insert(visibleSegments.begin(), visibleSegments.end());
+    int screenWidth = 1280;  
+    int screenHeight = 720; 
     for (const auto &edge : uniqueVisibleEdges)
     {
-        Renderer2D::DrawLine(edge.start, edge.end, {1.0f, 1.0f, 1.0f});
+        Edge3D clippedEdge = LiangBarsky(edge);
+        // Check if the clipped edge is valid before drawing
+        if (clippedEdge.start != clippedEdge.end)
+        {
+            FVector3 startScreen;
+            startScreen.X = (clippedEdge.start.X + 1) * 0.5f * screenWidth;
+            startScreen.Y = (clippedEdge.start.Y + 1) * 0.5f * screenHeight;
+            startScreen.Z = clippedEdge.start.Z; // Z coordinate remains the same
+
+            FVector3 endScreen;
+            endScreen.X = (clippedEdge.end.X + 1) * 0.5f * screenWidth;
+            endScreen.Y = (clippedEdge.end.Y + 1) * 0.5f * screenHeight;
+            endScreen.Z = clippedEdge.end.Z; // Z coordinate remains the same
+
+            Renderer2D::DrawLine(startScreen, endScreen, {1.0f, 1.0f, 1.0f});
+        }
     }
     ClearQueue();
 }
+
 
 
 void Renderer::ClearQueue()
@@ -84,69 +90,68 @@ void Renderer::ClearQueue()
     m_triangles.clear();
 }
 
-bool Renderer::IsOnScreen(const FVector3 &point)
+
+
+
+Edge3D Renderer::LiangBarsky(const Edge3D &edge)
 {
-    return (point.X >= xNDCMin && point.X <= xNDCMax ) &&
-           (point.Y >= yNDCMin  && point.Y <= yNDCMax );
-}
+    float xMin = xNDCMin, xMax = xNDCMax;
+    float yMin = yNDCMin, yMax = yNDCMax;
 
-bool Renderer::IsPointInsideEdge(const FVector2 &point, const FVector2 &edgeStart, const FVector2 &edgeEnd)
-{
-    return (edgeEnd.Y - edgeStart.Y) * point.X + (edgeStart.X - edgeEnd.X) * point.Y +
-               (edgeEnd.X * edgeStart.Y - edgeStart.X * edgeEnd.Y) < -0.01;
-}
+    float t0 = 0.0f, t1 = 1.0f;
 
+    float p[4], q[4];
 
+    FVector3 d = edge.end - edge.start; // Direction vector
 
+    p[0] = -d.X;
+    q[0] = edge.start.X - xMin;
+    p[1] = d.X;
+    q[1] = xMax - edge.start.X;
+    p[2] = -d.Y;
+    q[2] = edge.start.Y - yMin;
+    p[3] = d.Y;
+    q[3] = yMax - edge.start.Y;
 
-FVector2 Renderer::ComputeIntersection(const FVector2 &edgeAStart, const FVector2 &edgeAEnd, const FVector2 &edgeBStart,
-                                       const FVector2 &edgeBEnd)
-{
-    FVector2 dc = {edgeAStart.X - edgeAEnd.X, edgeAStart.Y - edgeAEnd.Y};
-    FVector2 dp = {edgeBStart.X - edgeBEnd.X, edgeBStart.Y - edgeBEnd.Y};
-
-    float n1 = edgeAStart.X * edgeAEnd.Y - edgeAStart.Y * edgeAEnd.X;
-    float n2 = edgeBStart.X * edgeBEnd.Y - edgeBStart.Y * edgeBEnd.X;
-    float n3 = 1.0f / (dc.X * dp.Y - dc.Y * dp.X);
-
-    return {((n1 * dp.X - dc.X * n2) * n3), ((n1 * dp.Y - dc.Y * n2) * n3)};
-}
-
-
-
-std::vector<FVector2> Renderer::SutherlandHodgmanClip(const std::vector<FVector2> &subjectPolygon,
-                                                      const std::vector<FVector2> &occluderPolygon)
-{
-    std::vector<FVector2> outputList(subjectPolygon);
-
-    for (size_t i = 0; i < occluderPolygon.size(); i++)
+    for (int i = 0; i < 4; ++i)
     {
-        FVector2 edgeStart = occluderPolygon[i];
-        FVector2 edgeEnd = occluderPolygon[(i + 1) % occluderPolygon.size()];
-        std::vector<FVector2> inputList(outputList);
-        outputList.clear();
-
-        for (size_t j = 0; j < inputList.size(); j++)
+        if (p[i] == 0)
         {
-            FVector2 currentVertex = inputList[j];
-            FVector2 previousVertex = inputList[(j + inputList.size() - 1) % inputList.size()];
-            if (currentVertex == edgeStart || currentVertex == edgeEnd)
+            if (q[i] < 0)
             {
-                //continue;
+                // Line is parallel to plane and outside the boundary
+                return Edge3D(); // Return an invalid edge
             }
-            if (IsPointInsideEdge(currentVertex, edgeStart, edgeEnd))
+            // Line is parallel to plane and inside; continue
+        }
+        else
+        {
+            float t = q[i] / p[i];
+            if (p[i] < 0)
             {
-                if (!IsPointInsideEdge(previousVertex, edgeStart, edgeEnd))
-                {
-                    outputList.push_back(ComputeIntersection(edgeStart, edgeEnd, previousVertex, currentVertex));
-                }
-                outputList.push_back(currentVertex);
+                if (t > t1)
+                    return Edge3D(); // Line is outside
+                if (t > t0)
+                    t0 = t;
             }
-            else if (IsPointInsideEdge(previousVertex, edgeStart, edgeEnd))
+            else
             {
-                outputList.push_back(ComputeIntersection(edgeStart, edgeEnd, previousVertex, currentVertex));
+                if (t < t0)
+                    return Edge3D(); // Line is outside
+                if (t < t1)
+                    t1 = t;
             }
         }
     }
-    return outputList;
+
+    if (t0 > t1)
+    {
+        // Line is outside the clipping region
+        return Edge3D(); // Return an invalid edge
+    }
+
+    FVector3 clippedStart = edge.start + d * t0;
+    FVector3 clippedEnd = edge.start + d * t1;
+
+    return Edge3D(clippedStart, clippedEnd);
 }

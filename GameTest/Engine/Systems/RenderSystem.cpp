@@ -4,9 +4,9 @@
 #include "RenderSystem.h"
 #include <Engine/Core/Components.h>
 #include <Engine/Managers/GraphicsManager.h>
-#include <Engine/Math/Vector3.h>
-#include <Engine/Storage/ComponentArray.h>
-#include <vector>
+#include <Engine/Math/Matrix4.h>
+#include <Engine/Storage/Registry.h>
+#include <tuple>
 
 RenderSystem::RenderSystem(Registry* registry, GraphicsManager* graphicsManager, Camera* camera)
 {
@@ -21,6 +21,7 @@ void RenderSystem::Init()
 
 void RenderSystem::Render()
 {
+    m_camera->DrawSkybox();
     auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
 
     auto view = m_registry->CreateView<TransformComponent, ModelComponent>();

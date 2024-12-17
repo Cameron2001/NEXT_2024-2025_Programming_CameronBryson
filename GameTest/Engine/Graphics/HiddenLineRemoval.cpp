@@ -20,7 +20,7 @@ HiddenLineRemoval::HiddenLineRemoval(const std::vector<Face> &triangles)
 {
     m_triangles = triangles;
     sortTrianglesByDepth();
-    initalizeQuadtree();
+    initializeQuadtree();
 }
 std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines()
 {
@@ -39,17 +39,18 @@ std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines()
         float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
         float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
         BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
-        std::vector<Face> potentialOccluders = m_quadtree->query(triangleBounds);
-        processTriangle(triangle, potentialOccluders, processedEdges, visibleEdges);
-        m_quadtree->insert(triangle);
+        std::vector<Face> potentialOccluders = m_quadtree->queryArea(triangleBounds);
+        if (processTriangle(triangle, potentialOccluders, processedEdges, visibleEdges))
+        {
+            m_quadtree->insert(triangle);
+        }
     }
-
     return visibleEdges;
 }
 
-void HiddenLineRemoval::initalizeQuadtree()
+void HiddenLineRemoval::initializeQuadtree()
 {
-    // Compute overall bounds
+    // Compute overall bounds using a single pass
     float minX = std::numeric_limits<float>::max();
     float minY = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -63,9 +64,19 @@ void HiddenLineRemoval::initalizeQuadtree()
         maxY = std::max({maxY, face.v0.Y, face.v1.Y, face.v2.Y});
     }
 
+    // Add a small padding to avoid boundary issues
+    constexpr float padding = 0.01f;
+    minX -= padding;
+    minY -= padding;
+    maxX += padding;
+    maxY += padding;
+
     BoundingBox2D rootBounds(minX, minY, maxX, maxY);
-    m_quadtree = std::make_unique<Quadtree>(rootBounds,100,6);
+    m_quadtree =
+        std::make_unique<Quadtree>(rootBounds, 36, 8);
 }
+
+
 
 void HiddenLineRemoval::sortTrianglesByDepth()
 {
@@ -79,30 +90,6 @@ void HiddenLineRemoval::sortTrianglesByDepth()
     });
 }
 
-
-bool HiddenLineRemoval::isPointOnEdge(const FVector3 &point, const Edge3D &edge) const
-{
-    FVector3 edgeVector = edge.end - edge.start;
-    float edgeLengthSquared = edgeVector.LengthSquared();
-
-    // Handle zero-length edges
-    if (edgeLengthSquared < 1e-12f)
-    {
-        // Only the start point is considered on the edge
-        return point == edge.start;
-    }
-
-    FVector3 pointVector = point - edge.start;
-    float crossProduct = edgeVector.Cross(pointVector).LengthSquared();
-    if (crossProduct > 1e-6f)
-        return false;
-
-    float dotProduct = pointVector.Dot(edgeVector);
-    if (dotProduct < 0.0f || dotProduct > edgeLengthSquared)
-        return false;
-
-    return true;
-}
 
 // Corrected getEdgeIntersection function
 bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint) const
@@ -178,37 +165,15 @@ bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &e
 }
 
 
-bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, const Face &triangle) const
-{
-    FVector2 p(point.X, point.Y);
-    FVector2 v0(triangle.v0.X, triangle.v0.Y);
-    FVector2 v1(triangle.v1.X, triangle.v1.Y);
-    FVector2 v2(triangle.v2.X, triangle.v2.Y);
 
-    // Compute vectors
-    float denom = (v1.Y - v2.Y) * (v0.X - v2.X) + (v2.X - v1.X) * (v0.Y - v2.Y);
-    if (fabs(denom) < 1e-6f)
-        return false; // Degenerate triangle
-
-    float a = ((v1.Y - v2.Y) * (p.X - v2.X) + (v2.X - v1.X) * (p.Y - v2.Y)) / denom;
-    float b = ((v2.Y - v0.Y) * (p.X - v2.X) + (v0.X - v2.X) * (p.Y - v2.Y)) / denom;
-    float c = 1.0f - a - b;
-
-    return (a >= 0.0f) && (b >= 0.0f) && (c >= 0.0f);
-}
 
 
 std::pair<Edge3D, Edge3D> HiddenLineRemoval::splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const
 {
-    assert(isPointOnEdge(splitPoint, edge));
     Edge3D edgeA(edge.start, splitPoint);
     Edge3D edgeB(splitPoint, edge.end);
     return {edgeA, edgeB};
 }
-//split at intersections
-// Figure out which half is visible
-// Keep visible, get rid of invisible
-
 std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edge, const Face &triangle) const
 {
     std::vector<FVector3> intersectionPoints;
@@ -221,13 +186,7 @@ std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edg
         FVector3 intersectionPoint;
         if (getEdgeIntersection(edge, triEdge, intersectionPoint))
         {
-            // Avoid duplicate intersection points
-            if (std::find_if(intersectionPoints.begin(), intersectionPoints.end(), [&](const FVector3 &p) {
-                    return (p - intersectionPoint).LengthSquared() < 1e-6f;
-                }) == intersectionPoints.end())
-            {
-                intersectionPoints.push_back(intersectionPoint);
-            }
+           intersectionPoints.push_back(intersectionPoint);
         }
     }
 
@@ -268,36 +227,4 @@ std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edg
     return clippedEdges;
 }
 
-void HiddenLineRemoval::processTriangle(const Face &triangle, const std::vector<Face> &potentialOccluders,
-                                        std::unordered_set<Edge3D, Edge3DHash> &processedEdges,
-                                        std::vector<Edge3D> &visibleEdges)
-{
-    Edge3D edges[3] = {{triangle.v0, triangle.v1}, {triangle.v1, triangle.v2}, {triangle.v2, triangle.v0}};
-    
-    for (const auto &edge : edges)
-    {
-        if (processedEdges.find(edge) != processedEdges.end())
-        {
-            continue;
-        }
-        processedEdges.insert(edge);
-        std::vector<Edge3D> segments = {edge};
-        for (const auto &occluder : potentialOccluders)
-        {
-            std::vector<Edge3D> tempSegments;
-            tempSegments.reserve(segments.size());
-            for (const auto &segment : segments)
-            {
-                auto clipped = clipEdgeAgainstTriangle(segment, occluder);
-                tempSegments.insert(tempSegments.end(), clipped.begin(), clipped.end());
-            }
-            segments = std::move(tempSegments);
-            if (segments.empty())
-            {
-                break;
-            }
-        }
-        visibleEdges.insert(visibleEdges.end(), segments.begin(), segments.end());
-    }
 
-}

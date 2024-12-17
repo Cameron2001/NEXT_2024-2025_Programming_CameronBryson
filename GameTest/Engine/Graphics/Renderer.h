@@ -1,13 +1,17 @@
 #pragma once
-#include "Camera.h"
 #include "Engine/Graphics/Edge.h"
 #include "Engine/Graphics/Mesh.h"
 #include "Engine/Graphics/Model.h"
 #include "Engine/Math/Matrix4.h"
-#include "Engine/Math/Vector2.h"
 #include "Engine/Math/Vector3.h"
-#include <unordered_set>
-
+#include "Face.h"
+#include <vector>
+const FVector3 VIEW_DIRECTION(0.0f, 0.0f, 1.0f);
+const float NDC = 1.00f;
+const float xNDCMax = NDC;
+const float xNDCMin = -NDC;
+const float yNDCMax = NDC;
+const float yNDCMin = -NDC;
 class Renderer
 {
 public:
@@ -18,13 +22,32 @@ public:
 
 private:
     static std::vector<Face> m_triangles;
-    static bool IsOnScreen(const FVector3 &point);
-    static bool IsPointInsideEdge(const FVector2 &point, const FVector2& edgeStart, const FVector2& edgeEnd);
-
-
-    // Sutherland-Hodgman Clipping Methods
-    static std::vector<FVector2> SutherlandHodgmanClip(const std::vector<FVector2> &subjectPolygon, const std::vector<FVector2>&occluderPolygon);
-    static FVector2 ComputeIntersection(const FVector2 &edgeAStart, const FVector2 &edgeAEnd, const FVector2 &edgeBStart,
-                                    const FVector2 &edgeBEnd);
+  static bool QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2);
+    // LiangBarsky
+    static Edge3D LiangBarsky(const Edge3D &edge);
 };
+inline bool Renderer::QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2)
+{
+    // Extract the vertices from the edges
+    const FVector3 &v0 = edge0.start;
+    const FVector3 &v1 = edge1.start;
+    const FVector3 &v2 = edge2.start;
+
+    // Check against the four frustum planes (excluding Z)
+    // Left plane (x = -1)
+    if (v0.X < xNDCMin && v1.X < xNDCMin && v2.X < xNDCMin)
+        return true;
+    // Right plane (x = 1)
+    if (v0.X > xNDCMax && v1.X > xNDCMax && v2.X > xNDCMax)
+        return true;
+    // Bottom plane (y = -1)
+    if (v0.Y < yNDCMin && v1.Y < yNDCMin && v2.Y < yNDCMin)
+        return true;
+    // Top plane (y = 1)
+    if (v0.Y > yNDCMax && v1.Y > yNDCMax && v2.Y > yNDCMax)
+        return true;
+
+    // Triangle is at least partially inside the frustum
+    return false;
+}
 

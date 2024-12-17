@@ -1,6 +1,8 @@
 #pragma once
 #include "Engine/Math/Matrix4.h"
 #include "Engine/Math/Vector3.h"
+#include "App/SimpleSprite.h"
+#include <memory>
 
 class Camera
 {
@@ -20,6 +22,8 @@ public:
     const Matrix4 &GetViewMatrix();
     const Matrix4 &GetProjectionMatrix();
 
+    void DrawSkybox();
+
 private:
     void UpdateViewMatrix();
     void UpdateProjectionMatrix();
@@ -37,4 +41,6 @@ private:
     float m_FOV;
     float m_zNear;
     float m_zFar;
+
+    std::unique_ptr<CSimpleSprite> m_skybox;
 };
