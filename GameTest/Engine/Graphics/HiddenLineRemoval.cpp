@@ -27,12 +27,13 @@ std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines()
     std::vector<Edge3D> visibleEdges;
     visibleEdges.reserve(m_triangles.size() * 3);
 
-
     std::unordered_set<Edge3D, Edge3DHash> processedEdges;
     processedEdges.reserve(m_triangles.size() * 3);
 
     for (const auto &triangle : m_triangles)
     {
+        if (triangleArea(triangle) < 0.0002)
+            continue;
         // query for potential occluders from the quadtree
         float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
         float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
@@ -72,11 +73,8 @@ void HiddenLineRemoval::initializeQuadtree()
     maxY += padding;
 
     BoundingBox2D rootBounds(minX, minY, maxX, maxY);
-    m_quadtree =
-        std::make_unique<Quadtree>(rootBounds, 36, 8);
+    m_quadtree = std::make_unique<Quadtree>(rootBounds, 36, 8);
 }
-
-
 
 void HiddenLineRemoval::sortTrianglesByDepth()
 {
@@ -84,12 +82,11 @@ void HiddenLineRemoval::sortTrianglesByDepth()
     std::sort(m_triangles.begin(), m_triangles.end(), [](const Face &a, const Face &b) {
         float depthA = (a.v0.Z + a.v1.Z + a.v2.Z) / 3.0f;
         float depthB = (b.v0.Z + b.v1.Z + b.v2.Z) / 3.0f;
-        //float depthA = std::min({a.v0.Z, a.v1.Z, a.v2.Z});
-        //float depthB = std::min({b.v0.Z, b.v1.Z, b.v2.Z});
+        // float depthA = std::min({a.v0.Z, a.v1.Z, a.v2.Z});
+        // float depthB = std::min({b.v0.Z, b.v1.Z, b.v2.Z});
         return depthA < depthB;
     });
 }
-
 
 // Corrected getEdgeIntersection function
 bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint) const
@@ -164,10 +161,6 @@ bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &e
     return true;
 }
 
-
-
-
-
 std::pair<Edge3D, Edge3D> HiddenLineRemoval::splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const
 {
     Edge3D edgeA(edge.start, splitPoint);
@@ -186,7 +179,7 @@ std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edg
         FVector3 intersectionPoint;
         if (getEdgeIntersection(edge, triEdge, intersectionPoint))
         {
-           intersectionPoints.push_back(intersectionPoint);
+            intersectionPoints.push_back(intersectionPoint);
         }
     }
 
@@ -200,7 +193,7 @@ std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edg
         else
         {
             // Edge is fully outside the triangle
-            return {edge}; 
+            return {edge};
         }
     }
 
@@ -226,5 +219,3 @@ std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edg
 
     return clippedEdges;
 }
-
-

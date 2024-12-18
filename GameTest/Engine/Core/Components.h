@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Math/Vector3.h"
 #include <string>
+#include <Engine/Math/Vector2.h>
 
 struct TransformComponent
 {
@@ -84,9 +85,16 @@ struct ModelComponent
 };
 struct ParticleComponent
 {
-    ParticleComponent(const float lifeTime) : lifetime(lifeTime)
+    ParticleComponent(const FVector2 &position, const float rotation, const FVector2 &linearVelocity,
+                      const float angularVelocity, const float lifetime)
+        : position(position), rotation(rotation), linearVelocity(linearVelocity), angularVelocity(angularVelocity),
+          lifetime(lifetime)
     {
     }
+    FVector2 position = {0, 0};
+    float rotation = 0;
+    FVector2 linearVelocity = {0, 0};
+    float angularVelocity = 0;
     float lifetime = 0;
     float age = 0;
 };

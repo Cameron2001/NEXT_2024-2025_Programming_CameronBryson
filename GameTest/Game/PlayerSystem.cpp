@@ -16,36 +16,36 @@ void PlayerSystem::Update(float dt)
     auto view = m_registry->CreateView<PlayerComponent, RigidBodyComponent>();
 
     // Get input states
-    bool W = App::IsKeyPressed('W');
-    bool A = App::IsKeyPressed('A');
-    bool S = App::IsKeyPressed('S');
-    bool D = App::IsKeyPressed('D');
-    bool Q = App::IsKeyPressed('Q');
-    bool E = App::IsKeyPressed('E');
+    bool UP = App::IsKeyPressed('W') || App::GetController().GetLeftThumbStickY() > 0.5f;
+    bool LEFT = App::IsKeyPressed('A') || App::GetController().GetLeftThumbStickX() < -0.5f;
+    bool DOWN = App::IsKeyPressed('S') || App::GetController().GetLeftThumbStickY() < -0.5f;
+    bool RIGHT = App::IsKeyPressed('D') || App::GetController().GetLeftThumbStickX() > 0.5f;
+    bool FORWARD = App::IsKeyPressed('Q');
+    bool BACKWARD = App::IsKeyPressed('E');
     bool R = App::IsKeyPressed('R');
     bool F = App::IsKeyPressed('F');
     bool V = App::IsKeyPressed('V');
 
-    constexpr float rotationSpeed = 0.000001f;
+    constexpr float rotationSpeed = 1000.0f;
 
     // Update each player entity
-    for (auto && entity : view)
+    for (auto &&entity : view)
     {
         auto &player = std::get<1>(entity);
         auto &rigidbody = std::get<2>(entity);
 
         // Movement
-        if (W)
+        if (UP)
             rigidbody.linearAcceleration += FVector3{0, 1, 0} * player.moveSpeed * dt;
-        if (S)
+        if (DOWN)
             rigidbody.linearAcceleration -= FVector3{0, 1, 0} * player.moveSpeed * dt;
-        if (A)
+        if (LEFT)
             rigidbody.linearAcceleration -= FVector3{1, 0, 0} * player.moveSpeed * dt;
-        if (D)
+        if (RIGHT)
             rigidbody.linearAcceleration += FVector3{1, 0, 0} * player.moveSpeed * dt;
-        if (Q)
+        if (FORWARD)
             rigidbody.linearAcceleration -= FVector3{0, 0, 1} * player.moveSpeed * dt;
-        if (E)
+        if (BACKWARD)
             rigidbody.linearAcceleration += FVector3{0, 0, 1} * player.moveSpeed * dt;
 
         // Rotation

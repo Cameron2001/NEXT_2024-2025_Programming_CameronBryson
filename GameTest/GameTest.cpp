@@ -20,11 +20,12 @@ void Init()
     SceneManager::GetCurrentScene().LateInit();
 }
 
-void Update(const float deltaTime)
+void Update(float deltaTime)
 {
+    deltaTime /= 1000.0f;
     SceneManager::GetCurrentScene().Update(deltaTime);
     SceneManager::GetCurrentScene().LateUpdate(deltaTime);
-    fps = 1.0f / deltaTime * 1000.0f;
+    fps = 1.0f / deltaTime;
 }
 
 void Render()

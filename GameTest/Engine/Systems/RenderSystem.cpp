@@ -6,7 +6,7 @@
 #include <Engine/Managers/GraphicsManager.h>
 #include <Engine/Math/Matrix4.h>
 #include <Engine/Storage/Registry.h>
-#include <tuple>
+#include <tuple>;
 
 RenderSystem::RenderSystem(Registry *registry, GraphicsManager *graphicsManager, Camera *camera)
 {

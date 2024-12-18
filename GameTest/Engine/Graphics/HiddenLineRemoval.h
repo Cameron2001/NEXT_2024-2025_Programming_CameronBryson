@@ -8,23 +8,25 @@ class HiddenLineRemoval
 {
   public:
     HiddenLineRemoval(const std::vector<Face> &triangles);
-    std::vector<Edge3D> removeHiddenLines();;
+    std::vector<Edge3D> removeHiddenLines();
+    ;
+
   private:
     void initializeQuadtree();
     std::vector<Face> m_triangles;
     std::unique_ptr<Quadtree> m_quadtree;
     void sortTrianglesByDepth();
-    
-    bool getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3& intersectionPoint) const;
+
+    bool getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint) const;
 
     bool isPointInsideTriangle(const FVector3 &point, const Face &triangle) const;
+    float triangleArea(const Face &triangle) const;
 
-    std::pair<Edge3D, Edge3D> splitEdge(const Edge3D &edge, const FVector3& splitPoint) const;
+    std::pair<Edge3D, Edge3D> splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const;
     std::vector<Edge3D> clipEdgeAgainstTriangle(const Edge3D &edge, const Face &triangle) const;
     bool processTriangle(const Face &triangle, const std::vector<Face> &potentialOccluders,
                          std::unordered_set<Edge3D, Edge3DHash> &processedEdges, std::vector<Edge3D> &visibleEdges);
-
-};  
+};
 
 inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, const Face &triangle) const
 {
@@ -58,10 +60,11 @@ inline bool HiddenLineRemoval::processTriangle(const Face &triangle, const std::
         const auto &edge = edges[i];
         if (!processedEdges.insert(edge).second)
             continue; // Edge already processed
-
         std::vector<Edge3D> segments = {edge};
         for (const auto &occluder : potentialOccluders)
         {
+            if (segments.empty())
+                break;
             std::vector<Edge3D> tempSegments;
             tempSegments.reserve(segments.size());
 
@@ -72,8 +75,6 @@ inline bool HiddenLineRemoval::processTriangle(const Face &triangle, const std::
             }
 
             segments = std::move(tempSegments);
-            if (segments.empty())
-                break;
         }
 
         // Bulk insert visible segments to reduce overhead
@@ -85,4 +86,12 @@ inline bool HiddenLineRemoval::processTriangle(const Face &triangle, const std::
         }
     }
     return isOcclued;
+}
+inline float HiddenLineRemoval::triangleArea(const Face &triangle) const
+{
+    // Calculate the area using the cross product method
+    FVector3 vec1 = triangle.v1 - triangle.v0;
+    FVector3 vec2 = triangle.v2 - triangle.v0;
+    float area = 0.5f * vec1.Cross(vec2).Length();
+    return area;
 }

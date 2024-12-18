@@ -6,12 +6,12 @@ class ParticleSystem
     ParticleSystem(Registry *registry);
     void Update(float deltaTime);
     void Render();
-    void EmitParticles(const FVector3 &position, int count);
+    void EmitParticles(const FVector2 &position, int count);
 
   private:
     Registry *m_registry;
 
   private:
     float GenerateRandomLifeTime();
-    FVector3 GenerateRandomAcceleration();
+    FVector2 GenerateRandomAcceleration();
 };

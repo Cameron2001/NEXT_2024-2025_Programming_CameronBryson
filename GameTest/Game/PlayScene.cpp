@@ -7,7 +7,7 @@
 Event<int> m_event;
 Threadpool m_threadpool(4);
 
-PlayScene::PlayScene() : Scene() , m_playerSystem(m_registry.get())
+PlayScene::PlayScene() : Scene(), m_playerSystem(m_registry.get())
 {
 }
 
@@ -18,8 +18,8 @@ void PlayScene::Init()
     m_event.AddListener(this, &PlayScene::Test);
     auto player = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -1.0f), FVector3(0.0f, 0.0f, 0.0f),
-                                                 FVector3(0.15f,0.15f, 0.15f));
-    m_registry->AddComponent<PlayerComponent>(player, 0.0000001);
+                                                 FVector3(0.15f, 0.15f, 0.15f));
+    m_registry->AddComponent<PlayerComponent>(player, 10.0f);
     m_registry->AddComponent<ModelComponent>(player, "ShipOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
     m_event.Notify(10);
@@ -30,11 +30,20 @@ void PlayScene::Init()
     m_registry->AddComponent<ModelComponent>(cube, "ShipOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube);
 
-    m_event.Notify(15);
-    auto future = m_threadpool.QueueTask([this](int value) {
-        this->Test(value);
-    }, 9);
+    auto cube2 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube2, FVector3(-0.1f, -0.1f, -3.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube2, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube2);
 
+    auto cube3 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube3, FVector3(0.3f, -0.3f, -8.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube3, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube3);
+
+    m_event.Notify(15);
+    auto future = m_threadpool.QueueTask([this](int value) { this->Test(value); }, 9);
 }
 
 void PlayScene::LateInit()
@@ -47,7 +56,6 @@ void PlayScene::Update(const float dt)
     Scene::Update(dt);
 
     m_playerSystem.Update(dt);
-    
 }
 
 void PlayScene::LateUpdate(const float dt)
@@ -77,5 +85,4 @@ void PlayScene::LateShutdown()
 
 void PlayScene::Test(int value)
 {
-
 }

@@ -18,7 +18,7 @@ void Scene::Init()
     m_renderSystem.Init();
     m_collisionSystem.Init();
     m_physicsSystem.Init();
-    m_particleSystem.EmitParticles(FVector3(0.50f, 0.5f, -5.0f), 10);
+    m_particleSystem.EmitParticles(FVector2(0.50f, 0.5f), 10);
 }
 
 void Scene::LateInit()
