@@ -51,8 +51,10 @@ struct Edge3DHash
 {
     std::size_t operator()(const Edge3D &edge) const
     {
-        std::size_t h1 = std::hash<float>()(edge.start.X) ^ std::hash<float>()(edge.start.Y) ^ std::hash<float>()(edge.start.Z);
-        std::size_t h2 = std::hash<float>()(edge.end.X) ^ std::hash<float>()(edge.end.Y) ^ std::hash<float>()(edge.end.Z);
+        std::size_t h1 =
+            std::hash<float>()(edge.start.X) ^ std::hash<float>()(edge.start.Y) ^ std::hash<float>()(edge.start.Z);
+        std::size_t h2 =
+            std::hash<float>()(edge.end.X) ^ std::hash<float>()(edge.end.Y) ^ std::hash<float>()(edge.end.Z);
         return h1 ^ h2;
     }
 };

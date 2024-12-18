@@ -33,13 +33,25 @@ std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines()
     std::vector<Edge3D> visibleEdges;
     visibleEdges.reserve(m_triangles.size() * 3);
 
-    std::unordered_set<Edge3D, Edge3DHash> processedEdges;
-    processedEdges.reserve(m_triangles.size() * 3);
-
+    std::unordered_set<Edge3D, Edge3DHash> uniqueEdges;
+    uniqueEdges.reserve(m_triangles.size() * 3);
     for (const auto &triangle : m_triangles)
     {
-        std::vector<Face> potentialOccluders = m_quadtree->queryFace(triangle);
-        if (processTriangle(triangle, potentialOccluders, processedEdges, visibleEdges))
+        std::vector<Edge3D> edges = {
+            {triangle.v0, triangle.v1}, {triangle.v1, triangle.v2}, {triangle.v2, triangle.v0}};
+        bool allOcclued = true;
+        for (const auto &edge : edges)
+        {
+            if (uniqueEdges.insert(edge).second)
+            {
+                std::vector<Face> potentialOccluders = m_quadtree->queryEdge(edge);
+                if (processEdge(edge, potentialOccluders, visibleEdges))
+                {
+                    allOcclued = false;
+                }
+            }
+        }
+        if (allOcclued)
         {
             m_quadtree->insert(triangle);
         }
@@ -87,26 +99,19 @@ void HiddenLineRemoval::sortTrianglesByDepth()
 }
 
 // Corrected getEdgeIntersection function
-bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint) const
+inline bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB,
+                                                   FVector3 &intersectionPoint) const
 {
-    // Extract coordinates
-    float x1 = edgeA.start.X;
-    float y1 = edgeA.start.Y;
-    float x2 = edgeA.end.X;
-    float y2 = edgeA.end.Y;
+    float x1 = edgeA.start.X, y1 = edgeA.start.Y;
+    float x2 = edgeA.end.X, y2 = edgeA.end.Y;
+    float x3 = edgeB.start.X, y3 = edgeB.start.Y;
+    float x4 = edgeB.end.X, y4 = edgeB.end.Y;
 
-    float x3 = edgeB.start.X;
-    float y3 = edgeB.start.Y;
-    float x4 = edgeB.end.X;
-    float y4 = edgeB.end.Y;
-
-    // Compute denominator with epsilon
     float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
     const float EPSILON = 1e-6f;
 
     if (fabs(denom) < EPSILON)
     {
-        // Lines are parallel or coincident
         bool startStart = edgeA.start == edgeB.start;
         bool startEnd = edgeA.start == edgeB.end;
         bool endStart = edgeA.end == edgeB.start;
@@ -115,42 +120,27 @@ bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &e
         int overlapCount = startStart + startEnd + endStart + endEnd;
 
         if (overlapCount > 1)
-        {
-            // Edges are coincident (all endpoints overlap)
             return false;
-        }
         else if (overlapCount == 1)
         {
-            // Edges intersect at a single endpoint
-            if (startStart)
+            if (startStart || startEnd)
                 intersectionPoint = edgeA.start;
-            else if (startEnd)
-                intersectionPoint = edgeA.start;
-            else if (endStart)
-                intersectionPoint = edgeA.end;
-            else if (endEnd)
+            else
                 intersectionPoint = edgeA.end;
             return true;
         }
         else
-        {
-            // Lines are parallel but do not share any endpoints
             return false;
-        }
     }
 
-    // Compute intersection parameters
-    float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
-    float u = ((x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2)) / denom;
+    float t_num = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4);
+    float u_num = (x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2);
+    float t = t_num / denom;
+    float u = u_num / denom;
 
     if (t < -EPSILON || t > 1.0f + EPSILON || u < -EPSILON || u > 1.0f + EPSILON)
-        return false; // Intersection not within the segments
+        return false;
 
-    // Clamp t and u to [0,1]
-    t = std::max(0.0f, std::min(1.0f, t));
-    u = std::max(0.0f, std::min(1.0f, u));
-
-    // Calculate intersection point in 3D
     float intersectionX = x1 + t * (x2 - x1);
     float intersectionY = y1 + t * (y2 - y1);
     float intersectionZ = edgeA.start.Z + t * (edgeA.end.Z - edgeA.start.Z);
@@ -168,51 +158,44 @@ std::pair<Edge3D, Edge3D> HiddenLineRemoval::splitEdge(const Edge3D &edge, const
 std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edge, const Face &triangle) const
 {
     std::vector<FVector3> intersectionPoints;
+    intersectionPoints.reserve(3);
 
     Edge3D triEdges[3] = {{triangle.v0, triangle.v1}, {triangle.v1, triangle.v2}, {triangle.v2, triangle.v0}};
 
-    // Check intersection with each edge of the triangle
     for (const auto &triEdge : triEdges)
     {
         FVector3 intersectionPoint;
         if (getEdgeIntersection(edge, triEdge, intersectionPoint))
-        {
-            intersectionPoints.push_back(intersectionPoint);
-        }
+            intersectionPoints.emplace_back(intersectionPoint);
     }
 
     if (intersectionPoints.empty())
     {
         if (isPointInsideTriangle(edge.start, triangle) && isPointInsideTriangle(edge.end, triangle))
-        {
-            // Edge is fully occluded
-            return {};
-        }
+            return {}; // Edge is fully occluded
         else
-        {
-            // Edge is fully outside the triangle
-            return {edge};
-        }
+            return {edge}; // Edge is fully outside the triangle
     }
 
-    std::sort(intersectionPoints.begin(), intersectionPoints.end(), [&edge](const FVector3 &a, const FVector3 &b) {
+    std::sort(intersectionPoints.begin(), intersectionPoints.end(), [&](const FVector3 &a, const FVector3 &b) {
         return (a - edge.start).LengthSquared() < (b - edge.start).LengthSquared();
     });
 
-    // Include the start and end points
-    std::vector<FVector3> sortedPoints = {edge.start};
+    // Reuse sortedPoints vector
+    std::vector<FVector3> sortedPoints;
+    sortedPoints.reserve(5); // start, 3 intersections, end
+    sortedPoints.emplace_back(edge.start);
     sortedPoints.insert(sortedPoints.end(), intersectionPoints.begin(), intersectionPoints.end());
-    sortedPoints.push_back(edge.end);
+    sortedPoints.emplace_back(edge.end);
 
-    // Determine visibility of each segment between consecutive points
     std::vector<Edge3D> clippedEdges;
+    clippedEdges.reserve(sortedPoints.size() - 1);
+
     for (size_t i = 0; i < sortedPoints.size() - 1; ++i)
     {
         FVector3 midPoint = (sortedPoints[i] + sortedPoints[i + 1]) * 0.5f;
         if (!isPointInsideTriangle(midPoint, triangle))
-        {
             clippedEdges.emplace_back(sortedPoints[i], sortedPoints[i + 1]);
-        }
     }
 
     return clippedEdges;
