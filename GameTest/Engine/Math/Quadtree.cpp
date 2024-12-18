@@ -59,7 +59,6 @@ bool Quadtree::insert(const Face &face)
     return true;
 }
 
-
 std::vector<Face> Quadtree::queryArea(const BoundingBox2D &range) const
 {
     std::vector<Face> found;
@@ -67,7 +66,26 @@ std::vector<Face> Quadtree::queryArea(const BoundingBox2D &range) const
     return found;
 }
 
+std::vector<Face> Quadtree::queryFace(const Face &face) const
+{
+    // query for potential occluders from the quadtree
+    float minX = std::min({face.v0.X, face.v1.X, face.v2.X});
+    float minY = std::min({face.v0.Y, face.v1.Y, face.v2.Y});
+    float maxX = std::max({face.v0.X, face.v1.X, face.v2.X});
+    float maxY = std::max({face.v0.Y, face.v1.Y, face.v2.Y});
+    BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
+    return queryArea(triangleBounds);
+}
 
+std::vector<Face> Quadtree::queryEdge(const Edge3D &edge) const
+{
+    float minX = std::min(edge.start.X, edge.end.X);
+    float minY = std::min(edge.start.Y, edge.end.Y);
+    float maxX = std::max(edge.start.X, edge.end.X);
+    float maxY = std::max(edge.start.Y, edge.end.Y);
+    BoundingBox2D edgeBounds(minX, minY, maxX, maxY);
+    return queryArea(edgeBounds);
+}
 
 void Quadtree::query(const Quadtree *node, const BoundingBox2D &range, std::vector<Face> &found) const
 {
@@ -92,7 +110,6 @@ void Quadtree::query(const Quadtree *node, const BoundingBox2D &range, std::vect
         node->m_southEast->query(node->m_southEast.get(), range, found);
     }
 }
-
 
 void Quadtree::subdivide()
 {
@@ -193,4 +210,3 @@ int Quadtree::getQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &val
 
     return -1; // Spans multiple quadrants
 }
-

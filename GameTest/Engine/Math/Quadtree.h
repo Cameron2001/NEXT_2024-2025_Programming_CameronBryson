@@ -18,6 +18,8 @@ class Quadtree
     Quadtree(const BoundingBox2D &bounds, int capacity = 4, int maxDepth = 10, int level = 0);
     bool insert(const Face &face);
     std::vector<Face> queryArea(const BoundingBox2D &range) const;
+    std::vector<Face> queryFace(const Face &face) const;
+    std::vector<Face> queryEdge(const Edge3D &edge) const;
   private:
     void subdivide();
     void query(const Quadtree *node, const BoundingBox2D &range, std::vector<Face> &found) const;

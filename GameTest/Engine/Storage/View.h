@@ -3,6 +3,7 @@
 #include <tuple>
 #include <utility>
 #include <vector>
+#include <ppl.h>
 class Registry;
 using Entity = unsigned int;
 
@@ -57,6 +58,14 @@ template <typename... Components> class View
     Iterator end()
     {
         return Iterator(this, m_matchingEntities.size());
+    }
+    template <typename Func> void ParallelForEach(Func &&func)
+    {
+        const size_t entityCount = m_matchingEntities.size();
+        concurrency::parallel_for(size_t(0), entityCount, [&](size_t i) {
+            Entity e = m_matchingEntities[i];
+            func(std::forward_as_tuple(e, m_registry->template GetComponent<Components>(e)...));
+        });
     }
 
   private:

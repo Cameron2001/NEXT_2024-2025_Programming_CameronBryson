@@ -42,6 +42,36 @@ void PlayScene::Init()
     m_registry->AddComponent<ModelComponent>(cube3, "ShipOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube3);
 
+    auto cube4 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube4, FVector3(0.4f, -0.2f, -4.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube4, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube4);
+
+    auto cube5 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube5, FVector3(-0.5f, -0.8f, -10.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube5, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube5);
+
+    auto cube6 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube6, FVector3(-0.5f, 0.6f, -5.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube6, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube6);
+
+    auto cube7 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube7, FVector3(-0.9f, -0.9f, -6.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube7, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube7);
+
+    auto cube8 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube8, FVector3(0.9f, 0.9f, -6.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube8, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube8);
+
     m_event.Notify(15);
     auto future = m_threadpool.QueueTask([this](int value) { this->Test(value); }, 9);
 }

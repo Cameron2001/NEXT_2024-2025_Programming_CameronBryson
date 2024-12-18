@@ -3,31 +3,42 @@
 #include "ParticleSystem.h"
 #include "Engine/Graphics/Renderer2D.h"
 #include "App/AppSettings.h"
+#include <concurrent_vector.h>
 
 ParticleSystem::ParticleSystem(Registry *registry) : m_registry(registry)
 {
 }
 
 void ParticleSystem::Update(float deltaTime)
-{ // Update particles
+{
     auto view = m_registry->CreateView<ParticleComponent>();
-    for (auto &&entity : view)
-    {
-        auto &particle = std::get<1>(entity);
+
+    Concurrency::concurrent_vector<Entity> entitiesToDestroy;
+
+    view.ParallelForEach([&](const auto &entityTuple) {
+        Entity entity = std::get<0>(entityTuple);
+        auto &particle = std::get<1>(entityTuple);
+
         particle.position += particle.linearVelocity * deltaTime;
         particle.rotation += particle.angularVelocity * deltaTime;
         particle.age += deltaTime;
+
+        // Check if particle should be destroyed
         if (particle.age > particle.lifetime)
         {
-            m_registry->DestroyEntity(std::get<0>(entity));
+            entitiesToDestroy.push_back(entity);
         }
+    });
+    for (const auto &entity : entitiesToDestroy)
+    {
+        m_registry->DestroyEntity(entity);
     }
 }
 
 void ParticleSystem::Render()
 {
     auto view = m_registry->CreateView<ParticleComponent>();
-    for (auto &entity : view)
+    for (auto &&entity : view)
     {
         auto &particle = std::get<1>(entity);
         Renderer2D::DrawParticle(particle.position, 0.02f, particle.rotation, FVector3(1.0f, 0.0f, 0.0f));

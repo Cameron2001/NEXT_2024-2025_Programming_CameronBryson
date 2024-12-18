@@ -18,10 +18,10 @@ void PhysicsSystem::Update(const float dt)
 {
     auto view = m_registry->CreateView<TransformComponent, RigidBodyComponent>();
 
-    for (auto &&entity : view)
-    {
-        auto &transform = std::get<1>(entity);
-        auto &rigidBody = std::get<2>(entity);
+    view.ParallelForEach([&](const auto &entityTuple) {
+        auto &transform = std::get<1>(entityTuple);
+        auto &rigidBody = std::get<2>(entityTuple);
+
         // Update velocities
         rigidBody.linearVelocity += rigidBody.linearAcceleration * dt;
         rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;
@@ -31,9 +31,9 @@ void PhysicsSystem::Update(const float dt)
         transform.Rotation += rigidBody.angularVelocity * dt;
 
         // Reset accelerations
-        rigidBody.linearAcceleration = FVector3{0, 0, 0};
-        rigidBody.angularAcceleration = FVector3{0, 0, 0};
-    }
+        rigidBody.linearAcceleration = FVector3{0.0f, 0.0f, 0.0f};
+        rigidBody.angularAcceleration = FVector3{0.0f, 0.0f, 0.0f};
+    });
 }
 
 void PhysicsSystem::Shutdown()

@@ -15,6 +15,7 @@
 std::vector<Face> Renderer::m_triangles;
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
+    // this can probably be parrellized
     for (const auto &face : mesh.faces)
     {
 
@@ -54,7 +55,6 @@ void Renderer::SubmitQueue()
     // }
     HiddenLineRemoval hlr(m_triangles);
     std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
-
     // Use an unordered_set with the custom hash to filter out duplicate edges
     std::unordered_set<Edge3D, Edge3DHash> uniqueVisibleEdges;
     uniqueVisibleEdges.reserve(visibleSegments.size());

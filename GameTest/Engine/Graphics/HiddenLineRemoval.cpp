@@ -15,7 +15,8 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
-
+#include <concurrent_unordered_set.h>
+#include <concurrent_vector.h>
 HiddenLineRemoval::HiddenLineRemoval(const std::vector<Face> &triangles)
 {
     m_triangles = triangles;
@@ -24,6 +25,11 @@ HiddenLineRemoval::HiddenLineRemoval(const std::vector<Face> &triangles)
 }
 std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines()
 {
+    // What if we collect unique edges first.
+    // Instead of just exiting early when a non unique is found
+    // Issue is that we will have to do per edge and that doesnt work well with quadtree
+    // Quad trees and many early exits work with triangles instead of standalone edges
+
     std::vector<Edge3D> visibleEdges;
     visibleEdges.reserve(m_triangles.size() * 3);
 
@@ -32,21 +38,13 @@ std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines()
 
     for (const auto &triangle : m_triangles)
     {
-        if (triangleArea(triangle) < 0.0002)
-            continue;
-        // query for potential occluders from the quadtree
-        float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-        float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
-        float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-        float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
-        BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
-        std::vector<Face> potentialOccluders = m_quadtree->queryArea(triangleBounds);
+        std::vector<Face> potentialOccluders = m_quadtree->queryFace(triangle);
         if (processTriangle(triangle, potentialOccluders, processedEdges, visibleEdges))
         {
             m_quadtree->insert(triangle);
         }
     }
-    return visibleEdges;
+    return std::vector<Edge3D>(visibleEdges.begin(), visibleEdges.end());
 }
 
 void HiddenLineRemoval::initializeQuadtree()
@@ -73,7 +71,7 @@ void HiddenLineRemoval::initializeQuadtree()
     maxY += padding;
 
     BoundingBox2D rootBounds(minX, minY, maxX, maxY);
-    m_quadtree = std::make_unique<Quadtree>(rootBounds, 36, 8);
+    m_quadtree = std::make_unique<Quadtree>(rootBounds, 16, 8);
 }
 
 void HiddenLineRemoval::sortTrianglesByDepth()

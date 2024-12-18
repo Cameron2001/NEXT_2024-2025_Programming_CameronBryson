@@ -4,6 +4,7 @@
 #include <Engine/Math/Quadtree.h>
 #include <unordered_set>
 #include <vector>
+#include <ppl.h>
 class HiddenLineRemoval
 {
   public:
@@ -20,7 +21,6 @@ class HiddenLineRemoval
     bool getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint) const;
 
     bool isPointInsideTriangle(const FVector3 &point, const Face &triangle) const;
-    float triangleArea(const Face &triangle) const;
 
     std::pair<Edge3D, Edge3D> splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const;
     std::vector<Edge3D> clipEdgeAgainstTriangle(const Edge3D &edge, const Face &triangle) const;
@@ -50,11 +50,19 @@ inline bool HiddenLineRemoval::processTriangle(const Face &triangle, const std::
                                                std::unordered_set<Edge3D, Edge3DHash> &processedEdges,
                                                std::vector<Edge3D> &visibleEdges)
 {
-    bool isOcclued = true;
+    bool isVisable = false;
     constexpr size_t NUM_EDGES = 3;
     const Edge3D edges[NUM_EDGES] = {
         {triangle.v0, triangle.v1}, {triangle.v1, triangle.v2}, {triangle.v2, triangle.v0}};
-
+    for (const auto &occluder : potentialOccluders)
+    {
+        bool allInsside = isPointInsideTriangle(occluder.v0, triangle) &&
+                          isPointInsideTriangle(occluder.v1, triangle) && isPointInsideTriangle(occluder.v2, triangle);
+        if (allInsside)
+        {
+            return false;
+        }
+    }
     for (size_t i = 0; i < NUM_EDGES; ++i)
     {
         const auto &edge = edges[i];
@@ -82,16 +90,8 @@ inline bool HiddenLineRemoval::processTriangle(const Face &triangle, const std::
         {
             visibleEdges.insert(visibleEdges.end(), std::make_move_iterator(segments.begin()),
                                 std::make_move_iterator(segments.end()));
-            isOcclued = false;
+            isVisable = true;
         }
     }
-    return isOcclued;
-}
-inline float HiddenLineRemoval::triangleArea(const Face &triangle) const
-{
-    // Calculate the area using the cross product method
-    FVector3 vec1 = triangle.v1 - triangle.v0;
-    FVector3 vec2 = triangle.v2 - triangle.v0;
-    float area = 0.5f * vec1.Cross(vec2).Length();
-    return area;
+    return isVisable;
 }

@@ -14,15 +14,15 @@ const float yNDCMax = NDC;
 const float yNDCMin = -NDC;
 class Renderer
 {
-public:
+  public:
     static void QueueMesh(const Mesh &mesh, const Matrix4 &MVP);
     static void QueueModel(const Model &model, const Matrix4 &MVP);
     static void SubmitQueue();
     static void ClearQueue();
 
-private:
+  private:
     static std::vector<Face> m_triangles;
-  static bool QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2);
+    static bool QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2);
     // LiangBarsky
     static Edge3D LiangBarsky(const Edge3D &edge);
 };
@@ -47,7 +47,15 @@ inline bool Renderer::QuickReject(const Edge3D &edge0, const Edge3D &edge1, cons
     if (v0.Y > yNDCMax && v1.Y > yNDCMax && v2.Y > yNDCMax)
         return true;
 
+    // Calculate the area of the triangle
+    FVector3 vec1 = v1 - v0;
+    FVector3 vec2 = v2 - v0;
+    float area = 0.5f * vec1.Cross(vec2).Length();
+
+    // Reject if the area is below the threshold
+    if (area < 0.0001f)
+        return true;
+
     // Triangle is at least partially inside the frustum
     return false;
 }
-
