@@ -196,7 +196,7 @@
     <ClInclude Include="Engine\Core\Threadpool.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Face.h" />
+    <ClInclude Include="Engine\Graphics\Triangle.h" />
     <ClInclude Include="Engine\Storage\View.h" />
     <ClInclude Include="Engine\Graphics\Edge.h" />
     <ClInclude Include="Engine\Graphics\HiddenLineRemoval.h" />

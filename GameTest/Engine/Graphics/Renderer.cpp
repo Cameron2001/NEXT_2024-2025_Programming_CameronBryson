@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Edge.h"
-#include "Face.h"
+#include "Triangle.h"
 #include "HiddenLineRemoval.h"
 #include "Mesh.h"
 #include "Model.h"
@@ -12,28 +12,50 @@
 #include <unordered_set>
 #include <vector>
 
-std::vector<Face> Renderer::m_triangles;
+std::vector<Triangle> Renderer::m_triangles;
+std::unordered_map<Edge3D, std::vector<size_t>, Edge3DHash> Renderer::m_edgeToTriangleMap;
+std::vector<bool> Renderer::m_triangleFacing;
+std::vector<Edge3D> Renderer::m_silhouetteEdges;
+
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
-    // this can probably be parrellized
-    for (const auto &face : mesh.faces)
-    {
+    size_t triangleIndex = m_triangles.size();
 
+    for (const auto &triangle : mesh.triangles)
+    {
         // Transformed vertices
-        FVector3 mvpVertex0 = MVP.TransformWithPerspectiveDivide(face.v0);
-        FVector3 mvpVertex1 = MVP.TransformWithPerspectiveDivide(face.v1);
-        FVector3 mvpVertex2 = MVP.TransformWithPerspectiveDivide(face.v2);
+        FVector3 mvpVertex0 = MVP.TransformWithPerspectiveDivide(triangle.v0);
+        FVector3 mvpVertex1 = MVP.TransformWithPerspectiveDivide(triangle.v1);
+        FVector3 mvpVertex2 = MVP.TransformWithPerspectiveDivide(triangle.v2);
+
         if (QuickReject(Edge3D(mvpVertex0, mvpVertex1), Edge3D(mvpVertex1, mvpVertex2), Edge3D(mvpVertex2, mvpVertex0)))
         {
             continue;
         }
+
         float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
                             ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
-        if (determinant < 0)
+        bool isFrontFacing = determinant > 0;
+
+        if (!isFrontFacing)
         {
             continue;
         }
+
+        // Store the triangle
         m_triangles.emplace_back(mvpVertex0, mvpVertex1, mvpVertex2);
+        m_triangleFacing.push_back(isFrontFacing);
+
+        // Build edge list with adjacency information
+        Edge3D edges[3] = {Edge3D(mvpVertex0, mvpVertex1), Edge3D(mvpVertex1, mvpVertex2),
+                           Edge3D(mvpVertex2, mvpVertex0)};
+
+        for (const auto &edge : edges)
+        {
+            m_edgeToTriangleMap[edge].push_back(triangleIndex);
+        }
+
+        ++triangleIndex;
     }
 }
 

@@ -55,7 +55,7 @@ void ParticleSystem::EmitParticles(const FVector2 &position, int count)
     }
     // particles need transform rigidbody and particle components
     // Also have to figure out how we are rendering it. Do we treat it as a model?
-    // I think i should probably just draw lines. since we dont need faces or proper winding order
+    // I think i should probably just draw lines. since we dont need triangles or proper winding order
     // Dont need to interact with other objects
 }
 

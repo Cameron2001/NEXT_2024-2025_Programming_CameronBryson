@@ -101,11 +101,10 @@ FVector3 &FVector3::operator/=(const float obj)
     return *this;
 }
 
-bool FVector3::operator==(const FVector3 &obj) const
+bool FVector3::operator==(const FVector3 &other) const
 {
-    return
-
-        this->X == obj.X && this->Y == obj.Y && this->Z == obj.Z;
+    const float EPSILON = 1e-5f; // Define an appropriate epsilon value
+    return (fabs(X - other.X) < EPSILON) && (fabs(Y - other.Y) < EPSILON) && (fabs(Z - other.Z) < EPSILON);
 }
 
 bool FVector3::operator!=(const FVector3 &obj) const
@@ -140,11 +139,7 @@ float FVector3::Dot(const FVector3 &obj) const
 
 FVector3 FVector3::Cross(const FVector3 &obj) const
 {
-    return FVector3(
-        Y * obj.Z - Z * obj.Y,
-        Z * obj.X - X * obj.Z,
-        X * obj.Y - Y * obj.X
-        );
+    return FVector3(Y * obj.Z - Z * obj.Y, Z * obj.X - X * obj.Z, X * obj.Y - Y * obj.X);
 }
 
 IVector3::IVector3()

@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
-#include "Engine/Graphics/Face.h"
+#include "Engine/Graphics/Triangle.h"
 #include <Engine/Math/Matrix4.h>
 
 struct Mesh
 {
-    Mesh(const std::vector<Face> &faces) : faces(faces)
+    Mesh(const std::vector<Triangle> &triangles) : triangles(triangles)
     {
     }
-    std::vector<Face> faces;
+    std::vector<Triangle> triangles;
 };

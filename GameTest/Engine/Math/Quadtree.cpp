@@ -3,12 +3,12 @@
 #include <algorithm>
 #include <memory>
 #include <array>
-FaceEntry::FaceEntry(const Face &f) : face(f)
+triangleEntry::triangleEntry(const Triangle &f) : triangle(f)
 {
-    float minX = std::min({face.v0.X, face.v1.X, face.v2.X});
-    float minY = std::min({face.v0.Y, face.v1.Y, face.v2.Y});
-    float maxX = std::max({face.v0.X, face.v1.X, face.v2.X});
-    float maxY = std::max({face.v0.Y, face.v1.Y, face.v2.Y});
+    float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
+    float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
+    float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
+    float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
     bounds = BoundingBox2D(minX, minY, maxX, maxY);
 }
 
@@ -17,18 +17,18 @@ Quadtree::Quadtree(const BoundingBox2D &bounds, int capacity, int maxDepth, int 
 {
 }
 
-bool Quadtree::insert(const Face &face)
+bool Quadtree::insert(const Triangle &triangle)
 {
-    FaceEntry entry(face);
+    triangleEntry entry(triangle);
 
     if (!m_bounds.intersects(entry.bounds))
     {
         return false;
     }
 
-    if (static_cast<int>(m_faces.size()) < m_capacity || m_level >= m_maxDepth)
+    if (static_cast<int>(m_triangles.size()) < m_capacity || m_level >= m_maxDepth)
     {
-        m_faces.emplace_back(entry);
+        m_triangles.emplace_back(entry);
         return true;
     }
 
@@ -43,41 +43,41 @@ bool Quadtree::insert(const Face &face)
         switch (quadrant)
         {
         case 0:
-            return m_northWest->insert(face);
+            return m_northWest->insert(triangle);
         case 1:
-            return m_northEast->insert(face);
+            return m_northEast->insert(triangle);
         case 2:
-            return m_southWest->insert(face);
+            return m_southWest->insert(triangle);
         case 3:
-            return m_southEast->insert(face);
+            return m_southEast->insert(triangle);
         default:
             break;
         }
     }
 
-    m_faces.emplace_back(entry);
+    m_triangles.emplace_back(entry);
     return true;
 }
 
-std::vector<Face> Quadtree::queryArea(const BoundingBox2D &range) const
+std::vector<Triangle> Quadtree::queryArea(const BoundingBox2D &range) const
 {
-    std::vector<Face> found;
+    std::vector<Triangle> found;
     query(this, range, found);
     return found;
 }
 
-std::vector<Face> Quadtree::queryFace(const Face &face) const
+std::vector<Triangle> Quadtree::querytriangle(const Triangle &triangle) const
 {
     // query for potential occluders from the quadtree
-    float minX = std::min({face.v0.X, face.v1.X, face.v2.X});
-    float minY = std::min({face.v0.Y, face.v1.Y, face.v2.Y});
-    float maxX = std::max({face.v0.X, face.v1.X, face.v2.X});
-    float maxY = std::max({face.v0.Y, face.v1.Y, face.v2.Y});
+    float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
+    float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
+    float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
+    float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
     BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
     return queryArea(triangleBounds);
 }
 
-std::vector<Face> Quadtree::queryEdge(const Edge3D &edge) const
+std::vector<Triangle> Quadtree::queryEdge(const Edge3D &edge) const
 {
     float minX = std::min(edge.start.X, edge.end.X);
     float minY = std::min(edge.start.Y, edge.end.Y);
@@ -87,18 +87,18 @@ std::vector<Face> Quadtree::queryEdge(const Edge3D &edge) const
     return queryArea(edgeBounds);
 }
 
-void Quadtree::query(const Quadtree *node, const BoundingBox2D &range, std::vector<Face> &found) const
+void Quadtree::query(const Quadtree *node, const BoundingBox2D &range, std::vector<Triangle> &found) const
 {
     if (!node->m_bounds.intersects(range))
     {
         return;
     }
 
-    for (const auto &entry : node->m_faces)
+    for (const auto &entry : node->m_triangles)
     {
         if (range.intersects(entry.bounds))
         {
-            found.push_back(entry.face);
+            found.push_back(entry.triangle);
         }
     }
 
@@ -125,10 +125,10 @@ void Quadtree::subdivide()
 
     m_divided = true;
 
-    // Redistribute existing faces to children
-    std::vector<FaceEntry> remainingFaces;
+    // Redistribute existing triangles to children
+    std::vector<triangleEntry> remainingtriangles;
 
-    for (const auto &entry : m_faces)
+    for (const auto &entry : m_triangles)
     {
         int quadrant = getQuadrant(m_bounds, entry.bounds);
         if (quadrant != -1)
@@ -136,29 +136,29 @@ void Quadtree::subdivide()
             switch (quadrant)
             {
             case 0:
-                m_northWest->insert(entry.face);
+                m_northWest->insert(entry.triangle);
                 break;
             case 1:
-                m_northEast->insert(entry.face);
+                m_northEast->insert(entry.triangle);
                 break;
             case 2:
-                m_southWest->insert(entry.face);
+                m_southWest->insert(entry.triangle);
                 break;
             case 3:
-                m_southEast->insert(entry.face);
+                m_southEast->insert(entry.triangle);
                 break;
             default:
-                remainingFaces.emplace_back(entry);
+                remainingtriangles.emplace_back(entry);
                 break;
             }
         }
         else
         {
-            remainingFaces.emplace_back(entry);
+            remainingtriangles.emplace_back(entry);
         }
     }
 
-    m_faces.swap(remainingFaces);
+    m_triangles.swap(remainingtriangles);
 }
 BoundingBox2D Quadtree::computeBox(const BoundingBox2D &box, int quadrant) const
 {
@@ -182,7 +182,7 @@ BoundingBox2D Quadtree::computeBox(const BoundingBox2D &box, int quadrant) const
     }
 }
 
-// Determine the quadrant for a given face's bounding box
+// Determine the quadrant for a given triangle's bounding box
 int Quadtree::getQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &valueBox) const
 {
     float midX = nodeBox.minX + (nodeBox.maxX - nodeBox.minX) / 2.0f;

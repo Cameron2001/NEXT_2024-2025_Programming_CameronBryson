@@ -188,7 +188,7 @@
     <ClInclude Include="App\SimpleSprite.h" />
     <ClInclude Include="Engine\Core\Collision.h" />
     <ClInclude Include="Engine\Graphics\Edge.h" />
-    <ClInclude Include="Engine\Graphics\Face.h" />
+    <ClInclude Include="Engine\Graphics\Triangle.h" />
     <ClInclude Include="Engine\Managers\CollisionManager.h" />
     <ClInclude Include="Engine\Math\BoundingBox.h" />
     <ClInclude Include="Engine\Math\MathUtil.h" />

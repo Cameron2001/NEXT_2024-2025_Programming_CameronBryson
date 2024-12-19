@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Edge.h"
-#include "Face.h"
+#include "Triangle.h"
 #include "HiddenLineRemoval.h"
 #include <algorithm>
 #include <cassert>
@@ -17,7 +17,7 @@
 #include <vector>
 #include <concurrent_unordered_set.h>
 #include <concurrent_vector.h>
-HiddenLineRemoval::HiddenLineRemoval(const std::vector<Face> &triangles)
+HiddenLineRemoval::HiddenLineRemoval(const std::vector<Triangle> &triangles)
 {
     m_triangles = triangles;
     sortTrianglesByDepth();
@@ -44,7 +44,7 @@ std::vector<Edge3D> HiddenLineRemoval::removeHiddenLines()
         {
             if (uniqueEdges.insert(edge).second)
             {
-                std::vector<Face> potentialOccluders = m_quadtree->queryEdge(edge);
+                std::vector<Triangle> potentialOccluders = m_quadtree->queryEdge(edge);
                 if (processEdge(edge, potentialOccluders, visibleEdges))
                 {
                     allOcclued = false;
@@ -67,12 +67,12 @@ void HiddenLineRemoval::initializeQuadtree()
     float maxX = std::numeric_limits<float>::lowest();
     float maxY = std::numeric_limits<float>::lowest();
 
-    for (const auto &face : m_triangles)
+    for (const auto &triangle : m_triangles)
     {
-        minX = std::min({minX, face.v0.X, face.v1.X, face.v2.X});
-        minY = std::min({minY, face.v0.Y, face.v1.Y, face.v2.Y});
-        maxX = std::max({maxX, face.v0.X, face.v1.X, face.v2.X});
-        maxY = std::max({maxY, face.v0.Y, face.v1.Y, face.v2.Y});
+        minX = std::min({minX, triangle.v0.X, triangle.v1.X, triangle.v2.X});
+        minY = std::min({minY, triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
+        maxX = std::max({maxX, triangle.v0.X, triangle.v1.X, triangle.v2.X});
+        maxY = std::max({maxY, triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
     }
 
     // Add a small padding to avoid boundary issues
@@ -89,7 +89,7 @@ void HiddenLineRemoval::initializeQuadtree()
 void HiddenLineRemoval::sortTrianglesByDepth()
 {
     // Sort triangles based on average Z value (depth)
-    std::sort(m_triangles.begin(), m_triangles.end(), [](const Face &a, const Face &b) {
+    std::sort(m_triangles.begin(), m_triangles.end(), [](const Triangle &a, const Triangle &b) {
         float depthA = (a.v0.Z + a.v1.Z + a.v2.Z) / 3.0f;
         float depthB = (b.v0.Z + b.v1.Z + b.v2.Z) / 3.0f;
         // float depthA = std::min({a.v0.Z, a.v1.Z, a.v2.Z});
@@ -149,13 +149,7 @@ inline bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Ed
     return true;
 }
 
-std::pair<Edge3D, Edge3D> HiddenLineRemoval::splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const
-{
-    Edge3D edgeA(edge.start, splitPoint);
-    Edge3D edgeB(splitPoint, edge.end);
-    return {edgeA, edgeB};
-}
-std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edge, const Face &triangle) const
+std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edge, const Triangle &triangle) const
 {
     std::vector<FVector3> intersectionPoints;
     intersectionPoints.reserve(3);
@@ -199,4 +193,41 @@ std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edg
     }
 
     return clippedEdges;
+}
+bool HiddenLineRemoval::processEdge(const Edge3D &edge, const std::vector<Triangle> &potentialOccluders,
+                                    std::vector<Edge3D> &visibleEdges)
+{
+    if (edge.start == edge.end || (edge.end - edge.start).LengthSquared() < 1e-6f)
+    {
+        return false; // Degenerate or negligible edge
+    }
+    bool isVisable = false;
+    std::vector<Edge3D> segments = {edge};
+    for (const auto &occluder : potentialOccluders)
+    {
+
+        if (isPointInsideTriangle(edge.start, occluder) && isPointInsideTriangle(edge.end, occluder))
+        {
+            return false; // Edge is fully occluded
+        }
+        std::vector<Edge3D> tempSegments;
+        tempSegments.reserve(segments.size());
+        for (const auto &segment : segments)
+        {
+            auto clipped = clipEdgeAgainstTriangle(segment, occluder);
+            tempSegments.insert(tempSegments.end(), clipped.begin(), clipped.end());
+        }
+        segments = std::move(tempSegments);
+        if (segments.empty())
+            break;
+    }
+
+    // Bulk insert visible segments to reduce overhead
+    if (!segments.empty())
+    {
+        visibleEdges.insert(visibleEdges.end(), std::make_move_iterator(segments.begin()),
+                            std::make_move_iterator(segments.end()));
+        isVisable = true;
+    }
+    return isVisable;
 }

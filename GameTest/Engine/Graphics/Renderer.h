@@ -4,8 +4,9 @@
 #include "Engine/Graphics/Model.h"
 #include "Engine/Math/Matrix4.h"
 #include "Engine/Math/Vector3.h"
-#include "Face.h"
+#include "Engine/Graphics/Triangle.h"
 #include <vector>
+#include <unordered_map>
 const FVector3 VIEW_DIRECTION(0.0f, 0.0f, 1.0f);
 const float NDC = 1.00f;
 const float xNDCMax = NDC;
@@ -21,7 +22,11 @@ class Renderer
     static void ClearQueue();
 
   private:
-    static std::vector<Face> m_triangles;
+    static std::vector<Triangle> m_triangles;
+    static std::unordered_map<Edge3D, std::vector<size_t>, Edge3DHash> m_edgeToTriangleMap;
+    static std::vector<bool> m_triangleFacing;
+    static std::vector<Edge3D> m_silhouetteEdges;
+
     static bool QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2);
     // LiangBarsky
     static Edge3D LiangBarsky(const Edge3D &edge);

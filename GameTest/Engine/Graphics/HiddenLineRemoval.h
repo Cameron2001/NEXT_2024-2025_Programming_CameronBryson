@@ -1,6 +1,6 @@
 #pragma once
 #include "Edge.h"
-#include "Face.h"
+#include "Triangle.h"
 #include <Engine/Math/Quadtree.h>
 #include <unordered_set>
 #include <vector>
@@ -8,28 +8,28 @@
 class HiddenLineRemoval
 {
   public:
-    HiddenLineRemoval(const std::vector<Face> &triangles);
+    HiddenLineRemoval(const std::vector<Triangle> &triangles);
     std::vector<Edge3D> removeHiddenLines();
     ;
 
   private:
     void initializeQuadtree();
-    std::vector<Face> m_triangles;
+    std::vector<Triangle> m_triangles;
     std::unique_ptr<Quadtree> m_quadtree;
 
     void sortTrianglesByDepth();
 
     bool getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint) const;
 
-    bool isPointInsideTriangle(const FVector3 &point, const Face &triangle) const;
+    bool isPointInsideTriangle(const FVector3 &point, const Triangle &triangle) const;
 
     std::pair<Edge3D, Edge3D> splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const;
-    std::vector<Edge3D> clipEdgeAgainstTriangle(const Edge3D &edge, const Face &triangle) const;
-    bool processEdge(const Edge3D &edge, const std::vector<Face> &potentialOccluders,
+    std::vector<Edge3D> clipEdgeAgainstTriangle(const Edge3D &edge, const Triangle &triangle) const;
+    bool processEdge(const Edge3D &edge, const std::vector<Triangle> &potentialOccluders,
                      std::vector<Edge3D> &visibleEdges);
 };
 
-inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, const Face &triangle) const
+inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, const Triangle &triangle) const
 {
     FVector2 p(point.X, point.Y);
     FVector2 v0(triangle.v0.X, triangle.v0.Y);
@@ -47,31 +47,9 @@ inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, cons
 
     return (a >= 0.0f) && (b >= 0.0f) && (c >= 0.0f);
 }
-inline bool HiddenLineRemoval::processEdge(const Edge3D &edge, const std::vector<Face> &potentialOccluders,
-                                           std::vector<Edge3D> &visibleEdges)
+inline std::pair<Edge3D, Edge3D> HiddenLineRemoval::splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const
 {
-    bool isVisable = false;
-    std::vector<Edge3D> segments = {edge};
-    for (const auto &occluder : potentialOccluders)
-    {
-        std::vector<Edge3D> tempSegments;
-        tempSegments.reserve(segments.size());
-        for (const auto &segment : segments)
-        {
-            auto clipped = clipEdgeAgainstTriangle(segment, occluder);
-            tempSegments.insert(tempSegments.end(), clipped.begin(), clipped.end());
-        }
-        segments = std::move(tempSegments);
-        if (segments.empty())
-            break;
-    }
-
-    // Bulk insert visible segments to reduce overhead
-    if (!segments.empty())
-    {
-        visibleEdges.insert(visibleEdges.end(), std::make_move_iterator(segments.begin()),
-                            std::make_move_iterator(segments.end()));
-        isVisable = true;
-    }
-    return isVisable;
+    Edge3D edgeA(edge.start, splitPoint);
+    Edge3D edgeB(splitPoint, edge.end);
+    return {edgeA, edgeB};
 }
