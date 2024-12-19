@@ -12,18 +12,16 @@
 #include <unordered_set>
 #include <vector>
 
-std::vector<Triangle> Renderer::m_triangles;
+std::vector<const Triangle *> Renderer::m_triangles;
 std::unordered_map<Edge3D, std::vector<size_t>, Edge3DHash> Renderer::m_edgeToTriangleMap;
-std::vector<bool> Renderer::m_triangleFacing;
-std::vector<Edge3D> Renderer::m_silhouetteEdges;
 
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
-    size_t triangleIndex = m_triangles.size();
+    m_edgeToTriangleMap.reserve(m_edgeToTriangleMap.size() + mesh.triangles.size() * 3);
 
-    for (const auto &triangle : mesh.triangles)
+    for (auto &triangle : mesh.triangles)
     {
-        // Transformed vertices
+        // Transform vertices
         FVector3 mvpVertex0 = MVP.TransformWithPerspectiveDivide(triangle.v0);
         FVector3 mvpVertex1 = MVP.TransformWithPerspectiveDivide(triangle.v1);
         FVector3 mvpVertex2 = MVP.TransformWithPerspectiveDivide(triangle.v2);
@@ -37,25 +35,19 @@ void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
                             ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
         bool isFrontFacing = determinant > 0;
 
-        if (!isFrontFacing)
-        {
-            continue;
-        }
+        triangle.isFrontFacing = isFrontFacing;
 
-        // Store the triangle
-        m_triangles.emplace_back(mvpVertex0, mvpVertex1, mvpVertex2);
-        m_triangleFacing.push_back(isFrontFacing);
+        m_triangles.emplace_back(&triangle);
 
-        // Build edge list with adjacency information
+        size_t triIndex = m_triangles.size() - 1;
+
         Edge3D edges[3] = {Edge3D(mvpVertex0, mvpVertex1), Edge3D(mvpVertex1, mvpVertex2),
                            Edge3D(mvpVertex2, mvpVertex0)};
 
         for (const auto &edge : edges)
         {
-            m_edgeToTriangleMap[edge].push_back(triangleIndex);
+            m_edgeToTriangleMap[edge].push_back(triIndex);
         }
-
-        ++triangleIndex;
     }
 }
 
@@ -71,32 +63,96 @@ void Renderer::SubmitQueue()
 {
     if (m_triangles.empty())
         return;
+
+    std::vector<Edge3D> silhouetteEdges;
+
+    // Identify silhouette edges
+    for (const auto &pair : m_edgeToTriangleMap)
+    {
+        const Edge3D &edge = pair.first;
+        const std::vector<size_t> &adjacentTriangles = pair.second;
+
+        bool isSilhouette = false;
+
+        if (adjacentTriangles.size() == 1)
+        {
+            // Edge is on the boundary of the mesh
+            size_t triIndex = adjacentTriangles[0];
+            if (m_triangles[triIndex]->isFrontFacing)
+            {
+                isSilhouette = true;
+            }
+        }
+        else if (adjacentTriangles.size() == 2)
+        {
+            size_t triIndex0 = adjacentTriangles[0];
+            size_t triIndex1 = adjacentTriangles[1];
+
+            bool facing0 = m_triangles[triIndex0]->isFrontFacing;
+            bool facing1 = m_triangles[triIndex1]->isFrontFacing;
+
+            if (facing0 != facing1)
+            {
+                isSilhouette = true;
+            }
+        }
+        else
+        {
+            bool facingFirst = m_triangles[adjacentTriangles[0]]->isFrontFacing;
+            for (size_t i = 1; i < adjacentTriangles.size(); ++i)
+            {
+                if (m_triangles[adjacentTriangles[i]]->isFrontFacing != facingFirst)
+                {
+                    isSilhouette = true;
+                    break;
+                }
+            }
+        }
+
+        if (isSilhouette)
+        {
+            silhouetteEdges.push_back(edge);
+        }
+    }
+
+    for (const auto &edge : silhouetteEdges)
+    {
+        Edge3D clippedEdge = LiangBarsky(edge);
+        if (clippedEdge.start != clippedEdge.end)
+        {
+            Renderer2D::DrawLine(clippedEdge.start, clippedEdge.end, {1.0f, 1.0f, 1.0f});
+        }
+    }
+
+    ClearQueue();
+
     // for (auto &triangle : m_triangles)
     //{
     //     Renderer2D::DrawPolygon({triangle.v0, triangle.v1, triangle.v2}, {1.0f, 1.0f, 1.0f});
     // }
-    HiddenLineRemoval hlr(m_triangles);
-    std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
-    // Use an unordered_set with the custom hash to filter out duplicate edges
-    std::unordered_set<Edge3D, Edge3DHash> uniqueVisibleEdges;
-    uniqueVisibleEdges.reserve(visibleSegments.size());
-    uniqueVisibleEdges.insert(visibleSegments.begin(), visibleSegments.end());
-    for (const auto &edge : uniqueVisibleEdges)
-    {
-        Edge3D clippedEdge = LiangBarsky(edge);
-        // Check if the clipped edge is valid before drawing
-        if (clippedEdge.start != clippedEdge.end)
-        {
+    // HiddenLineRemoval hlr(m_triangles);
+    // std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
+    //// Use an unordered_set with the custom hash to filter out duplicate edges
+    // std::unordered_set<Edge3D, Edge3DHash> uniqueVisibleEdges;
+    // uniqueVisibleEdges.reserve(visibleSegments.size());
+    // uniqueVisibleEdges.insert(visibleSegments.begin(), visibleSegments.end());
+    // for (const auto &edge : uniqueVisibleEdges)
+    //{
+    //     Edge3D clippedEdge = LiangBarsky(edge);
+    //     // Check if the clipped edge is valid before drawing
+    //     if (clippedEdge.start != clippedEdge.end)
+    //     {
 
-            Renderer2D::DrawLine(clippedEdge.start, clippedEdge.end, {1.0f, 1.0f, 1.0f});
-        }
-    }
+    //        Renderer2D::DrawLine(clippedEdge.start, clippedEdge.end, {1.0f, 1.0f, 1.0f});
+    //    }
+    //}
     ClearQueue();
 }
 
 void Renderer::ClearQueue()
 {
     m_triangles.clear();
+    m_edgeToTriangleMap.clear();
 }
 
 Edge3D Renderer::LiangBarsky(const Edge3D &edge)

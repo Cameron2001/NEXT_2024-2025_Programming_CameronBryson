@@ -3,13 +3,13 @@
 #include <functional>
 struct Triangle
 {
-    Triangle(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2, const FVector3 &normal)
-        : v0(v0), v1(v1), v2(v2), normal(normal)
-    {
-    }
     Triangle(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2) : v0(v0), v1(v1), v2(v2)
     {
-        normal = {0, 0, 0};
+        isFrontFacing = false;
+    }
+    Triangle(const Triangle &other, bool isFrontFacing)
+        : v0(other.v0), v1(other.v1), v2(other.v2), isFrontFacing(isFrontFacing)
+    {
     }
     bool operator==(const Triangle &other) const
     {
@@ -18,7 +18,7 @@ struct Triangle
     FVector3 v0;
     FVector3 v1;
     FVector3 v2;
-    FVector3 normal;
+    mutable bool isFrontFacing;
 };
 struct TriangleHasher
 {

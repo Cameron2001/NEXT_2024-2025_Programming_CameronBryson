@@ -100,7 +100,7 @@ void GraphicsManager::LoadModel(const std::string &modelName, const std::string 
 
             // Create triangle with actual vertices
             triangles.emplace_back(tempPositions[vertexIndex[0]], tempPositions[vertexIndex[1]],
-                               tempPositions[vertexIndex[2]], triangleNormal);
+                                   tempPositions[vertexIndex[2]]);
         }
     }
 
