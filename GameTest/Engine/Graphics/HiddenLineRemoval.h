@@ -1,32 +1,50 @@
+// HiddenLineRemoval.h
 #pragma once
+
 #include "Edge.h"
 #include "Triangle.h"
 #include <Engine/Math/Quadtree.h>
 #include <unordered_set>
 #include <vector>
-#include <ppl.h>
+#include <memory>
+#include <concurrent_vector.h>
+class FVector3;
+class FVector2;
+class BoundingBox2D;
+
+struct Edge3DHash; // Forward declaration
+
 class HiddenLineRemoval
 {
   public:
     HiddenLineRemoval(const std::vector<Triangle> &triangles);
     std::vector<Edge3D> removeHiddenLines();
-    ;
 
   private:
+    // Initialization and sorting
     void initializeQuadtree();
-    std::vector<Triangle> m_triangles;
-    std::unique_ptr<Quadtree> m_quadtree;
-
     void sortTrianglesByDepth();
 
+    // Intersection and clipping
     bool getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint) const;
+    std::vector<Edge3D> clipEdgeAgainstTriangle(const Edge3D &edge, const Triangle &triangle) const;
 
+    // Point inside triangle test
     bool isPointInsideTriangle(const FVector3 &point, const Triangle &triangle) const;
 
-    std::pair<Edge3D, Edge3D> splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const;
-    std::vector<Edge3D> clipEdgeAgainstTriangle(const Edge3D &edge, const Triangle &triangle) const;
+    // Processing functions
     bool processEdge(const Edge3D &edge, const std::vector<Triangle> &potentialOccluders,
                      std::vector<Edge3D> &visibleEdges);
+    void processTriangle(const Triangle &triangle, std::unordered_set<Edge3D, Edge3DHash> &uniqueEdges,
+                         std::vector<Edge3D> &visibleEdges);
+    std::vector<Edge3D> createTriangleEdges(const Triangle &triangle) const;
+    bool sharesVertex(const Triangle &occluder, const Edge3D &edge) const;
+    std::vector<Edge3D> clipSegmentsWithOccluder(const std::vector<Edge3D> &segments, const Triangle &occluder) const;
+    void appendVisibleSegments(std::vector<Edge3D> &visibleEdges, const std::vector<Edge3D> &segments) const;
+
+    // Member variables
+    std::vector<Triangle> m_triangles;
+    std::unique_ptr<Quadtree> m_quadtree;
 };
 
 inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, const Triangle &triangle) const
@@ -46,10 +64,4 @@ inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, cons
     float c = 1.0f - a - b;
 
     return (a >= 0.0f) && (b >= 0.0f) && (c >= 0.0f);
-}
-inline std::pair<Edge3D, Edge3D> HiddenLineRemoval::splitEdge(const Edge3D &edge, const FVector3 &splitPoint) const
-{
-    Edge3D edgeA(edge.start, splitPoint);
-    Edge3D edgeB(splitPoint, edge.end);
-    return {edgeA, edgeB};
 }
