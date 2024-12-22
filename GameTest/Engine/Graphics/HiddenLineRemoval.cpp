@@ -205,6 +205,12 @@ bool HiddenLineRemoval::processEdge(const Edge3D &edge, const std::vector<Triang
     std::vector<Edge3D> segments = {edge};
     for (const auto &occluder : potentialOccluders)
     {
+        // Skip clipping if the triangle shares a vertex with the edge
+        if (occluder.v0 == edge.start || occluder.v0 == edge.end || occluder.v1 == edge.start ||
+            occluder.v1 == edge.end || occluder.v2 == edge.start || occluder.v2 == edge.end)
+        {
+            continue;
+        }
 
         if (isPointInsideTriangle(edge.start, occluder) && isPointInsideTriangle(edge.end, occluder))
         {

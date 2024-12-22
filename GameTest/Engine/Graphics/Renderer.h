@@ -23,9 +23,6 @@ class Renderer
 
   private:
     static std::vector<Triangle> m_triangles;
-    static std::unordered_map<Edge3D, std::vector<size_t>, Edge3DHash> m_edgeToTriangleMap;
-    static std::vector<bool> m_triangleFacing;
-    static std::vector<Edge3D> m_silhouetteEdges;
 
     static bool QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2);
     // LiangBarsky
