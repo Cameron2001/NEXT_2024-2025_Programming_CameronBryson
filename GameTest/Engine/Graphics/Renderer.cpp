@@ -11,12 +11,13 @@
 #include <Engine/Math/Vector3.h>
 #include <unordered_set>
 #include <vector>
+#include <ppl.h>
 
 std::vector<Triangle> Renderer::m_triangles;
 
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
-    // this can probably be parrellized
+
     for (const auto &face : mesh.triangles)
     {
 
@@ -34,7 +35,7 @@ void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
         {
             continue;
         }
-        m_triangles.emplace_back(mvpVertex0, mvpVertex1, mvpVertex2);
+        m_triangles.emplace_back(std::move(mvpVertex0), std::move(mvpVertex1), std::move(mvpVertex2));
     }
 }
 
@@ -52,10 +53,7 @@ void Renderer::SubmitQueue()
         return;
     HiddenLineRemoval hlr(m_triangles);
     std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
-    std::unordered_set<Edge3D, Edge3DHash> uniqueVisibleEdges;
-    uniqueVisibleEdges.reserve(visibleSegments.size());
-    uniqueVisibleEdges.insert(visibleSegments.begin(), visibleSegments.end());
-    for (const auto &edge : uniqueVisibleEdges)
+    for (const auto &edge : visibleSegments)
     {
         Edge3D clippedEdge = LiangBarsky(edge);
         if (clippedEdge.start != clippedEdge.end)
@@ -99,7 +97,7 @@ Edge3D Renderer::LiangBarsky(const Edge3D &edge)
             if (q[i] < 0)
             {
                 // Line is parallel to plane and outside the boundary
-                return Edge3D(); // Return an invalid edge
+                return {}; // Return an invalid edge
             }
             // Line is parallel to plane and inside; continue
         }
@@ -109,16 +107,14 @@ Edge3D Renderer::LiangBarsky(const Edge3D &edge)
             if (p[i] < 0)
             {
                 if (t > t1)
-                    return Edge3D(); // Line is outside
-                if (t > t0)
-                    t0 = t;
+                    return {}; // Line is outside
+                t0 = std::max(t, t0);
             }
             else
             {
                 if (t < t0)
-                    return Edge3D(); // Line is outside
-                if (t < t1)
-                    t1 = t;
+                    return {}; // Line is outside
+                t1 = std::min(t, t1);
             }
         }
     }
@@ -126,11 +122,11 @@ Edge3D Renderer::LiangBarsky(const Edge3D &edge)
     if (t0 > t1)
     {
         // Line is outside the clipping region
-        return Edge3D(); // Return an invalid edge
+        return {}; // Return an invalid edge
     }
 
     FVector3 clippedStart = edge.start + d * t0;
     FVector3 clippedEnd = edge.start + d * t1;
 
-    return Edge3D(clippedStart, clippedEnd);
+    return {clippedStart, clippedEnd};
 }

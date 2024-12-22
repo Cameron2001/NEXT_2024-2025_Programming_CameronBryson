@@ -36,12 +36,7 @@ struct Edge3D
         return ((start == other.start && end == other.end) || (start == other.end && end == other.start));
     }
     Edge3D(const Edge3D &other) = default;
-    Edge3D &operator=(const Edge3D &other)
-    {
-        start = other.start;
-        end = other.end;
-        return *this;
-    }
+    Edge3D &operator=(const Edge3D &other) = default;
     Edge3D(Edge3D &&other) noexcept = default;
     Edge3D &operator=(Edge3D &&other) noexcept = default;
 };
