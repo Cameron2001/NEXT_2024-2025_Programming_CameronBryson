@@ -11,6 +11,11 @@ struct Triangle
         : v0(other.v0), v1(other.v1), v2(other.v2), isFrontFacing(isFrontFacing)
     {
     }
+    Triangle(const Triangle &other) noexcept = default;
+    Triangle &operator=(const Triangle &other) noexcept = default;
+
+    Triangle(Triangle &&other) noexcept = default;
+    Triangle &operator=(Triangle &&other) noexcept = default;
     bool operator==(const Triangle &other) const
     {
         return v0 == other.v0 && v1 == other.v1 && v2 == other.v2;
@@ -19,14 +24,4 @@ struct Triangle
     FVector3 v1;
     FVector3 v2;
     mutable bool isFrontFacing;
-};
-struct TriangleHasher
-{
-    std::size_t operator()(const Triangle &triangle) const
-    {
-        std::size_t h1 = std::hash<float>()(triangle.v0.X) ^ std::hash<float>()(triangle.v0.Y) << 1;
-        std::size_t h2 = std::hash<float>()(triangle.v1.X) ^ std::hash<float>()(triangle.v1.Y) << 1;
-        std::size_t h3 = std::hash<float>()(triangle.v2.X) ^ std::hash<float>()(triangle.v2.Y) << 1;
-        return h1 ^ h2 ^ h3;
-    }
 };
