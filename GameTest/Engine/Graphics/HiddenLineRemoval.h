@@ -18,6 +18,12 @@ class HiddenLineRemoval
 {
   public:
     explicit HiddenLineRemoval(const std::vector<Triangle> &triangles);
+    ~HiddenLineRemoval() = default;
+    HiddenLineRemoval(const HiddenLineRemoval &) = delete;
+    HiddenLineRemoval &operator=(const HiddenLineRemoval &) = delete;
+
+    HiddenLineRemoval(HiddenLineRemoval &&) = default;
+    HiddenLineRemoval &operator=(HiddenLineRemoval &&) = default;
     std::vector<Edge3D> removeHiddenLines() const;
 
   private:

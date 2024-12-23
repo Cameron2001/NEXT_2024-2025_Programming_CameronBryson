@@ -4,9 +4,8 @@ class Scene;
 
 class SceneManager
 {
-public:
-    template <typename T>
-    static void LoadScene()
+  public:
+    template <typename T> static void LoadScene()
     {
         if (m_currentScene)
         {
@@ -14,12 +13,11 @@ public:
         }
         m_currentScene = std::make_unique<T>();
         m_currentScene->Init();
+        m_currentScene->LateInit();
     }
 
     static Scene &GetCurrentScene();
 
-private:
+  private:
     static std::unique_ptr<Scene> m_currentScene;
-
-
 };

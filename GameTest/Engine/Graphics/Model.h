@@ -3,9 +3,8 @@
 #include "Engine/Graphics/Mesh.h"
 #include <Engine/Math/Matrix4.h>
 
-class Model
+struct Model
 {
-public:
     explicit Model(const std::vector<Mesh> &meshes) : meshes(meshes)
     {
     }

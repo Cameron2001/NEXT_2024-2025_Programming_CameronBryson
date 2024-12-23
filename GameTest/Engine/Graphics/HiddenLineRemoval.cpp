@@ -9,12 +9,14 @@
 #include <cmath>
 #include <concurrent_vector.h>
 #include <ppl.h>
-
+#include "Engine/Core/Events.h"
 // Constructor
 HiddenLineRemoval::HiddenLineRemoval(const std::vector<Triangle> &triangles) : m_triangles(triangles)
 {
+
     sortTrianglesByDepth();
     initializeQuadtree();
+    m_event.Notify(99);
 }
 
 // Public method to remove hidden lines
@@ -91,16 +93,12 @@ void HiddenLineRemoval::processTriangle(const Triangle &triangle, std::unordered
             }
         }
     }
-    if (segments.empty())
-    {
-        // For the life of me I cant figure out why this works better
-        //  Adding fully occluded triangles to the quadtree works best for performance and reduces the most artifacts
-        m_quadtree->insert(triangle);
-    }
-    else
+
+    if (!segments.empty())
     {
         appendVisibleSegments(visibleEdges, segments);
     }
+    m_quadtree->insert(triangle);
 }
 
 // Create edges for a triangle
@@ -163,8 +161,7 @@ std::vector<Edge3D> HiddenLineRemoval::clipSegmentsWithOccluder(const std::vecto
 }
 
 // Append visible segments to the main visible edges vector
-void HiddenLineRemoval::appendVisibleSegments(std::vector<Edge3D> &visibleEdges,
-                                              const std::vector<Edge3D> &segments)
+void HiddenLineRemoval::appendVisibleSegments(std::vector<Edge3D> &visibleEdges, const std::vector<Edge3D> &segments)
 {
     for (const auto &segment : segments)
     {
@@ -193,6 +190,7 @@ std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edg
 
     if (intersectionPoints.empty())
     {
+
         if (isPointInsideTriangle(edge.start, triangle) && isPointInsideTriangle(edge.end, triangle))
             return {}; // Edge is fully occluded
         else

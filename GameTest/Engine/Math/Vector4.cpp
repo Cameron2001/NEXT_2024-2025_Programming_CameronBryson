@@ -147,7 +147,7 @@ float FVector4::LengthSquared() const
 
 FVector4 FVector4::Normalize() const
 {
-    float len = Length();
+    const float len = Length();
     if (len > 0.0f)
     {
         return FVector4(X / len, Y / len, Z / len, W / len);
@@ -168,10 +168,10 @@ FVector4 FVector4::Clamp(const float min, const float max) const
 
 FVector4 FVector4::Project(const FVector4 &normal) const
 {
-    float normalLengthSquared = normal.Dot(normal);
+    const float normalLengthSquared = normal.Dot(normal);
     if (normalLengthSquared > 0.0f)
     {
-        float scalar = this->Dot(normal) / normalLengthSquared;
+        const float scalar = this->Dot(normal) / normalLengthSquared;
         return normal * scalar;
     }
     return FVector4(0.0f, 0.0f, 0.0f, 0.0f);

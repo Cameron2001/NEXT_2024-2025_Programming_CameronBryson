@@ -204,6 +204,7 @@
     <ClInclude Include="Engine\Math\Quadtree.h" />
     <ClInclude Include="Engine\Math\BoundingBox.h" />
     <ClInclude Include="Engine\Systems\ParticleSystem.h" />
+    <ClInclude Include="Engine\Core\Events.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

@@ -64,7 +64,7 @@ template <typename... Components> class View
         const size_t entityCount = m_matchingEntities.size();
         concurrency::parallel_for(static_cast<size_t>(0), entityCount, [&](const size_t i) {
             Entity e = m_matchingEntities[i];
-            func(std::forward_as_tuple(e, m_registry->template GetComponent<Components>(e)...));
+            func(std::forward_as_tuple(e, m_registry->GetComponent<Components>(e)...));
         });
     }
 

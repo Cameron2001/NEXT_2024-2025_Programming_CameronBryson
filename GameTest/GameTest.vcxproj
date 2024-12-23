@@ -187,6 +187,7 @@
     <ClInclude Include="App\SimpleSound.h" />
     <ClInclude Include="App\SimpleSprite.h" />
     <ClInclude Include="Engine\Core\Collision.h" />
+    <ClInclude Include="Engine\Core\Events.h" />
     <ClInclude Include="Engine\Graphics\Edge.h" />
     <ClInclude Include="Engine\Graphics\Triangle.h" />
     <ClInclude Include="Engine\Managers\CollisionManager.h" />

@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "PlayScene.h"
 #include "Game/GameComponents.h"
-#include "Engine/Core/Event.h"
+#include "Engine/Core/Events.h"
 #include "Engine/Core/Threadpool.h"
 #include "App/app.h"
-Event<int> m_event;
+
 Threadpool m_threadpool(4);
 
 PlayScene::PlayScene() : Scene(), m_playerSystem(m_registry.get())
@@ -22,7 +22,7 @@ void PlayScene::Init()
     m_registry->AddComponent<PlayerComponent>(player, 10.0f);
     m_registry->AddComponent<ModelComponent>(player, "ShipOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
-    m_event.Notify(10);
+    // m_event.Notify(10);
 
     auto cube = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(cube, FVector3(0.1f, 0.1f, -6.0f), FVector3(20.0f, 15.0f, 10.0f),
@@ -73,7 +73,7 @@ void PlayScene::Init()
     m_registry->AddComponent<RigidBodyComponent>(cube8);
 
     m_event.Notify(15);
-    auto future = m_threadpool.QueueTask([this](int value) { this->Test(value); }, 9);
+    // auto future = m_threadpool.QueueTask([this](int value) { this->Test(value); }, 9);
 }
 
 void PlayScene::LateInit()
@@ -115,4 +115,5 @@ void PlayScene::LateShutdown()
 
 void PlayScene::Test(int value)
 {
+    printf("Value: %d\n", value);
 }

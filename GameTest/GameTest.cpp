@@ -16,8 +16,8 @@ float fps;
 void Init()
 {
     SceneManager::LoadScene<PlayScene>();
-    SceneManager::GetCurrentScene().Init();
-    SceneManager::GetCurrentScene().LateInit();
+    // SceneManager::GetCurrentScene().Init();
+    // SceneManager::GetCurrentScene().LateInit();
 }
 
 void Update(float deltaTime)

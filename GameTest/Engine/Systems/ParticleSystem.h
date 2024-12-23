@@ -3,7 +3,7 @@
 class ParticleSystem
 {
   public:
-    ParticleSystem(Registry *registry);
+    explicit ParticleSystem(Registry *registry);
     void Update(float deltaTime);
     void Render() const;
     void EmitParticles(const FVector2 &position, int count);

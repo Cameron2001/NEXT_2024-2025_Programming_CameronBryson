@@ -16,6 +16,11 @@ constexpr float yNDCMin = -NDC;
 class Renderer
 {
   public:
+    Renderer() = delete;
+    Renderer(const Renderer &) = delete;
+    Renderer &operator=(const Renderer &) = delete;
+    Renderer(Renderer &&) = delete;
+    Renderer &operator=(Renderer &&) = delete;
     static void QueueMesh(const Mesh &mesh, const Matrix4 &MVP);
     static void QueueModel(const Model &model, const Matrix4 &MVP);
     static void SubmitQueue();

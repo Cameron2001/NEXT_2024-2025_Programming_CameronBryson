@@ -146,7 +146,7 @@ Matrix4 Matrix4::Inverse() const
 
     int indxc[4], indxr[4], ipiv[4] = {};
     int i, icol = 0, irow = 0, j, k, l, ll;
-    float big, dum, pivinv, temp;
+    float big, dum, pivinv;
 
     for (i = 0; i < 4; i++)
     {

@@ -49,7 +49,7 @@ class BoundingBox3D
     {
     }
 
-    BoundingBox3D(const float minX_, const float minY_, const float minZ_, const float maxX_, const float maxY_, float max_z)
+    BoundingBox3D(const float minX_, const float minY_, const float minZ_, const float maxX_, const float maxY_, const float max_z)
         : minX(minX_), minY(minY_), minZ(minZ_), maxX(maxX_), maxY(maxY_), maxZ(max_z)
     {
     }

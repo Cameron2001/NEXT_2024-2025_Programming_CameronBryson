@@ -7,8 +7,14 @@
 class Camera
 {
 public:
+    Camera(const Camera &other) = default;
+    Camera(Camera &&other) noexcept = default;
+    Camera & operator=(const Camera &other) = default;
+    Camera & operator=(Camera &&other) noexcept = default;
+
     Camera(const FVector3 &position, const FVector3 &worldUp, float yaw, float pitch, float FOV);
     ~Camera() = default;
+    
 
 
     void SetPosition(const FVector3 &position);
