@@ -29,7 +29,7 @@ void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
         {
             continue;
         }
-        float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
+        const float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
                             ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
         if (determinant < 0)
         {
@@ -51,8 +51,8 @@ void Renderer::SubmitQueue()
 {
     if (m_triangles.empty())
         return;
-    HiddenLineRemoval hlr(m_triangles);
-    std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
+    const HiddenLineRemoval hlr(m_triangles);
+    const std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
     for (const auto &edge : visibleSegments)
     {
         Edge3D clippedEdge = LiangBarsky(edge);
@@ -72,14 +72,16 @@ void Renderer::ClearQueue()
 
 Edge3D Renderer::LiangBarsky(const Edge3D &edge)
 {
-    float xMin = xNDCMin, xMax = xNDCMax;
-    float yMin = yNDCMin, yMax = yNDCMax;
+    constexpr float xMin = xNDCMin;
+    constexpr float xMax = xNDCMax;
+    constexpr float yMin = yNDCMin;
+    constexpr float yMax = yNDCMax;
 
     float t0 = 0.0f, t1 = 1.0f;
 
     float p[4], q[4];
 
-    FVector3 d = edge.end - edge.start; // Direction vector
+    const FVector3 d = edge.end - edge.start; // Direction vector
 
     p[0] = -d.X;
     q[0] = edge.start.X - xMin;

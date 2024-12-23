@@ -29,7 +29,7 @@ void GraphicsManager::LoadModel(const std::string &modelName, const std::string 
     std::ifstream objFile(path);
     if (!objFile.is_open())
     {
-        std::cerr << "Failed to open file: " << path << std::endl;
+        std::cerr << "Failed to open file: " << path << '\n';
         return;
     }
     std::vector<Mesh> meshes;

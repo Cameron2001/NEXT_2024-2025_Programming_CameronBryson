@@ -66,8 +66,8 @@ void HiddenLineRemoval::initializeQuadtree()
 void HiddenLineRemoval::sortTrianglesByDepth()
 {
     std::sort(m_triangles.begin(), m_triangles.end(), [](const Triangle &a, const Triangle &b) {
-        float depthA = (a.v0.Z + a.v1.Z + a.v2.Z) / 3.0f;
-        float depthB = (b.v0.Z + b.v1.Z + b.v2.Z) / 3.0f;
+        const float depthA = (a.v0.Z + a.v1.Z + a.v2.Z) / 3.0f;
+        const float depthB = (b.v0.Z + b.v1.Z + b.v2.Z) / 3.0f;
         return depthA < depthB;
     });
 }
@@ -77,7 +77,7 @@ void HiddenLineRemoval::processTriangle(const Triangle &triangle, std::unordered
                                         std::vector<Edge3D> &visibleEdges) const
 {
     std::vector<Edge3D> segments;
-    std::vector<Edge3D> edges = createTriangleEdges(triangle);
+    const std::vector<Edge3D> edges = createTriangleEdges(triangle);
 
     for (const auto &edge : edges)
     {
@@ -228,22 +228,26 @@ std::vector<Edge3D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge3D &edg
 // Get the intersection point of two edges if it exists
 bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint)
 {
-    float x1 = edgeA.start.X, y1 = edgeA.start.Y;
-    float x2 = edgeA.end.X, y2 = edgeA.end.Y;
-    float x3 = edgeB.start.X, y3 = edgeB.start.Y;
-    float x4 = edgeB.end.X, y4 = edgeB.end.Y;
+    const float x1 = edgeA.start.X;
+    const float y1 = edgeA.start.Y;
+    const float x2 = edgeA.end.X;
+    const float y2 = edgeA.end.Y;
+    const float x3 = edgeB.start.X;
+    const float y3 = edgeB.start.Y;
+    const float x4 = edgeB.end.X;
+    const float y4 = edgeB.end.Y;
 
-    float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-    const float EPSILON = 1e-6f;
+    const float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    constexpr float EPSILON = 1e-6f;
 
     if (fabs(denom) < EPSILON)
     {
-        bool startStart = edgeA.start == edgeB.start;
-        bool startEnd = edgeA.start == edgeB.end;
-        bool endStart = edgeA.end == edgeB.start;
-        bool endEnd = edgeA.end == edgeB.end;
+        const bool startStart = edgeA.start == edgeB.start;
+        const bool startEnd = edgeA.start == edgeB.end;
+        const bool endStart = edgeA.end == edgeB.start;
+        const bool endEnd = edgeA.end == edgeB.end;
 
-        int overlapCount = startStart + startEnd + endStart + endEnd;
+        const int overlapCount = startStart + startEnd + endStart + endEnd;
 
         if (overlapCount > 1)
             return false;
@@ -259,17 +263,17 @@ bool HiddenLineRemoval::getEdgeIntersection(const Edge3D &edgeA, const Edge3D &e
             return false;
     }
 
-    float t_num = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4);
-    float u_num = (x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2);
-    float t = t_num / denom;
-    float u = u_num / denom;
+    const float t_num = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4);
+    const float u_num = (x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2);
+    const float t = t_num / denom;
+    const float u = u_num / denom;
 
     if (t < -EPSILON || t > 1.0f + EPSILON || u < -EPSILON || u > 1.0f + EPSILON)
         return false;
 
-    float intersectionX = x1 + t * (x2 - x1);
-    float intersectionY = y1 + t * (y2 - y1);
-    float intersectionZ = edgeA.start.Z + t * (edgeA.end.Z - edgeA.start.Z);
+    const float intersectionX = x1 + t * (x2 - x1);
+    const float intersectionY = y1 + t * (y2 - y1);
+    const float intersectionZ = edgeA.start.Z + t * (edgeA.end.Z - edgeA.start.Z);
 
     intersectionPoint = FVector3(intersectionX, intersectionY, intersectionZ);
     return true;

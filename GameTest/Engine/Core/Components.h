@@ -30,7 +30,7 @@ struct BoxBoundsComponent
     {
     }
 
-    BoxBoundsComponent(const FVector3 &extents) : extents(extents)
+    explicit BoxBoundsComponent(const FVector3 &extents) : extents(extents)
     {
     }
 
@@ -43,7 +43,7 @@ struct SphereBoundsComponent
     {
     }
 
-    SphereBoundsComponent(float radius) : radius(radius)
+    explicit SphereBoundsComponent(const float radius) : radius(radius)
     {
     }
 
@@ -53,12 +53,12 @@ struct SphereBoundsComponent
 struct RigidBodyComponent
 {
     RigidBodyComponent() = default;
-    RigidBodyComponent(float linearDrag, float angularDrag) : linearDrag(linearDrag), angularDrag(angularDrag)
+    RigidBodyComponent(const float linearDrag, const float angularDrag) : linearDrag(linearDrag), angularDrag(angularDrag)
     {
     }
-    RigidBodyComponent(float linearDrag, float angularDrag, const FVector3 &initialLinearAcceleration,
+    RigidBodyComponent(const float linearDrag, const float angularDrag, const FVector3 &initialLinearAcceleration,
                        const FVector3 &initialAngularAcceleration)
-        : linearDrag(linearDrag), angularDrag(angularDrag), linearAcceleration(initialLinearAcceleration),
+        : linearDrag(linearDrag), linearAcceleration(initialLinearAcceleration), angularDrag(angularDrag),
           angularAcceleration(initialAngularAcceleration)
     {
     }
@@ -77,7 +77,7 @@ struct TextComponent
 
 struct ModelComponent
 {
-    ModelComponent(const std::string &modelName) : modelName(modelName)
+    explicit ModelComponent(std::string modelName) : modelName(std::move(modelName))
     {
     }
 

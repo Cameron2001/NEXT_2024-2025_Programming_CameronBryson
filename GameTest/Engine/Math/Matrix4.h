@@ -19,7 +19,7 @@ public:
     static Matrix4 CreatePerspectiveMatrix(float fov, float aspectRatio, float zNear, float zFar);
     static Matrix4 CreateViewMatrix(const FVector3 &origin, const FVector3 &target, const FVector3 &up); //Look at
     static Matrix4 CreateTranslationMatrix(const FVector3 &translation);
-    static Matrix4 CreateScaleMatrix(FVector3 scale);
+    static Matrix4 CreateScaleMatrix(const FVector3 &scale);
     static Matrix4 CreateEulerAngleMatrixXYZ(const FVector3 &rotation);
 
     FVector3 GetRight() const;

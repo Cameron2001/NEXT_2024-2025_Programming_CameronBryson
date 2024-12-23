@@ -46,11 +46,11 @@ void ComponentArray<T>::AddComponent(Entity entity, Args &&... args)
 }
 
 template <typename T>
-void ComponentArray<T>::RemoveComponent(Entity entity)
+void ComponentArray<T>::RemoveComponent(const Entity entity)
 {
     Entity entityIndex = m_SparseArray[entity];
     Entity lastIndex = m_DenseArray.size() - 1;
-    Entity lastEntity = m_DenseArray[lastIndex];
+    const Entity lastEntity = m_DenseArray[lastIndex];
 
     std::swap(m_DenseArray[entityIndex], m_DenseArray[lastIndex]);
     std::swap(m_componentArray[entityIndex], m_componentArray[lastIndex]);
@@ -63,13 +63,13 @@ void ComponentArray<T>::RemoveComponent(Entity entity)
 }
 
 template <typename T>
-bool ComponentArray<T>::HasComponent(Entity entity)
+bool ComponentArray<T>::HasComponent(const Entity entity)
 {
     return m_SparseArray[entity] < m_DenseArray.size() && m_DenseArray[m_SparseArray[entity]] == entity;
 }
 
 template <typename T>
-T &ComponentArray<T>::GetComponent(Entity entity)
+T &ComponentArray<T>::GetComponent(const Entity entity)
 {
     Entity index = m_SparseArray[entity];
     return m_componentArray[index];

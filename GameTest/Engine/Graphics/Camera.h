@@ -17,10 +17,10 @@ public:
     void SetFOV(float fov);
 
     const FVector3 &GetPosition() const;
-    const float GetYaw() const;
-    const float GetPitch() const;
-    const Matrix4 &GetViewMatrix();
-    const Matrix4 &GetProjectionMatrix();
+    float GetYaw() const;
+    float GetPitch() const;
+    const Matrix4 &GetViewMatrix() const;
+    const Matrix4 &GetProjectionMatrix() const;
 
 private:
     void UpdateViewMatrix();

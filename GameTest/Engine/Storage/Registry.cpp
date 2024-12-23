@@ -11,7 +11,7 @@ Registry::Registry()
 
 Entity Registry::CreateEntity()
 {
-    Entity ID = m_freeEntities.back();
+    const Entity ID = m_freeEntities.back();
     m_freeEntities.pop_back();
     m_entities.push_back(ID);
     return ID;
@@ -19,7 +19,7 @@ Entity Registry::CreateEntity()
 
 void Registry::DestroyEntity(Entity entity)
 {
-    for (auto &componentArray : m_componentArrays)
+    for (const auto &componentArray : m_componentArrays)
     {
         if (componentArray->HasComponent(entity))
         {

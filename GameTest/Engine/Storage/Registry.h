@@ -80,7 +80,7 @@ template <typename... T> std::vector<Entity> Registry::GetEntitiesWithComponents
         return std::vector<Entity>();
     }
 
-    std::vector<IComponentArray *> arrays = {&GetComponentArray<T>()...};
+    const std::vector<IComponentArray *> arrays = {&GetComponentArray<T>()...};
 
     auto result = arrays[0]->GetEntities();
     for (size_t i = 1; i < arrays.size(); i++)

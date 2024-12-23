@@ -5,7 +5,7 @@ class ParticleSystem
   public:
     ParticleSystem(Registry *registry);
     void Update(float deltaTime);
-    void Render();
+    void Render() const;
     void EmitParticles(const FVector2 &position, int count);
 
   private:

@@ -10,7 +10,7 @@ struct triangleEntry
 {
     Triangle triangle;
     BoundingBox2D bounds;
-    triangleEntry(const Triangle &f);
+    triangleEntry(Triangle f);
 };
 class Quadtree
 {
@@ -23,10 +23,10 @@ class Quadtree
 
   private:
     void subdivide();
-    void query(const Quadtree *node, const BoundingBox2D &range, std::vector<Triangle> &found) const;
-    BoundingBox2D computeBox(const BoundingBox2D &box, int quadrant) const;
+    static void query(const Quadtree *node, const BoundingBox2D &range, std::vector<Triangle> &found);
+    static BoundingBox2D computeBox(const BoundingBox2D &box, int quadrant);
 
-    int getQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &valueBox) const;
+    static int getQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &valueBox);
 
     BoundingBox2D m_bounds;
     int m_capacity;

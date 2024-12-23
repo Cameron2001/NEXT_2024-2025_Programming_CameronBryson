@@ -9,7 +9,7 @@
 class Threadpool
 {
 public:
-    explicit Threadpool(size_t numThreads) : stop(false)
+    explicit Threadpool(const size_t numThreads) : stop(false)
     {
         for (size_t i = 0; i < numThreads; i++)
         {

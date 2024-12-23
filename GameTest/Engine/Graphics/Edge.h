@@ -13,13 +13,8 @@ struct Edge2D
     bool operator==(const Edge2D &other) const
     {
         return start == other.start && end == other.end;
-    };
-    Edge2D &operator=(const Edge2D &other)
-    {
-        start = other.start;
-        end = other.end;
-        return *this;
     }
+    Edge2D &operator=(const Edge2D &other) = default;
 };
 
 struct Edge3D
@@ -33,7 +28,7 @@ struct Edge3D
     bool operator==(const Edge3D &other) const
     {
         // Check for equality regardless of the order of start and end points
-        return ((start == other.start && end == other.end) || (start == other.end && end == other.start));
+        return (start == other.start && end == other.end) || (start == other.end && end == other.start);
     }
 
     Edge3D(const Edge3D &other) = default;
@@ -47,9 +42,9 @@ struct Edge3DHash
 {
     std::size_t operator()(const Edge3D &edge) const
     {
-        std::size_t h1 =
+        const std::size_t h1 =
             std::hash<float>()(edge.start.X) ^ std::hash<float>()(edge.start.Y) ^ std::hash<float>()(edge.start.Z);
-        std::size_t h2 =
+        const std::size_t h2 =
             std::hash<float>()(edge.end.X) ^ std::hash<float>()(edge.end.Y) ^ std::hash<float>()(edge.end.Z);
         return h1 ^ h2;
     }

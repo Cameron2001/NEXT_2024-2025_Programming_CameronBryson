@@ -3,7 +3,7 @@
 
 struct Collision
 {
-    Collision(unsigned int ID1, unsigned int ID2, float penetration, FVector3 normal) : ID1(ID1), ID2(ID2),
+    Collision(const unsigned int ID1, const unsigned int ID2, const float penetration, const FVector3 &normal) : ID1(ID1), ID2(ID2),
         penetration(penetration), normal(normal)
     {
     }

@@ -8,11 +8,11 @@
 #include <vector>
 #include <unordered_map>
 const FVector3 VIEW_DIRECTION(0.0f, 0.0f, 1.0f);
-const float NDC = 1.00f;
-const float xNDCMax = NDC;
-const float xNDCMin = -NDC;
-const float yNDCMax = NDC;
-const float yNDCMin = -NDC;
+constexpr float NDC = 1.00f;
+constexpr float xNDCMax = NDC;
+constexpr float xNDCMin = -NDC;
+constexpr float yNDCMax = NDC;
+constexpr float yNDCMin = -NDC;
 class Renderer
 {
   public:
@@ -50,9 +50,9 @@ inline bool Renderer::QuickReject(const Edge3D &edge0, const Edge3D &edge1, cons
         return true;
 
     // Calculate the area of the triangle
-    FVector3 vec1 = v1 - v0;
-    FVector3 vec2 = v2 - v0;
-    float area = 0.5f * vec1.Cross(vec2).Length();
+    const FVector3 vec1 = v1 - v0;
+    const FVector3 vec2 = v2 - v0;
+    const float area = 0.5f * vec1.Cross(vec2).Length();
 
     // Reject if the area is below the threshold
     if (area < 0.0001f)

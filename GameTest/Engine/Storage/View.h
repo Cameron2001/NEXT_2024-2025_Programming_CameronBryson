@@ -20,7 +20,7 @@ template <typename... Components> class View
       public:
         using ValueType = std::tuple<Entity, Components &...>;
 
-        Iterator(View *view, size_t index) : m_view(view), m_index(index)
+        Iterator(View *view, const size_t index) : m_view(view), m_index(index)
         {
         }
 
@@ -62,7 +62,7 @@ template <typename... Components> class View
     template <typename Func> void ParallelForEach(Func &&func)
     {
         const size_t entityCount = m_matchingEntities.size();
-        concurrency::parallel_for(size_t(0), entityCount, [&](size_t i) {
+        concurrency::parallel_for(static_cast<size_t>(0), entityCount, [&](const size_t i) {
             Entity e = m_matchingEntities[i];
             func(std::forward_as_tuple(e, m_registry->template GetComponent<Components>(e)...));
         });

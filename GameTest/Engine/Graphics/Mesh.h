@@ -5,7 +5,7 @@
 
 struct Mesh
 {
-    Mesh(const std::vector<Triangle> &triangles) : triangles(triangles)
+    explicit Mesh(const std::vector<Triangle> &triangles) : triangles(triangles)
     {
     }
     std::vector<Triangle> triangles;

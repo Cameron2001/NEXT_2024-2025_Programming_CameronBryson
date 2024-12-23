@@ -16,7 +16,7 @@ void ParticleSystem::Update(float deltaTime)
     Concurrency::concurrent_vector<Entity> entitiesToDestroy;
 
     view.ParallelForEach([&](const auto &entityTuple) {
-        Entity entity = std::get<0>(entityTuple);
+        const Entity entity = std::get<0>(entityTuple);
         auto &particle = std::get<1>(entityTuple);
 
         particle.position += particle.linearVelocity * deltaTime;
@@ -35,7 +35,7 @@ void ParticleSystem::Update(float deltaTime)
     }
 }
 
-void ParticleSystem::Render()
+void ParticleSystem::Render() const
 {
     auto view = m_registry->CreateView<ParticleComponent>();
     for (auto &&entity : view)
@@ -45,11 +45,11 @@ void ParticleSystem::Render()
     }
 }
 
-void ParticleSystem::EmitParticles(const FVector2 &position, int count)
+void ParticleSystem::EmitParticles(const FVector2 &position, const int count)
 {
     for (int i = 0; i < count; ++i)
     {
-        auto entity = m_registry->CreateEntity();
+        const auto entity = m_registry->CreateEntity();
         m_registry->AddComponent<ParticleComponent>(entity, position, 0, GenerateRandomAcceleration(),
                                                     FRAND_RANGE(1.0f, 25.0f), GenerateRandomLifeTime());
     }

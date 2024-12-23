@@ -7,7 +7,7 @@ struct Triangle
     {
         isFrontFacing = false;
     }
-    Triangle(const Triangle &other, bool isFrontFacing)
+    Triangle(const Triangle &other, const bool isFrontFacing)
         : v0(other.v0), v1(other.v1), v2(other.v2), isFrontFacing(isFrontFacing)
     {
     }

@@ -6,7 +6,7 @@
 class Model
 {
 public:
-    Model(const std::vector<Mesh> &meshes) : meshes(meshes)
+    explicit Model(const std::vector<Mesh> &meshes) : meshes(meshes)
     {
     }
 

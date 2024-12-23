@@ -13,7 +13,7 @@ class BoundingBox2D
     {
     }
 
-    BoundingBox2D(float minX_, float minY_, float maxX_, float maxY_)
+    BoundingBox2D(const float minX_, const float minY_, const float maxX_, const float maxY_)
         : minX(minX_), minY(minY_), maxX(maxX_), maxY(maxY_)
     {
     }
@@ -49,8 +49,8 @@ class BoundingBox3D
     {
     }
 
-    BoundingBox3D(float minX_, float minY_, float minZ_, float maxX_, float maxY_, float maxZ_)
-        : minX(minX_), minY(minY_), minZ(minZ_), maxX(maxX_), maxY(maxY_), maxZ(maxZ_)
+    BoundingBox3D(const float minX_, const float minY_, const float minZ_, const float maxX_, const float maxY_, float max_z)
+        : minX(minX_), minY(minY_), minZ(minZ_), maxX(maxX_), maxY(maxY_), maxZ(max_z)
     {
     }
 

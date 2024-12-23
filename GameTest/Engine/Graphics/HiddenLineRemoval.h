@@ -17,7 +17,7 @@ struct Edge3DHash; // Forward declaration
 class HiddenLineRemoval
 {
   public:
-    HiddenLineRemoval(const std::vector<Triangle> &triangles);
+    explicit HiddenLineRemoval(const std::vector<Triangle> &triangles);
     std::vector<Edge3D> removeHiddenLines() const;
 
   private:
@@ -47,19 +47,19 @@ class HiddenLineRemoval
 
 inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, const Triangle &triangle)
 {
-    FVector2 p(point.X, point.Y);
-    FVector2 v0(triangle.v0.X, triangle.v0.Y);
-    FVector2 v1(triangle.v1.X, triangle.v1.Y);
-    FVector2 v2(triangle.v2.X, triangle.v2.Y);
+    const FVector2 p(point.X, point.Y);
+    const FVector2 v0(triangle.v0.X, triangle.v0.Y);
+    const FVector2 v1(triangle.v1.X, triangle.v1.Y);
+    const FVector2 v2(triangle.v2.X, triangle.v2.Y);
 
     // Compute vectors
-    float denom = (v1.Y - v2.Y) * (v0.X - v2.X) + (v2.X - v1.X) * (v0.Y - v2.Y);
+    const float denom = (v1.Y - v2.Y) * (v0.X - v2.X) + (v2.X - v1.X) * (v0.Y - v2.Y);
     if (fabs(denom) < 1e-6f)
         return false; // Degenerate triangle
 
-    float a = ((v1.Y - v2.Y) * (p.X - v2.X) + (v2.X - v1.X) * (p.Y - v2.Y)) / denom;
-    float b = ((v2.Y - v0.Y) * (p.X - v2.X) + (v0.X - v2.X) * (p.Y - v2.Y)) / denom;
-    float c = 1.0f - a - b;
+    const float a = ((v1.Y - v2.Y) * (p.X - v2.X) + (v2.X - v1.X) * (p.Y - v2.Y)) / denom;
+    const float b = ((v2.Y - v0.Y) * (p.X - v2.X) + (v0.X - v2.X) * (p.Y - v2.Y)) / denom;
+    const float c = 1.0f - a - b;
 
     return (a >= 0.0f) && (b >= 0.0f) && (c >= 0.0f);
 }

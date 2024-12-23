@@ -5,15 +5,15 @@ int screenWidth = 1280;
 int screenHeight = 720;
 void Renderer2D::DrawLine(const FVector2 &start, const FVector2 &end, const FVector3 &color)
 {
-    FVector2 startScreen = ndcToScreen(start);
-    FVector2 endScreen = ndcToScreen(end);
+    const FVector2 startScreen = ndcToScreen(start);
+    const FVector2 endScreen = ndcToScreen(end);
     App::DrawLine(startScreen.X, startScreen.Y, endScreen.X, endScreen.Y, color.X, color.Y, color.Z);
 }
 
 void Renderer2D::DrawLine(const FVector3 &start, const FVector3 &end, const FVector3 &color)
 {
-    FVector3 startScreen = ndcToScreen(start);
-    FVector3 endScreen = ndcToScreen(end);
+    const FVector3 startScreen = ndcToScreen(start);
+    const FVector3 endScreen = ndcToScreen(end);
     App::DrawLine(startScreen.X, startScreen.Y, endScreen.X, endScreen.Y, color.X, color.Y, color.Z);
 }
 
@@ -57,12 +57,12 @@ void Renderer2D::DrawCross(const FVector3 &center, const float radius, const FVe
 void Renderer2D::DrawParticle(const FVector2 &center, const float length, const float rotation, const FVector3 &color)
 {
     // works for now but should be changed later
-    float halfLength = length / 2.0f;
-    float aspectRatio = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
-    float offsetX = halfLength * cos(rotation);
-    float offsetY = halfLength * sin(rotation) * aspectRatio;
-    FVector2 start(center.X - offsetX, center.Y - offsetY);
-    FVector2 end(center.X + offsetX, center.Y + offsetY);
+    const float halfLength = length / 2.0f;
+    const float aspectRatio = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
+    const float offsetX = halfLength * cos(rotation);
+    const float offsetY = halfLength * sin(rotation) * aspectRatio;
+    const FVector2 start(center.X - offsetX, center.Y - offsetY);
+    const FVector2 end(center.X + offsetX, center.Y + offsetY);
     DrawLine(start, end, color);
 }
 

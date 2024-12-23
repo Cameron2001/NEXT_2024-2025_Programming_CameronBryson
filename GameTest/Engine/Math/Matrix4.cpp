@@ -15,7 +15,7 @@ Matrix4::Matrix4()
     }
 }
 
-void Matrix4::Set(int row, int column, float value)
+void Matrix4::Set(const int row, const int column, const float value)
 {
     if (row < 0 || row >= 4 || column < 0 || column >= 4)
     {
@@ -27,8 +27,8 @@ void Matrix4::Set(int row, int column, float value)
 Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRatio, const float zNear, const float zFar)
 {
     Matrix4 perspectiveMatrix;
-    float radFov = MathUtil::DegreesToRadians(fov);
-    float tanHalfFOV = tanf(radFov / 2.0f);
+    const float radFov = MathUtil::DegreesToRadians(fov);
+    const float tanHalfFOV = tanf(radFov / 2.0f);
 
     perspectiveMatrix.Set(0, 0, 1.0f / (aspectRatio * tanHalfFOV));
     perspectiveMatrix.Set(1, 1, 1.0f / tanHalfFOV);
@@ -42,9 +42,9 @@ Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRati
 Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &target, const FVector3 &up)
 {
     //Right handed
-    FVector3 forward = (target - origin).Normalize(); //zAxis
-    FVector3 right = forward.Cross(up).Normalize(); //xAxis
-    FVector3 newUp = right.Cross(forward); //yAxis
+    const FVector3 forward = (target - origin).Normalize(); //zAxis
+    const FVector3 right = forward.Cross(up).Normalize(); //xAxis
+    const FVector3 newUp = right.Cross(forward); //yAxis
 
     Matrix4 viewMatrix;
 
@@ -77,7 +77,7 @@ Matrix4 Matrix4::CreateTranslationMatrix(const FVector3 &translation)
     return translationMatrix;
 }
 
-Matrix4 Matrix4::CreateScaleMatrix(const FVector3 scale)
+Matrix4 Matrix4::CreateScaleMatrix(const FVector3 &scale)
 {
     Matrix4 scaleMatrix;
     scaleMatrix.Set(0, 0, scale.X);
@@ -89,17 +89,17 @@ Matrix4 Matrix4::CreateScaleMatrix(const FVector3 scale)
 Matrix4 Matrix4::CreateEulerAngleMatrixXYZ(const FVector3 &rotation)
 {
     Matrix4 eulerAngleMatrix;
-    float radX = MathUtil::DegreesToRadians(rotation.X);
-    float radY = MathUtil::DegreesToRadians(rotation.Y);
-    float radZ = MathUtil::DegreesToRadians(rotation.Z);
+    const float radX = MathUtil::DegreesToRadians(rotation.X);
+    const float radY = MathUtil::DegreesToRadians(rotation.Y);
+    const float radZ = MathUtil::DegreesToRadians(rotation.Z);
 
-    float cosX = cosf(-radX);
-    float cosY = cosf(-radY);
-    float cosZ = cosf(-radZ);
+    const float cosX = cosf(-radX);
+    const float cosY = cosf(-radY);
+    const float cosZ = cosf(-radZ);
 
-    float sinX = sinf(-radX);
-    float sinY = sinf(-radY);
-    float sinZ = sinf(-radZ);
+    const float sinX = sinf(-radX);
+    const float sinY = sinf(-radY);
+    const float sinZ = sinf(-radZ);
 
     eulerAngleMatrix.Set(0, 0, cosY * cosZ);
     eulerAngleMatrix.Set(0, 1, -cosX * sinZ + sinX * sinY * cosZ);
@@ -144,7 +144,7 @@ Matrix4 Matrix4::Inverse() const
     float m[16];
     memcpy(m, this->m, 16 * sizeof(float));
 
-    int indxc[4], indxr[4], ipiv[4] = {0};
+    int indxc[4], indxr[4], ipiv[4] = {};
     int i, icol = 0, irow = 0, j, k, l, ll;
     float big, dum, pivinv, temp;
 
@@ -256,19 +256,18 @@ Matrix4 Matrix4::operator*(const Matrix4 &obj) const
 
 FVector3 Matrix4::operator*(const FVector3 &obj) const
 {
-    float x = m[0] * obj.X + m[4] * obj.Y + m[8] * obj.Z + m[12] * 1.0f;
-    float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * 1.0f;
-    float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * 1.0f;
-    float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * 1.0f;
+    const float x = m[0] * obj.X + m[4] * obj.Y + m[8] * obj.Z + m[12] * 1.0f;
+    const float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * 1.0f;
+    const float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * 1.0f;
     return FVector3{x, y, z};
 }
 
 FVector4 Matrix4::operator*(const FVector4 &obj) const
 {
-    float x = m[0] * obj.X + m[4] * obj.Y + m[8] * obj.Z + m[12] * obj.W;
-    float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * obj.W;
-    float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * obj.W;
-    float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * obj.W;
+    const float x = m[0] * obj.X + m[4] * obj.Y + m[8] * obj.Z + m[12] * obj.W;
+    const float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * obj.W;
+    const float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * obj.W;
+    const float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * obj.W;
     return FVector4{x, y, z, w};
 }
 
@@ -277,7 +276,7 @@ FVector3 Matrix4::TransformWithPerspectiveDivide(const FVector3 &obj) const
     float x = m[0] * obj.X + m[4] * obj.Y + m[8] * obj.Z + m[12] * 1.0f;
     float y = m[1] * obj.X + m[5] * obj.Y + m[9] * obj.Z + m[13] * 1.0f;
     float z = m[2] * obj.X + m[6] * obj.Y + m[10] * obj.Z + m[14] * 1.0f;
-    float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * 1.0f;
+    const float w = m[3] * obj.X + m[7] * obj.Y + m[11] * obj.Z + m[15] * 1.0f;
 
     // Perspective divide when requested
     if (w != 0.0f)
