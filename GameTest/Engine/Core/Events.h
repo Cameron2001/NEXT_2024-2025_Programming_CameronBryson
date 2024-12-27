@@ -1,3 +1,4 @@
 #pragma once
 #include "Event.h"
-static Event<int> m_event;
+extern Event<int> TestEvent;
+extern Event<int> TestEvent2;

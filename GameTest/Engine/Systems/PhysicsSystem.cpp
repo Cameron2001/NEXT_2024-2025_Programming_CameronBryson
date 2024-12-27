@@ -26,6 +26,10 @@ void PhysicsSystem::Update(const float dt)
         rigidBody.linearVelocity += rigidBody.linearAcceleration * dt;
         rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;
 
+        // Apply damping
+        rigidBody.linearVelocity *= std::pow(1 - rigidBody.linearDrag, dt);
+        rigidBody.angularVelocity *= std::pow(1 - rigidBody.angularDrag, dt);
+
         // Update transform
         transform.Position += rigidBody.linearVelocity * dt;
         transform.Rotation += rigidBody.angularVelocity * dt;

@@ -4,6 +4,7 @@
 #include "Engine/Core/Events.h"
 #include "Engine/Core/Threadpool.h"
 #include "App/app.h"
+#include <Engine/Core/Event.h>
 
 Threadpool m_threadpool(4);
 
@@ -15,11 +16,13 @@ void PlayScene::Init()
 {
     Scene::Init();
     m_playerSystem.Init();
-    m_event.AddListener(this, &PlayScene::Test);
+    auto self = shared_from_this();
+    TestEvent.AddListener(self, &PlayScene::Test);
+    TestEvent2.AddListener(self, &PlayScene::Test);
     auto player = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -1.0f), FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(0.15f, 0.15f, 0.15f));
-    m_registry->AddComponent<PlayerComponent>(player, 10.0f);
+    m_registry->AddComponent<PlayerComponent>(player, 2.0f);
     m_registry->AddComponent<ModelComponent>(player, "ShipOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
     // m_event.Notify(10);
@@ -72,7 +75,7 @@ void PlayScene::Init()
     m_registry->AddComponent<ModelComponent>(cube8, "ShipOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube8);
 
-    m_event.Notify(15);
+    TestEvent.Notify(15);
     // auto future = m_threadpool.QueueTask([this](int value) { this->Test(value); }, 9);
 }
 

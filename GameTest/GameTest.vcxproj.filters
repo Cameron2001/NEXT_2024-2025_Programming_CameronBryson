@@ -39,9 +39,6 @@
     <ClCompile Include="Engine\Graphics\Camera.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\CollisionManager.cpp">
-      <Filter>Engine\Managers</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Managers\GraphicsManager.cpp">
       <Filter>Engine\Managers</Filter>
     </ClCompile>
@@ -66,7 +63,7 @@
     <ClCompile Include="Engine\Graphics\Renderer2D.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\CollisionDetectionSystem.cpp">
+    <ClCompile Include="Engine\Systems\CollisionSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Systems\PhysicsSystem.cpp">
@@ -82,6 +79,8 @@
     <ClCompile Include="Engine\Math\Octree.cpp" />
     <ClCompile Include="Engine\Math\Quadtree.cpp" />
     <ClCompile Include="Engine\Systems\ParticleSystem.cpp" />
+    <ClCompile Include="Engine\Core\Events.cpp" />
+    <ClCompile Include="Engine\Core\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -139,9 +138,6 @@
     <ClInclude Include="Engine\Core\Collision.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\CollisionManager.h">
-      <Filter>Engine\Managers</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Core\Components.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
@@ -181,7 +177,7 @@
     <ClInclude Include="Engine\Graphics\Renderer2D.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Systems\CollisionDetectionSystem.h">
+    <ClInclude Include="Engine\Systems\CollisionSystem.h">
       <Filter>Engine\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Systems\PhysicsSystem.h">
@@ -205,6 +201,16 @@
     <ClInclude Include="Engine\Math\BoundingBox.h" />
     <ClInclude Include="Engine\Systems\ParticleSystem.h" />
     <ClInclude Include="Engine\Core\Events.h" />
+    <ClInclude Include="Engine\Core\TestResult.h" />
+    <ClInclude Include="Engine\Math\OctreeTests.h" />
+    <ClInclude Include="Engine\Core\Tests.h" />
+    <ClInclude Include="Engine\Core\Logger.h" />
+    <ClInclude Include="Engine\Math\BoundingBoxTests.h" />
+    <ClInclude Include="Engine\Math\Matrix4Tests.h" />
+    <ClInclude Include="Engine\Math\QuadtreeTests.h" />
+    <ClInclude Include="Engine\Math\Vector2Tests.h" />
+    <ClInclude Include="Engine\Math\Vector3Tests.h" />
+    <ClInclude Include="Engine\Math\Vector4Tests.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

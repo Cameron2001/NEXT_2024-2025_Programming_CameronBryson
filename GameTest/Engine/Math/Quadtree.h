@@ -8,22 +8,22 @@
 #include <Engine/Graphics/Edge.h>
 struct triangleEntry
 {
-    Triangle triangle;
+    Triangle2D triangle;
     BoundingBox2D bounds;
-    triangleEntry(Triangle f);
+    triangleEntry(Triangle2D f);
 };
 class Quadtree
 {
   public:
     Quadtree(const BoundingBox2D &bounds, int capacity = 4, int maxDepth = 10, int level = 0);
-    bool insert(const Triangle &triangle);
-    std::vector<Triangle> queryArea(const BoundingBox2D &range) const;
-    std::vector<Triangle> querytriangle(const Triangle &triangle) const;
-    std::vector<Triangle> queryEdge(const Edge3D &edge) const;
+    bool insert(const Triangle2D &triangle);
+    std::vector<Triangle2D> queryArea(const BoundingBox2D &range) const;
+    std::vector<Triangle2D> querytriangle(const Triangle2D &triangle) const;
+    std::vector<Triangle2D> queryEdge(const Edge2D &edge) const;
 
   private:
     void subdivide();
-    static void query(const Quadtree *node, const BoundingBox2D &range, std::vector<Triangle> &found);
+    static void query(const Quadtree *node, const BoundingBox2D &range, std::vector<Triangle2D> &found);
     static BoundingBox2D computeBox(const BoundingBox2D &box, int quadrant);
 
     static int getQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &valueBox);

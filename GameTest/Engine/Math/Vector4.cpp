@@ -299,6 +299,16 @@ IVector4 &IVector4::operator/=(const int obj)
     return *this;
 }
 
+bool IVector4::operator==(const IVector4 &other) const
+{
+    return X == other.X && Y == other.Y && Z == other.Z && W == other.W;
+}
+
+bool IVector4::operator!=(const IVector4 &other) const
+{
+    return !(*this == other);
+}
+
 float IVector4::Length() const
 {
     return std::sqrt(static_cast<float>(X * X + Y * Y + Z * Z + W * W));

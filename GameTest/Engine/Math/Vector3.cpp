@@ -133,6 +133,26 @@ FVector3 FVector3::Cross(const FVector3 &obj) const
     return FVector3(Y * obj.Z - Z * obj.Y, Z * obj.X - X * obj.Z, X * obj.Y - Y * obj.X);
 }
 
+FVector3 FVector3::Clamp(float min, float max) const
+{
+    float clampedX = std::max(min, std::min(X, max));
+    float clampedY = std::max(min, std::min(Y, max));
+    float clampedZ = std::max(min, std::min(Z, max));
+    return FVector3(clampedX, clampedY, clampedZ);
+}
+
+FVector3 FVector3::Project(const FVector3 &normal) const
+{
+    float dotProduct = Dot(normal);
+    float normalLengthSquared = normal.LengthSquared();
+    if (normalLengthSquared > 0.0f)
+    {
+        float scalar = dotProduct / normalLengthSquared;
+        return FVector3(normal.X * scalar, normal.Y * scalar, normal.Z * scalar);
+    }
+    return FVector3(0.0f, 0.0f, 0.0f);
+}
+
 IVector3::IVector3() : X(0), Y(0), Z(0)
 {
 }
@@ -221,6 +241,16 @@ IVector3 &IVector3::operator/=(const int obj)
     Y /= obj;
     Z /= obj;
     return *this;
+}
+
+bool IVector3::operator==(const IVector3 &other) const
+{
+    return X == other.X && Y == other.Y && Z == other.Z;
+}
+
+bool IVector3::operator!=(const IVector3 &other) const
+{
+    return !(*this == other);
 }
 
 float IVector3::Length() const

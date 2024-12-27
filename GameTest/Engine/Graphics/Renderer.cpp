@@ -1,19 +1,18 @@
 #include "stdafx.h"
 #include "Edge.h"
-#include "Triangle.h"
 #include "HiddenLineRemoval.h"
 #include "Mesh.h"
 #include "Model.h"
 #include "Renderer.h"
 #include "Renderer2D.h"
-#include <algorithm>
+#include "Triangle.h"
 #include <Engine/Math/Matrix4.h>
+#include <Engine/Math/Vector2.h>
 #include <Engine/Math/Vector3.h>
-#include <unordered_set>
+#include <utility>
 #include <vector>
-#include <ppl.h>
 
-std::vector<Triangle> Renderer::m_triangles;
+std::vector<Triangle2D> Renderer::m_triangles;
 
 void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
 {
@@ -30,12 +29,16 @@ void Renderer::QueueMesh(const Mesh &mesh, const Matrix4 &MVP)
             continue;
         }
         const float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
-                            ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
+                                  ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
         if (determinant < 0)
         {
             continue;
         }
-        m_triangles.emplace_back(std::move(mvpVertex0), std::move(mvpVertex1), std::move(mvpVertex2));
+        float avgZ = (mvpVertex0.Z + mvpVertex1.Z + mvpVertex2.Z) / 3.0f;
+        FVector2 v0(mvpVertex0.X, mvpVertex0.Y);
+        FVector2 v1(mvpVertex1.X, mvpVertex1.Y);
+        FVector2 v2(mvpVertex2.X, mvpVertex2.Y);
+        m_triangles.emplace_back(v0, v1, v2, avgZ);
     }
 }
 
@@ -52,10 +55,10 @@ void Renderer::SubmitQueue()
     if (m_triangles.empty())
         return;
     const HiddenLineRemoval hlr(m_triangles);
-    const std::vector<Edge3D> visibleSegments = hlr.removeHiddenLines();
+    const std::vector<Edge2D> visibleSegments = hlr.removeHiddenLines();
     for (const auto &edge : visibleSegments)
     {
-        Edge3D clippedEdge = LiangBarsky(edge);
+        Edge2D clippedEdge = LiangBarsky(edge);
         if (clippedEdge.start != clippedEdge.end)
         {
 
@@ -70,7 +73,7 @@ void Renderer::ClearQueue()
     m_triangles.clear();
 }
 
-Edge3D Renderer::LiangBarsky(const Edge3D &edge)
+Edge2D Renderer::LiangBarsky(const Edge2D &edge)
 {
     constexpr float xMin = xNDCMin;
     constexpr float xMax = xNDCMax;
@@ -81,7 +84,7 @@ Edge3D Renderer::LiangBarsky(const Edge3D &edge)
 
     float p[4], q[4];
 
-    const FVector3 d = edge.end - edge.start; // Direction vector
+    const FVector2 d = edge.end - edge.start; // Direction vector
 
     p[0] = -d.X;
     q[0] = edge.start.X - xMin;
@@ -127,8 +130,8 @@ Edge3D Renderer::LiangBarsky(const Edge3D &edge)
         return {}; // Return an invalid edge
     }
 
-    FVector3 clippedStart = edge.start + d * t0;
-    FVector3 clippedEnd = edge.start + d * t1;
+    FVector2 clippedStart = edge.start + d * t0;
+    FVector2 clippedEnd = edge.start + d * t1;
 
     return {clippedStart, clippedEnd};
 }

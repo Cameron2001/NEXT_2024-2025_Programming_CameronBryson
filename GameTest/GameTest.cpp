@@ -12,9 +12,29 @@
 //------------------------------------------------------------------------
 #include "Engine/Managers/SceneManager.h"
 #include "Game/PlayScene.h"
-float fps;
+#include "Engine/Core/Tests.h"
+#include "Engine/Core/Logger.h"
+float fps = 0.0f;
+float minFps = 999999.0f;
+float maxFps = 0.0f;
+float totalFps = 0.0f;
+int frameCount = 0;
+// Warm-Up Configuration
+const int warmUpFrames = 5; // Number of frames to skip for minFps
+int warmUpFrameCount = 0;   // Counter for warm-up frames
+bool testsEnabled = true;
 void Init()
 {
+    if (testsEnabled)
+    {
+        auto testResults = RunTests();
+        for (const auto &testResult : testResults)
+        {
+            Logger::GetInstance().LogTestResult(testResult);
+        }
+        Logger::GetInstance().LogInfo("All tests completed.");
+    }
+    auto &brub = Logger::GetInstance();
     SceneManager::LoadScene<PlayScene>();
     // SceneManager::GetCurrentScene().Init();
     // SceneManager::GetCurrentScene().LateInit();
@@ -25,16 +45,48 @@ void Update(float deltaTime)
     deltaTime /= 1000.0f;
     SceneManager::GetCurrentScene().Update(deltaTime);
     SceneManager::GetCurrentScene().LateUpdate(deltaTime);
-    fps = 1.0f / deltaTime;
+    // Calculate FPS
+    if (deltaTime > 0.0f)
+        fps = 1.0f / deltaTime;
+
+    // Update FPS Metrics
+    if (warmUpFrameCount >= warmUpFrames)
+    {
+        // Update minFps after warm-up
+        if (fps < minFps)
+            minFps = fps;
+    }
+
+    // Always update maxFps and totalFps
+    if (fps > maxFps)
+        maxFps = fps;
+
+    totalFps += fps;
+    frameCount++;
+
+    // Increment warm-up frame counter
+    if (warmUpFrameCount < warmUpFrames)
+        warmUpFrameCount++;
 }
 
 void Render()
 {
     SceneManager::GetCurrentScene().Render();
     SceneManager::GetCurrentScene().LateRender();
-    std::string fpsStr = std::to_string(fps);
-    fpsStr = "FPS: " + fpsStr;
-    App::Print(0.5, 0.5, fpsStr.c_str());
+    // Calculate Average FPS
+    float averageFps = (frameCount > 0) ? (totalFps / frameCount) : 0.0f;
+
+    // Prepare FPS Strings
+    std::string fpsStr = "FPS: " + std::to_string(fps);
+    std::string minFpsStr = "Min FPS: " + std::to_string(minFps);
+    std::string maxFpsStr = "Max FPS: " + std::to_string(maxFps);
+    std::string avgFpsStr = "Avg FPS: " + std::to_string(averageFps);
+
+    // Print FPS Metrics
+    App::Print(100, 200, fpsStr.c_str());
+    App::Print(100, 220, minFpsStr.c_str());
+    App::Print(100, 240, maxFpsStr.c_str());
+    App::Print(100, 260, avgFpsStr.c_str());
 }
 void Shutdown()
 {

@@ -32,5 +32,8 @@ public:
     FVector4 operator*(const FVector4 &obj) const;
     FVector3 TransformWithPerspectiveDivide(const FVector3 &obj) const;
 
+    bool operator==(const Matrix4 &other) const;
+    bool operator!=(const Matrix4 &other) const;
+
 
 };

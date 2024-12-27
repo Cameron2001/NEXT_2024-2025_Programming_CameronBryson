@@ -35,7 +35,7 @@ void GraphicsManager::LoadModel(const std::string &modelName, const std::string 
     std::vector<Mesh> meshes;
     std::vector<FVector3> tempPositions;
     std::vector<FVector3> tempNormals;
-    std::vector<Triangle> triangles;
+    std::vector<Triangle3D> triangles;
     std::string currentMeshName = "Default";
     std::string line;
     while (std::getline(objFile, line))

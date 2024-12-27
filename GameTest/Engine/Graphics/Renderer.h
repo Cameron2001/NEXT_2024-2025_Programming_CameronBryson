@@ -2,11 +2,10 @@
 #include "Engine/Graphics/Edge.h"
 #include "Engine/Graphics/Mesh.h"
 #include "Engine/Graphics/Model.h"
+#include "Engine/Graphics/Triangle.h"
 #include "Engine/Math/Matrix4.h"
 #include "Engine/Math/Vector3.h"
-#include "Engine/Graphics/Triangle.h"
 #include <vector>
-#include <unordered_map>
 const FVector3 VIEW_DIRECTION(0.0f, 0.0f, 1.0f);
 constexpr float NDC = 1.00f;
 constexpr float xNDCMax = NDC;
@@ -27,11 +26,11 @@ class Renderer
     static void ClearQueue();
 
   private:
-    static std::vector<Triangle> m_triangles;
+    static std::vector<Triangle2D> m_triangles;
 
     static bool QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2);
     // LiangBarsky
-    static Edge3D LiangBarsky(const Edge3D &edge);
+    static Edge2D LiangBarsky(const Edge2D &edge);
 };
 inline bool Renderer::QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2)
 {

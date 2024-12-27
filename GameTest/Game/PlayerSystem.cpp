@@ -26,7 +26,7 @@ void PlayerSystem::Update(float dt)
     bool F = App::IsKeyPressed('F');
     bool V = App::IsKeyPressed('V');
 
-    constexpr float rotationSpeed = 1000.0f;
+    constexpr float rotationSpeed = 100.0f;
 
     view.ParallelForEach([&](const auto &entityTuple) {
         auto &player = std::get<1>(entityTuple);
@@ -34,24 +34,24 @@ void PlayerSystem::Update(float dt)
 
         // Movement
         if (UP)
-            rigidbody.linearAcceleration += FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed * dt;
+            rigidbody.linearAcceleration += FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
         if (DOWN)
-            rigidbody.linearAcceleration -= FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed * dt;
+            rigidbody.linearAcceleration -= FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
         if (LEFT)
-            rigidbody.linearAcceleration -= FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed * dt;
+            rigidbody.linearAcceleration -= FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed;
         if (RIGHT)
-            rigidbody.linearAcceleration += FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed * dt;
+            rigidbody.linearAcceleration += FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed;
         if (FORWARD)
-            rigidbody.linearAcceleration -= FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed * dt;
+            rigidbody.linearAcceleration -= FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed;
         if (BACKWARD)
-            rigidbody.linearAcceleration += FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed * dt;
+            rigidbody.linearAcceleration += FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed;
 
         // Rotation
         if (R)
-            rigidbody.angularAcceleration += FVector3{0.0f, 0.0f, 1.0f} * rotationSpeed * dt;
+            rigidbody.angularAcceleration += FVector3{0.0f, 0.0f, 1.0f} * rotationSpeed;
         if (F)
-            rigidbody.angularAcceleration += FVector3{0.0f, 1.0f, 0.0f} * rotationSpeed * dt;
+            rigidbody.angularAcceleration += FVector3{0.0f, 1.0f, 0.0f} * rotationSpeed;
         if (V)
-            rigidbody.angularAcceleration += FVector3{1.0f, 0.0f, 0.0f} * rotationSpeed * dt;
+            rigidbody.angularAcceleration += FVector3{1.0f, 0.0f, 0.0f} * rotationSpeed;
     });
 }

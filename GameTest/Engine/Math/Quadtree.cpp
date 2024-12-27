@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <memory>
 #include <array>
-triangleEntry::triangleEntry(Triangle f) : triangle(std::move(f))
+triangleEntry::triangleEntry(Triangle2D f) : triangle(std::move(f))
 {
     const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
     const float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
@@ -17,7 +17,7 @@ Quadtree::Quadtree(const BoundingBox2D &bounds, const int capacity, const int ma
 {
 }
 
-bool Quadtree::insert(const Triangle &triangle)
+bool Quadtree::insert(const Triangle2D &triangle)
 {
     triangleEntry entry(triangle);
 
@@ -59,14 +59,14 @@ bool Quadtree::insert(const Triangle &triangle)
     return true;
 }
 
-std::vector<Triangle> Quadtree::queryArea(const BoundingBox2D &range) const
+std::vector<Triangle2D> Quadtree::queryArea(const BoundingBox2D &range) const
 {
-    std::vector<Triangle> found;
+    std::vector<Triangle2D> found;
     query(this, range, found);
     return found;
 }
 
-std::vector<Triangle> Quadtree::querytriangle(const Triangle &triangle) const
+std::vector<Triangle2D> Quadtree::querytriangle(const Triangle2D &triangle) const
 {
     // query for potential occluders from the quadtree
     const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
@@ -77,7 +77,7 @@ std::vector<Triangle> Quadtree::querytriangle(const Triangle &triangle) const
     return queryArea(triangleBounds);
 }
 
-std::vector<Triangle> Quadtree::queryEdge(const Edge3D &edge) const
+std::vector<Triangle2D> Quadtree::queryEdge(const Edge2D &edge) const
 {
     const float minX = std::min(edge.start.X, edge.end.X);
     const float minY = std::min(edge.start.Y, edge.end.Y);
@@ -87,7 +87,7 @@ std::vector<Triangle> Quadtree::queryEdge(const Edge3D &edge) const
     return queryArea(edgeBounds);
 }
 
-void Quadtree::query(const Quadtree *node, const BoundingBox2D &range, std::vector<Triangle> &found)
+void Quadtree::query(const Quadtree *node, const BoundingBox2D &range, std::vector<Triangle2D> &found)
 {
     if (!node->m_bounds.intersects(range))
     {

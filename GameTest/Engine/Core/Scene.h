@@ -2,10 +2,9 @@
 #include "Engine/Storage/Registry.h"
 
 #include "Engine/Managers/AudioManager.h"
-#include "Engine/Managers/CollisionManager.h"
 #include "Engine/Managers/GraphicsManager.h"
 
-#include "Engine/Systems/CollisionDetectionSystem.h"
+#include "Engine/Systems/CollisionSystem.h"
 #include "Engine/Systems/PhysicsSystem.h"
 #include "Engine/Systems/RenderSystem.h"
 #include "Engine/Systems/ParticleSystem.h"
@@ -44,7 +43,6 @@ class Scene
     // or make it shared pointers that can be passed to new scene and lifetime will be extended
     std::shared_ptr<AudioManager> m_audioManager;
     std::shared_ptr<GraphicsManager> m_graphicsManager;
-    std::shared_ptr<CollisionManager> m_collisionManager;
 
     // Systems
     // Systems are for processing data and editing data
@@ -56,7 +54,7 @@ class Scene
     // Could be made static if changed a bit
     // Currently systems either need access to the registry or only to the specific components it needs
     RenderSystem m_renderSystem;
-    CollisionDetectionSystem m_collisionSystem;
+    CollisionSystem m_collisionSystem;
     PhysicsSystem m_physicsSystem;
     ParticleSystem m_particleSystem;
 

@@ -66,6 +66,9 @@ class IVector2
     IVector2 &operator*=(int obj);
     IVector2 &operator/=(int obj);
 
+    bool operator==(const IVector2 &other) const;
+    bool operator!=(const IVector2 &other) const;
+
     // Member Functions
     float Length() const;
     float LengthSquared() const;

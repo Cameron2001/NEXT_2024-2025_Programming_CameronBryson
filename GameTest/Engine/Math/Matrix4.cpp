@@ -41,10 +41,10 @@ Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRati
 
 Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &target, const FVector3 &up)
 {
-    //Right handed
-    const FVector3 forward = (target - origin).Normalize(); //zAxis
-    const FVector3 right = forward.Cross(up).Normalize(); //xAxis
-    const FVector3 newUp = right.Cross(forward); //yAxis
+    // Right handed
+    const FVector3 forward = (target - origin).Normalize(); // zAxis
+    const FVector3 right = forward.Cross(up).Normalize();   // xAxis
+    const FVector3 newUp = right.Cross(forward);            // yAxis
 
     Matrix4 viewMatrix;
 
@@ -222,7 +222,6 @@ Matrix4 Matrix4::Inverse() const
     return inv;
 }
 
-
 Matrix4 Matrix4::Transpose() const
 {
     Matrix4 result;
@@ -286,4 +285,21 @@ FVector3 Matrix4::TransformWithPerspectiveDivide(const FVector3 &obj) const
         z /= w;
     }
     return FVector3{x, y, z};
+}
+
+bool Matrix4::operator==(const Matrix4 &other) const
+{
+    for (int i = 0; i < 16; ++i)
+    {
+        if (m[i] != other.m[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Matrix4::operator!=(const Matrix4 &other) const
+{
+    return !(*this == other);
 }

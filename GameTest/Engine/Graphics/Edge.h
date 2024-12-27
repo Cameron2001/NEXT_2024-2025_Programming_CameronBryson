@@ -5,16 +5,38 @@
 
 struct Edge2D
 {
+    Edge2D() = default;
+
     Edge2D(const FVector2 &start2D, const FVector2 &end2D) : start(start2D), end(end2D)
     {
     }
-    FVector2 start;
-    FVector2 end;
+
     bool operator==(const Edge2D &other) const
     {
-        return start == other.start && end == other.end;
+        return (start == other.start && end == other.end) || (start == other.end && end == other.start);
     }
+
+    Edge2D(const Edge2D &other) = default;
+
     Edge2D &operator=(const Edge2D &other) = default;
+
+    Edge2D(Edge2D &&other) noexcept = default;
+
+    Edge2D &operator=(Edge2D &&other) noexcept = default;
+
+    FVector2 start;
+    FVector2 end;
+};
+
+struct Edge2DHash
+{
+    std::size_t operator()(const Edge2D &edge) const
+    {
+        const std::size_t h1 = std::hash<float>()(edge.start.X) ^ (std::hash<float>()(edge.start.Y) << 1);
+        const std::size_t h2 = std::hash<float>()(edge.end.X) ^ (std::hash<float>()(edge.end.Y) << 1);
+
+        return h1 ^ h2;
+    }
 };
 
 struct Edge3D

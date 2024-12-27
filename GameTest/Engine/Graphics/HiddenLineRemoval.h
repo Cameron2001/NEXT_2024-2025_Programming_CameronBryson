@@ -1,30 +1,30 @@
-// HiddenLineRemoval.h
-#pragma once
 
+#pragma once
 #include "Edge.h"
 #include "Triangle.h"
+#include <cmath>
 #include <Engine/Math/Quadtree.h>
+#include <memory>
 #include <unordered_set>
 #include <vector>
-#include <memory>
-#include <concurrent_vector.h>
 class FVector3;
 class FVector2;
 class BoundingBox2D;
 
-struct Edge3DHash; // Forward declaration
+struct Edge2DHash;
+struct Edge3DHash;
 
 class HiddenLineRemoval
 {
   public:
-    explicit HiddenLineRemoval(const std::vector<Triangle> &triangles);
+    explicit HiddenLineRemoval(const std::vector<Triangle2D> &triangles);
     ~HiddenLineRemoval() = default;
     HiddenLineRemoval(const HiddenLineRemoval &) = delete;
     HiddenLineRemoval &operator=(const HiddenLineRemoval &) = delete;
 
     HiddenLineRemoval(HiddenLineRemoval &&) = default;
     HiddenLineRemoval &operator=(HiddenLineRemoval &&) = default;
-    std::vector<Edge3D> removeHiddenLines() const;
+    std::vector<Edge2D> removeHiddenLines() const;
 
   private:
     // Initialization and sorting
@@ -32,26 +32,27 @@ class HiddenLineRemoval
     void sortTrianglesByDepth();
 
     // Intersection and clipping
-    static bool getEdgeIntersection(const Edge3D &edgeA, const Edge3D &edgeB, FVector3 &intersectionPoint);
-    static std::vector<Edge3D> clipEdgeAgainstTriangle(const Edge3D &edge, const Triangle &triangle);
+    static bool getEdgeIntersection(const Edge2D &edgeA, const Edge2D &edgeB, FVector2 &intersectionPoint);
+    static std::vector<Edge2D> clipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle);
 
     // Point inside triangle test
-    static bool isPointInsideTriangle(const FVector3 &point, const Triangle &triangle);
+    static bool isPointInsideTriangle(const FVector2 &point, const Triangle2D &triangle);
 
     // Processing functions
-    static std::vector<Edge3D> processEdge(const Edge3D &edge, const std::vector<Triangle> &potentialOccluders);
-    void processTriangle(const Triangle &triangle, std::unordered_set<Edge3D, Edge3DHash> &uniqueEdges,
-                         std::vector<Edge3D> &visibleEdges) const;
-    static std::vector<Edge3D> createTriangleEdges(const Triangle &triangle);
-    static bool sharesVertex(const Triangle &occluder, const Edge3D &edge);
-    static std::vector<Edge3D> clipSegmentsWithOccluder(const std::vector<Edge3D> &segments, const Triangle &occluder);
-    static void appendVisibleSegments(std::vector<Edge3D> &visibleEdges, const std::vector<Edge3D> &segments);
+    static std::vector<Edge2D> processEdge(const Edge2D &edge, const std::vector<Triangle2D> &potentialOccluders);
+    void processTriangle(const Triangle2D &triangle, std::unordered_set<Edge2D, Edge2DHash> &uniqueEdges,
+                         std::vector<Edge2D> &visibleEdges) const;
+    static std::vector<Edge2D> createTriangleEdges(const Triangle2D &triangle);
+    static bool sharesVertex(const Triangle2D &occluder, const Edge2D &edge);
+    static std::vector<Edge2D> clipSegmentsWithOccluder(const std::vector<Edge2D> &segments,
+                                                        const Triangle2D &occluder);
+    static void appendVisibleSegments(std::vector<Edge2D> &visibleEdges, const std::vector<Edge2D> &segments);
     // Member variables
-    std::vector<Triangle> m_triangles;
+    std::vector<Triangle2D> m_triangles;
     std::unique_ptr<Quadtree> m_quadtree;
 };
 
-inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, const Triangle &triangle)
+inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector2 &point, const Triangle2D &triangle)
 {
     const FVector2 p(point.X, point.Y);
     const FVector2 v0(triangle.v0.X, triangle.v0.Y);
@@ -70,7 +71,7 @@ inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector3 &point, cons
     return (a >= 0.0f) && (b >= 0.0f) && (c >= 0.0f);
 }
 // Check if an occluder shares any vertex with the edge
-inline bool HiddenLineRemoval::sharesVertex(const Triangle &occluder, const Edge3D &edge)
+inline bool HiddenLineRemoval::sharesVertex(const Triangle2D &occluder, const Edge2D &edge)
 {
     return (occluder.v0 == edge.start || occluder.v0 == edge.end || occluder.v1 == edge.start ||
             occluder.v1 == edge.end || occluder.v2 == edge.start || occluder.v2 == edge.end);

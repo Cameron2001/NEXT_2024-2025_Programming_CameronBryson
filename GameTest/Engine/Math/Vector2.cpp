@@ -145,7 +145,6 @@ FVector2 FVector2::Project(const FVector2 &normal) const
     return FVector2(0.0f, 0.0f);
 }
 
-
 IVector2::IVector2() : X(0), Y(0)
 {
 }
@@ -228,6 +227,16 @@ IVector2 &IVector2::operator/=(const int obj)
     X /= obj;
     Y /= obj;
     return *this;
+}
+
+bool IVector2::operator==(const IVector2 &other) const
+{
+    return X == other.X && Y == other.Y;
+}
+
+bool IVector2::operator!=(const IVector2 &other) const
+{
+    return !(*this == other);
 }
 
 float IVector2::Length() const

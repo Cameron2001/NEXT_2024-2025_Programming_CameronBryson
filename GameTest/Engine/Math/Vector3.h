@@ -37,6 +37,8 @@ class FVector3
     FVector3 Normalize() const;
     float Dot(const FVector3 &obj) const;
     FVector3 Cross(const FVector3 &obj) const;
+    FVector3 Clamp(float min, float max) const;
+    FVector3 Project(const FVector3 &normal) const;
 };
 
 class IVector3
@@ -64,6 +66,9 @@ class IVector3
     IVector3 &operator/=(const IVector3 &obj);
     IVector3 &operator*=(int obj);
     IVector3 &operator/=(int obj);
+
+    bool operator==(const IVector3 &other) const;
+    bool operator!=(const IVector3 &other) const;
 
     float Length() const;
     float LengthSquared() const;

@@ -1,10 +1,11 @@
 #pragma once
 #include "Engine/Core/Scene.h"
 #include "Game/PlayerSystem.h"
+#include <memory>
 
-class PlayScene : public Scene
+class PlayScene : public Scene, public std::enable_shared_from_this<PlayScene>
 {
-public:
+  public:
     PlayScene();
     ~PlayScene() override = default;
     void Init() override;
@@ -17,6 +18,6 @@ public:
     void LateShutdown() override;
     void Test(int value);
 
-private:
+  private:
     PlayerSystem m_playerSystem;
 };

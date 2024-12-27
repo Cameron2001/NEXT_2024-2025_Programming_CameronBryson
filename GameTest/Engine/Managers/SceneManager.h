@@ -11,7 +11,7 @@ class SceneManager
         {
             m_currentScene->Shutdown();
         }
-        m_currentScene = std::make_unique<T>();
+        m_currentScene = std::make_shared<T>();
         m_currentScene->Init();
         m_currentScene->LateInit();
     }
@@ -19,5 +19,5 @@ class SceneManager
     static Scene &GetCurrentScene();
 
   private:
-    static std::unique_ptr<Scene> m_currentScene;
+    static std::shared_ptr<Scene> m_currentScene;
 };
