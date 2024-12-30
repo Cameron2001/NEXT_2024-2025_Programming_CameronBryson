@@ -54,8 +54,8 @@ void Renderer::SubmitQueue()
 {
     if (m_triangles.empty())
         return;
-    const HiddenLineRemoval hlr(m_triangles);
-    const std::vector<Edge2D> visibleSegments = hlr.removeHiddenLines();
+    HiddenLineRemoval hlr(m_triangles);
+    std::vector<Edge2D> visibleSegments = hlr.removeHiddenLines();
     for (const auto &edge : visibleSegments)
     {
         Edge2D clippedEdge = LiangBarsky(edge);

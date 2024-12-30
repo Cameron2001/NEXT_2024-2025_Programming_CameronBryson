@@ -14,6 +14,7 @@ public:
     ~RenderSystem() = default;
     void Init();
     void Render();
+    void LateRender();
     void Shutdown();
 
 private:

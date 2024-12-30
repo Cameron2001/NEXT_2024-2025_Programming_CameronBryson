@@ -59,6 +59,13 @@ template <typename... Components> class View
     {
         return Iterator(this, m_matchingEntities.size());
     }
+    template <typename Func> void ForEach(Func &&func)
+    {
+        for (const Entity entity : m_matchingEntities)
+        {
+            func(std::forward_as_tuple(entity, m_registry->GetComponent<Components>(entity)...));
+        }
+    }
     template <typename Func> void ParallelForEach(Func &&func)
     {
         const size_t entityCount = m_matchingEntities.size();

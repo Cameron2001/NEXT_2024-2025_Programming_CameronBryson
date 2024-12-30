@@ -18,7 +18,7 @@ void PhysicsSystem::Update(const float dt)
 {
     auto view = m_registry->CreateView<TransformComponent, RigidBodyComponent>();
 
-    view.ParallelForEach([&](const auto &entityTuple) {
+    view.ParallelForEach([this, dt](const auto &entityTuple) {
         auto &transform = std::get<1>(entityTuple);
         auto &rigidBody = std::get<2>(entityTuple);
 

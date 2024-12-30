@@ -18,7 +18,7 @@ class Quadtree
     Quadtree(const BoundingBox2D &bounds, int capacity = 4, int maxDepth = 10, int level = 0);
     bool insert(const Triangle2D &triangle);
     std::vector<Triangle2D> queryArea(const BoundingBox2D &range) const;
-    std::vector<Triangle2D> querytriangle(const Triangle2D &triangle) const;
+    std::vector<Triangle2D> queryTriangle(const Triangle2D &triangle) const;
     std::vector<Triangle2D> queryEdge(const Edge2D &edge) const;
 
   private:

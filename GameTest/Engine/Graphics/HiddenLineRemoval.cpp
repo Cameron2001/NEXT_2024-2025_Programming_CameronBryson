@@ -1,4 +1,3 @@
-// HiddenLineRemoval.cpp
 #include "stdafx.h"
 #include "HiddenLineRemoval.h"
 #include "Engine/Math/Vector2.h"
@@ -69,11 +68,19 @@ void HiddenLineRemoval::processTriangle(const Triangle2D &triangle, std::unorder
     std::vector<Edge2D> segments;
     const std::vector<Edge2D> edges = createTriangleEdges(triangle);
 
+    std::vector<Triangle2D> potentialOccluders = m_quadtree->queryTriangle(triangle);
+    // We want to erase any triangles that share a vertex with the current triangle
+    // Order of the occluders doesnt matter
+    // We do not need to maintain order. So that means we could swap back and pop
+    potentialOccluders.erase(
+        std::remove_if(potentialOccluders.begin(), potentialOccluders.end(),
+                       [&](const Triangle2D &occluder) { return sharesVertex(occluder, triangle); }),
+        potentialOccluders.end());
+
     for (const auto &edge : edges)
     {
         if (uniqueEdges.insert(edge).second)
         {
-            std::vector<Triangle2D> potentialOccluders = m_quadtree->queryEdge(edge);
             auto newSegments = processEdge(edge, potentialOccluders);
             for (auto &segment : newSegments)
             {
@@ -81,7 +88,6 @@ void HiddenLineRemoval::processTriangle(const Triangle2D &triangle, std::unorder
             }
         }
     }
-
     if (!segments.empty())
     {
         appendVisibleSegments(visibleEdges, segments);
@@ -99,27 +105,13 @@ std::vector<Edge2D> HiddenLineRemoval::createTriangleEdges(const Triangle2D &tri
 std::vector<Edge2D> HiddenLineRemoval::processEdge(const Edge2D &edge,
                                                    const std::vector<Triangle2D> &potentialOccluders)
 {
-    if (edge.start == edge.end || (edge.end - edge.start).LengthSquared() < 0.00001f)
-    {
-        return {};
-    }
-
     std::vector<Edge2D> segments = {edge};
-
     for (const auto &occluder : potentialOccluders)
     {
-
-        // Skip clipping if the triangle shares a vertex with the edge
-        if (sharesVertex(occluder, edge))
-        {
-            continue;
-        }
-
         segments = clipSegmentsWithOccluder(segments, occluder);
         if (segments.empty())
             break;
     }
-
     return segments;
 }
 
@@ -135,13 +127,9 @@ std::vector<Edge2D> HiddenLineRemoval::clipSegmentsWithOccluder(const std::vecto
         auto clipped = clipEdgeAgainstTriangle(segment, occluder);
         for (const auto &edge : clipped)
         {
-            if (edge.start != edge.end)
-            {
-                clippedSegments.emplace_back(edge);
-            }
+            clippedSegments.emplace_back(edge);
         }
     }
-
     return clippedSegments;
 }
 
@@ -200,60 +188,14 @@ std::vector<Edge2D> HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edg
     {
         FVector2 midPoint = (sortedPoints[i] + sortedPoints[i + 1]) * 0.5f;
         if (!isPointInsideTriangle(midPoint, triangle))
-            clippedEdges.emplace_back(sortedPoints[i], sortedPoints[i + 1]);
+        {
+            Edge2D newEdge(sortedPoints[i], sortedPoints[i + 1]);
+            if (newEdge.start != newEdge.end && (newEdge.end - newEdge.start).LengthSquared() >= 0.00001f)
+            {
+                clippedEdges.emplace_back(newEdge);
+            }
+        }
     }
 
     return clippedEdges;
-}
-// Get the intersection point of two edges if it exists
-bool HiddenLineRemoval::getEdgeIntersection(const Edge2D &edgeA, const Edge2D &edgeB, FVector2 &intersectionPoint)
-{
-    const float x1 = edgeA.start.X;
-    const float y1 = edgeA.start.Y;
-    const float x2 = edgeA.end.X;
-    const float y2 = edgeA.end.Y;
-    const float x3 = edgeB.start.X;
-    const float y3 = edgeB.start.Y;
-    const float x4 = edgeB.end.X;
-    const float y4 = edgeB.end.Y;
-
-    const float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-    constexpr float EPSILON = 1e-6f;
-
-    if (fabs(denom) < EPSILON)
-    {
-        const bool startStart = edgeA.start == edgeB.start;
-        const bool startEnd = edgeA.start == edgeB.end;
-        const bool endStart = edgeA.end == edgeB.start;
-        const bool endEnd = edgeA.end == edgeB.end;
-
-        const int overlapCount = startStart + startEnd + endStart + endEnd;
-
-        if (overlapCount > 1)
-            return false;
-        else if (overlapCount == 1)
-        {
-            if (startStart || startEnd)
-                intersectionPoint = edgeA.start;
-            else
-                intersectionPoint = edgeA.end;
-            return true;
-        }
-        else
-            return false;
-    }
-
-    const float t_num = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4);
-    const float u_num = (x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2);
-    const float t = t_num / denom;
-    const float u = u_num / denom;
-
-    if (t < -EPSILON || t > 1.0f + EPSILON || u < -EPSILON || u > 1.0f + EPSILON)
-        return false;
-
-    const float intersectionX = x1 + t * (x2 - x1);
-    const float intersectionY = y1 + t * (y2 - y1);
-
-    intersectionPoint = FVector2(intersectionX, intersectionY);
-    return true;
 }

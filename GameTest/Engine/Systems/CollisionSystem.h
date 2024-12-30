@@ -5,6 +5,7 @@
 #include "Engine/Storage/Registry.h"
 #include "Engine/Core/Collision.h"
 #include <unordered_map>
+#include <Engine/Math/Octree.h>
 class CollisionSystem
 {
   public:
@@ -16,12 +17,17 @@ class CollisionSystem
     void Shutdown();
 
   private:
+    void BuildOctree();
     bool OOBvsOOB(Entity ID1, Entity ID2);
     bool SpherevsSphere(Entity ID1, Entity ID2);
     bool SpherevsOOB(Entity ID1, Entity ID2);
-    // std::unordered_map<std::pair<Entity, Entity>, Collision> m_collisions;
-    //  Raw pointers are fine. This will be destroyed before the dependencys
+    bool CanCollide(const ColliderComponent& collider1, const ColliderComponent& collider2);
+
+    void DetectCollisions();
+    void ResolveCollisions();
     Registry *m_registry;
+    std::unique_ptr<Octree> m_octree;
+    std::vector<Collision> m_collisions;
 };
 
 // Read

@@ -33,13 +33,13 @@ private:
     void UpdateProjectionMatrix();
     void UpdateAxes();
 
+    Matrix4 m_viewMatrix;
+    Matrix4 m_projectionMatrix;
     FVector3 m_position;
     FVector3 m_forward;
     FVector3 m_up;
     FVector3 m_right;
     FVector3 m_worldUp;
-    Matrix4 m_viewMatrix;
-    Matrix4 m_projectionMatrix;
     float m_yaw;
     float m_pitch;
     float m_FOV;

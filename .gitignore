@@ -31,3 +31,4 @@
 *.app
 /GameTest/x64
 *.pdb
+/GameTest/logs

@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "Octree.h"
+#include <algorithm> // For std::max and std::minmax
+#include <set>       // For std::set
 
-ColliderEntry::ColliderEntry(const BoundingBox3D &bounds_, unsigned int entityID) : bounds(bounds_), EntityID(entityID)
+ColliderEntry::ColliderEntry(const BoundingBox3D &bounds_, unsigned int entityID) : EntityID(entityID), bounds(bounds_)
 {
 }
 
 Octree::Octree(const BoundingBox3D &bounds, int capacity, int maxDepth, int level)
-    : m_bounds(bounds), m_capacity(capacity), m_maxDepth(maxDepth), m_level(level), m_divided(false)
+    : m_bounds(bounds), m_capacity(capacity), m_maxDepth(maxDepth), m_level(level)
 {
     for (auto &child : m_children)
     {
@@ -14,212 +16,163 @@ Octree::Octree(const BoundingBox3D &bounds, int capacity, int maxDepth, int leve
     }
 }
 
-bool Octree::insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID)
+void Octree::insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID)
 {
-    // Compute the scaled radius
     float scaledRadius = sphere.radius * std::max({transform.Scale.X, transform.Scale.Y, transform.Scale.Z});
 
-    // Compute the bounds of the sphere
     BoundingBox3D colliderBounds(transform.Position.X - scaledRadius, transform.Position.Y - scaledRadius,
                                  transform.Position.Z - scaledRadius, transform.Position.X + scaledRadius,
                                  transform.Position.Y + scaledRadius, transform.Position.Z + scaledRadius);
 
-    return insert(colliderBounds, entityID);
+    insert(ColliderEntry(colliderBounds, entityID));
 }
 
-bool Octree::insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID)
+void Octree::insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID)
 {
-    // Compute scaled extents
     FVector3 scaledExtents(box.extents.X * transform.Scale.X, box.extents.Y * transform.Scale.Y,
                            box.extents.Z * transform.Scale.Z);
 
-    // Compute the bounds of the box
     BoundingBox3D colliderBounds(transform.Position.X - scaledExtents.X, transform.Position.Y - scaledExtents.Y,
                                  transform.Position.Z - scaledExtents.Z, transform.Position.X + scaledExtents.X,
                                  transform.Position.Y + scaledExtents.Y, transform.Position.Z + scaledExtents.Z);
 
-    return insert(colliderBounds, entityID);
-}
-bool Octree::insert(const BoundingBox3D &colliderBounds, unsigned int entityID)
-{
-    // If the collider is not within this node's bounds, return false
-    if (!m_bounds.intersects(colliderBounds))
-    {
-        return false;
-    }
-
-    // If capacity not reached or max depth, add collider here
-    if (static_cast<int>(m_colliders.size()) < m_capacity || m_level >= m_maxDepth)
-    {
-        m_colliders.emplace_back(colliderBounds, entityID);
-        return true;
-    }
-
-    // Subdivide if not already divided
-    if (!m_divided)
-    {
-        subdivide();
-    }
-
-    // Determine the octant the collider belongs to
-    int octant = getOctant(m_bounds, colliderBounds);
-    if (octant != -1)
-    {
-        return m_children[octant]->insert(colliderBounds, entityID);
-    }
-    else
-    {
-        // Collider spans multiple octants; keep it at this level
-        m_colliders.emplace_back(colliderBounds, entityID);
-        return true;
-    }
-}
-std::vector<unsigned int> Octree::queryArea(const BoundingBox3D &range) const
-{
-    std::vector<unsigned int> found;
-    query(this, range, found);
-    return found;
+    insert(ColliderEntry(colliderBounds, entityID));
 }
 
-std::vector<unsigned int> Octree::querySphere(const SphereBoundsComponent &sphere,
-                                              const TransformComponent &transform) const
+void Octree::insert(const ColliderEntry &entry)
 {
-
-    float scaledRadius = sphere.radius * std::max({transform.Scale.X, transform.Scale.Y, transform.Scale.Z});
-
-    BoundingBox3D sphereBounds(transform.Position.X - scaledRadius, transform.Position.Y - scaledRadius,
-                               transform.Position.Z - scaledRadius, transform.Position.X + scaledRadius,
-                               transform.Position.Y + scaledRadius, transform.Position.Z + scaledRadius);
-
-    return queryArea(sphereBounds);
-}
-
-std::vector<unsigned int> Octree::queryBox(const BoxBoundsComponent &box, const TransformComponent &transform) const
-{
-
-    FVector3 scaledExtents = FVector3(box.extents.X * transform.Scale.X, box.extents.Y * transform.Scale.Y,
-                                      box.extents.Z * transform.Scale.Z);
-
-    BoundingBox3D boxBounds(transform.Position.X - scaledExtents.X, transform.Position.Y - scaledExtents.Y,
-                            transform.Position.Z - scaledExtents.Z, transform.Position.X + scaledExtents.X,
-                            transform.Position.Y + scaledExtents.Y, transform.Position.Z + scaledExtents.Z);
-
-    return queryArea(boxBounds);
-}
-
-void Octree::subdivide()
-{
-    // Create child nodes
-    for (int i = 0; i < 8; ++i)
-    {
-        BoundingBox3D childBounds = computeBox(m_bounds, i);
-        m_children[i] = std::make_unique<Octree>(childBounds, m_capacity, m_maxDepth, m_level + 1);
-    }
-
-    m_divided = true;
-
-    // Redistribute existing colliders to children
-    std::vector<ColliderEntry> remainingColliders;
-
-    for (const auto &entry : m_colliders)
-    {
-        int octant = getOctant(m_bounds, entry.bounds);
-        if (octant != -1)
-        {
-            if (m_children[octant]->insert(entry.bounds, entry.EntityID))
-            {
-                continue;
-            }
-        }
-        remainingColliders.emplace_back(entry);
-    }
-
-    m_colliders.swap(remainingColliders);
-}
-
-void Octree::query(const Octree *node, const BoundingBox3D &range, std::vector<unsigned int> &found)
-{
-    if (!node->m_bounds.intersects(range))
+    // If the entry's bounds do not intersect this node's bounds, do not insert
+    if (!m_bounds.intersects(entry.bounds))
     {
         return;
     }
 
-    for (const auto &entry : node->m_colliders)
+    // Subdivide if necessary
+    if (m_children[0] == nullptr && m_level < m_maxDepth)
     {
-        if (range.intersects(entry.bounds))
+        if (m_colliders.size() >= static_cast<size_t>(m_capacity))
         {
-            found.push_back(entry.EntityID);
+            subdivide();
         }
     }
 
-    if (node->m_divided)
+    bool insertedIntoChild = false;
+    if (m_children[0] != nullptr)
     {
-        for (const auto &child : node->m_children)
+        for (auto &child : m_children)
         {
-            if (child)
+            if (child->m_bounds.intersects(entry.bounds))
             {
-                query(child.get(), range, found);
+                child->insert(entry);
+                insertedIntoChild = true;
+                // Do not break; the entry can be in multiple children
             }
         }
     }
-}
 
-BoundingBox3D Octree::computeBox(const BoundingBox3D &box, int octant)
-{
-    const float x = box.minX;
-    const float y = box.minY;
-    const float z = box.minZ;
-    const float midX = (box.minX + box.maxX) / 2.0f;
-    const float midY = (box.minY + box.maxY) / 2.0f;
-    const float midZ = (box.minZ + box.maxZ) / 2.0f;
-
-    switch (octant)
+    // If not inserted into any child, store in this node
+    if (!insertedIntoChild)
     {
-    case 0: // Left Bottom Back
-        return {x, y, z, midX, midY, midZ};
-    case 1: // Right Bottom Back
-        return {midX, y, z, box.maxX, midY, midZ};
-    case 2: // Left Top Back
-        return {x, midY, z, midX, box.maxY, midZ};
-    case 3: // Right Top Back
-        return {midX, midY, z, box.maxX, box.maxY, midZ};
-    case 4: // Left Bottom Front
-        return {x, y, midZ, midX, midY, box.maxZ};
-    case 5: // Right Bottom Front
-        return {midX, y, midZ, box.maxX, midY, box.maxZ};
-    case 6: // Left Top Front
-        return {x, midY, midZ, midX, box.maxY, box.maxZ};
-    case 7: // Right Top Front
-        return {midX, midY, midZ, box.maxX, box.maxY, box.maxZ};
-    default:
-        return {};
+        m_colliders.push_back(entry);
     }
 }
 
-int Octree::getOctant(const BoundingBox3D &nodeBox, const BoundingBox3D &valueBox)
+void Octree::subdivide()
 {
-    const float midX = (nodeBox.minX + nodeBox.maxX) / 2.0f;
-    const float midY = (nodeBox.minY + nodeBox.maxY) / 2.0f;
-    const float midZ = (nodeBox.minZ + nodeBox.maxZ) / 2.0f;
+    const float x = m_bounds.minX;
+    const float y = m_bounds.minY;
+    const float z = m_bounds.minZ;
+    const float midX = (m_bounds.minX + m_bounds.maxX) / 2.0f;
+    const float midY = (m_bounds.minY + m_bounds.maxY) / 2.0f;
+    const float midZ = (m_bounds.minZ + m_bounds.maxZ) / 2.0f;
 
-    bool inLeft = valueBox.maxX <= midX;
-    bool inRight = valueBox.minX >= midX;
-    bool inBottom = valueBox.maxY <= midY;
-    bool inTop = valueBox.minY >= midY;
-    bool inBack = valueBox.maxZ <= midZ;
-    bool inFront = valueBox.minZ >= midZ;
+    // Create 8 child nodes
+    m_children[0] =
+        std::make_unique<Octree>(BoundingBox3D(x, y, z, midX, midY, midZ), m_capacity, m_maxDepth, m_level + 1);
+    m_children[1] = std::make_unique<Octree>(BoundingBox3D(midX, y, z, m_bounds.maxX, midY, midZ), m_capacity,
+                                             m_maxDepth, m_level + 1);
+    m_children[2] = std::make_unique<Octree>(BoundingBox3D(x, midY, z, midX, m_bounds.maxY, midZ), m_capacity,
+                                             m_maxDepth, m_level + 1);
+    m_children[3] = std::make_unique<Octree>(BoundingBox3D(midX, midY, z, m_bounds.maxX, m_bounds.maxY, midZ),
+                                             m_capacity, m_maxDepth, m_level + 1);
+    m_children[4] = std::make_unique<Octree>(BoundingBox3D(x, y, midZ, midX, midY, m_bounds.maxZ), m_capacity,
+                                             m_maxDepth, m_level + 1);
+    m_children[5] = std::make_unique<Octree>(BoundingBox3D(midX, y, midZ, m_bounds.maxX, midY, m_bounds.maxZ),
+                                             m_capacity, m_maxDepth, m_level + 1);
+    m_children[6] = std::make_unique<Octree>(BoundingBox3D(x, midY, midZ, midX, m_bounds.maxY, m_bounds.maxZ),
+                                             m_capacity, m_maxDepth, m_level + 1);
+    m_children[7] =
+        std::make_unique<Octree>(BoundingBox3D(midX, midY, midZ, m_bounds.maxX, m_bounds.maxY, m_bounds.maxZ),
+                                 m_capacity, m_maxDepth, m_level + 1);
 
-    if ((inLeft || inRight) && (inBottom || inTop) && (inBack || inFront))
+    // Re-insert existing colliders into children
+    std::vector<ColliderEntry> oldColliders = m_colliders;
+    m_colliders.clear();
+    for (const auto &entry : oldColliders)
     {
-        int octant = 0;
-        if (inRight)
-            octant |= 1;
-        if (inTop)
-            octant |= 2;
-        if (inFront)
-            octant |= 4;
-        return octant;
+        insert(entry);
+    }
+}
+
+void Octree::getPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
+{
+    std::set<std::pair<unsigned int, unsigned int>> collisionsSet;
+    collectPotentialCollisions(collisionsSet);
+    potentialCollisions.assign(collisionsSet.begin(), collisionsSet.end());
+}
+
+void Octree::collectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
+{
+    // Check all pairs within this node
+    for (size_t i = 0; i < m_colliders.size(); ++i)
+    {
+        for (size_t j = i + 1; j < m_colliders.size(); ++j)
+        {
+            // Verify actual intersection
+            if (m_colliders[i].bounds.intersects(m_colliders[j].bounds))
+            {
+                potentialCollisions.emplace(std::minmax(m_colliders[i].EntityID, m_colliders[j].EntityID));
+            }
+        }
     }
 
-    return -1;
+    // Check collisions between this node's colliders and descendants
+    for (const auto &child : m_children)
+    {
+        if (child)
+        {
+            // Check collisions between this node's colliders and child's colliders
+            for (const auto &entry : m_colliders)
+            {
+                child->collectCollisionsWithEntry(entry, potentialCollisions);
+            }
+
+            // Recursively collect potential collisions from children
+            child->collectPotentialCollisions(potentialCollisions);
+        }
+    }
+}
+
+
+void Octree::collectCollisionsWithEntry(const ColliderEntry &entry,
+                                        std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
+{
+    // Check collisions between the given entry and colliders in this node
+    for (const auto &collider : m_colliders)
+    {
+        // Verify actual intersection
+        if (entry.bounds.intersects(collider.bounds))
+        {
+            potentialCollisions.emplace(std::minmax(entry.EntityID, collider.EntityID));
+        }
+    }
+
+    // Recursively check in children
+    for (const auto &child : m_children)
+    {
+        if (child)
+        {
+            child->collectCollisionsWithEntry(entry, potentialCollisions);
+        }
+    }
 }

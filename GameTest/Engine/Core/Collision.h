@@ -8,8 +8,8 @@ struct Collision
     {
     }
 
+    FVector3 normal = {0, 0, 0};
+    float penetration = 0.0f;
     unsigned int ID1 = 0;
     unsigned int ID2 = 0;
-    float penetration = 0.0f;
-    FVector3 normal = {0, 0, 0};
 };

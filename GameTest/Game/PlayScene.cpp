@@ -20,20 +20,24 @@ void PlayScene::Init()
     TestEvent.AddListener(self, &PlayScene::Test);
     TestEvent2.AddListener(self, &PlayScene::Test);
     auto player = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(player, FVector3(0.0f, 0.0f, -1.0f), FVector3(0.0f, 0.0f, 0.0f),
+    m_registry->AddComponent<TransformComponent>(player, FVector3(0.3f, 0.1f, -3.0f), FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(0.15f, 0.15f, 0.15f));
     m_registry->AddComponent<PlayerComponent>(player, 2.0f);
-    m_registry->AddComponent<ModelComponent>(player, "ShipOBJ");
+    m_registry->AddComponent<ModelComponent>(player, "CubeOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
+    m_registry->AddComponent<ColliderComponent>(player, ColliderType::Box, true);
+    m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
     // m_event.Notify(10);
 
     auto cube = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(cube, FVector3(0.1f, 0.1f, -6.0f), FVector3(20.0f, 15.0f, 10.0f),
+    m_registry->AddComponent<TransformComponent>(cube, FVector3(-0.3f, -0.1f, -3.0f), FVector3(20.0f, 15.0f, 10.0f),
                                                  FVector3(0.15f, 0.15f, 0.51f));
-    m_registry->AddComponent<ModelComponent>(cube, "ShipOBJ");
+    m_registry->AddComponent<ModelComponent>(cube, "CubeOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube);
+    m_registry->AddComponent<ColliderComponent>(cube, ColliderType::Box, true);
+    m_registry->AddComponent<BoxBoundsComponent>(cube, FVector3(1.0f, 1.0f, 1.0f));
 
-    auto cube2 = m_registry->CreateEntity();
+    /*auto cube2 = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(cube2, FVector3(-0.1f, -0.1f, -3.0f), FVector3(20.0f, 15.0f, 10.0f),
                                                  FVector3(0.15f, 0.15f, 0.51f));
     m_registry->AddComponent<ModelComponent>(cube2, "ShipOBJ");
@@ -73,7 +77,7 @@ void PlayScene::Init()
     m_registry->AddComponent<TransformComponent>(cube8, FVector3(0.9f, 0.9f, -6.0f), FVector3(20.0f, 15.0f, 10.0f),
                                                  FVector3(0.15f, 0.15f, 0.51f));
     m_registry->AddComponent<ModelComponent>(cube8, "ShipOBJ");
-    m_registry->AddComponent<RigidBodyComponent>(cube8);
+    m_registry->AddComponent<RigidBodyComponent>(cube8);*/
 
     TestEvent.Notify(15);
     // auto future = m_threadpool.QueueTask([this](int value) { this->Test(value); }, 9);

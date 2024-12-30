@@ -66,7 +66,7 @@ std::vector<Triangle2D> Quadtree::queryArea(const BoundingBox2D &range) const
     return found;
 }
 
-std::vector<Triangle2D> Quadtree::querytriangle(const Triangle2D &triangle) const
+std::vector<Triangle2D> Quadtree::queryTriangle(const Triangle2D &triangle) const
 {
     // query for potential occluders from the quadtree
     const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});

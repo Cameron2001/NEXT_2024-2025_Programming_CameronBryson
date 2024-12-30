@@ -1,8 +1,11 @@
 #pragma once
+
 #include "BoundingBox.h"
 #include <memory>
 #include <vector>
-#include <Engine/Core/Components.h>
+#include <set> // For std::set
+#include "Engine/Core/Components.h"
+
 struct ColliderEntry
 {
     unsigned int EntityID;
@@ -10,33 +13,32 @@ struct ColliderEntry
 
     ColliderEntry(const BoundingBox3D &bounds_, unsigned int entityID);
 };
+
 class Octree
 {
   public:
     Octree(const BoundingBox3D &bounds, int capacity = 4, int maxDepth = 10, int level = 0);
 
-    bool insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID);
-    bool insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID);
+    void insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID);
+    void insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID);
 
-    bool insert(const BoundingBox3D &colliderBounds, unsigned int entityID);
+    void insert(const ColliderEntry &entry);
 
-    std::vector<unsigned int> queryArea(const BoundingBox3D &range) const;
-    std::vector<unsigned int> querySphere(const SphereBoundsComponent &sphere,
-                                          const TransformComponent &transform) const;
-    std::vector<unsigned int> queryBox(const BoxBoundsComponent &box, const TransformComponent &transform) const;
+    void getPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
 
   private:
     void subdivide();
-    static void query(const Octree *node, const BoundingBox3D &range, std::vector<unsigned int> &found);
-    static BoundingBox3D computeBox(const BoundingBox3D &box, int octant);
-    static int getOctant(const BoundingBox3D &nodeBox, const BoundingBox3D &valueBox);
+
+    void collectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
+
+    void collectCollisionsWithEntry(const ColliderEntry &entry,
+                                    std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
 
     BoundingBox3D m_bounds;
     int m_capacity;
     int m_maxDepth;
     int m_level;
-    std::vector<ColliderEntry> m_colliders;
-    bool m_divided;
 
+    std::vector<ColliderEntry> m_colliders;
     std::unique_ptr<Octree> m_children[8];
 };

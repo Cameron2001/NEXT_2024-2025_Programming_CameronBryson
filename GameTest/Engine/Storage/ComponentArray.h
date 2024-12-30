@@ -6,47 +6,40 @@
 using Entity = unsigned int;
 constexpr size_t MAX_ENTITIES = 10000;
 
-template <typename T>
-class ComponentArray final :
-    public IComponentArray
+template <typename T> class ComponentArray final : public IComponentArray
 {
-public:
+  public:
     ComponentArray();
     ~ComponentArray() override = default;
 
-    template <typename... Args>
-    void AddComponent(Entity entity, Args &&... args);
+    template <typename... Args> void AddComponent(Entity entity, Args &&...args);
     void RemoveComponent(Entity entity) override;
     bool HasComponent(Entity entity) override;
     T &GetComponent(Entity entity);
     std::vector<Entity> GetEntities() override;
     std::vector<Entity> GetEntityIntersection(std::vector<Entity> entities) override;
 
-private:
+  private:
     std::vector<T> m_componentArray;
     std::vector<Entity> m_DenseArray;
     std::vector<Entity> m_SparseArray;
 };
 
-template <typename T>
-ComponentArray<T>::ComponentArray()
+template <typename T> ComponentArray<T>::ComponentArray()
 {
     m_SparseArray.resize(MAX_ENTITIES, 0);
     m_DenseArray.reserve(MAX_ENTITIES);
     m_componentArray.reserve(MAX_ENTITIES);
 }
 
-template <typename T>
-template <typename... Args>
-void ComponentArray<T>::AddComponent(Entity entity, Args &&... args)
+template <typename T> template <typename... Args> void ComponentArray<T>::AddComponent(Entity entity, Args &&...args)
 {
     m_DenseArray.emplace_back(entity);
     m_componentArray.emplace_back(std::forward<Args>(args)...);
     m_SparseArray[entity] = m_DenseArray.size() - 1;
 }
 
-template <typename T>
-void ComponentArray<T>::RemoveComponent(const Entity entity)
+template <typename T> void ComponentArray<T>::RemoveComponent(const Entity entity)
 {
     Entity entityIndex = m_SparseArray[entity];
     Entity lastIndex = m_DenseArray.size() - 1;
@@ -62,27 +55,23 @@ void ComponentArray<T>::RemoveComponent(const Entity entity)
     m_SparseArray[entity] = 0; // invalid index, change to somehting ebetter later
 }
 
-template <typename T>
-bool ComponentArray<T>::HasComponent(const Entity entity)
+template <typename T> bool ComponentArray<T>::HasComponent(const Entity entity)
 {
     return m_SparseArray[entity] < m_DenseArray.size() && m_DenseArray[m_SparseArray[entity]] == entity;
 }
 
-template <typename T>
-T &ComponentArray<T>::GetComponent(const Entity entity)
+template <typename T> T &ComponentArray<T>::GetComponent(const Entity entity)
 {
     Entity index = m_SparseArray[entity];
     return m_componentArray[index];
 }
 
-template <typename T>
-std::vector<Entity> ComponentArray<T>::GetEntities()
+template <typename T> std::vector<Entity> ComponentArray<T>::GetEntities()
 {
     return m_DenseArray;
 }
 
-template <typename T>
-std::vector<Entity> ComponentArray<T>::GetEntityIntersection(std::vector<Entity> entities)
+template <typename T> std::vector<Entity> ComponentArray<T>::GetEntityIntersection(std::vector<Entity> entities)
 {
     auto IDs = GetEntities();
 

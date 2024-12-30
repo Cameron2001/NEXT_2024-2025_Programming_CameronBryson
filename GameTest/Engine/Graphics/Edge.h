@@ -15,7 +15,16 @@ struct Edge2D
     {
         return (start == other.start && end == other.end) || (start == other.end && end == other.start);
     }
-
+    bool operator<(const Edge2D &other) const
+    {
+        if (start.X != other.start.X)
+            return start.X < other.start.X;
+        if (start.Y != other.start.Y)
+            return start.Y < other.start.Y;
+        if (end.X != other.end.X)
+            return end.X < other.end.X;
+        return end.Y < other.end.Y;
+    }
     Edge2D(const Edge2D &other) = default;
 
     Edge2D &operator=(const Edge2D &other) = default;

@@ -1,6 +1,11 @@
 #include "stdafx.h"
+#include "GameComponents.h"
 #include "PlayerSystem.h"
 #include <App/app.h>
+#include <Engine/Core/Components.h>
+#include <Engine/Math/Vector3.h>
+#include <Engine/Storage/Registry.h>
+#include <Engine/Storage/View.h>
 
 PlayerSystem::PlayerSystem(Registry *registry)
 {
@@ -28,7 +33,7 @@ void PlayerSystem::Update(float dt)
 
     constexpr float rotationSpeed = 100.0f;
 
-    view.ParallelForEach([&](const auto &entityTuple) {
+    view.ForEach([&](const auto &entityTuple) {
         auto &player = std::get<1>(entityTuple);
         auto &rigidbody = std::get<2>(entityTuple);
 

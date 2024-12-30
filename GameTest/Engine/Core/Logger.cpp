@@ -1,3 +1,4 @@
+// Logger.cpp
 #include "stdafx.h"
 #include "Logger.h"
 #include <windows.h>
@@ -72,4 +73,30 @@ void Logger::WriteLog(const std::string &message)
         // Write the timestamp and message
         m_outputFile << "[" << timeBuffer << "] " << message << std::endl;
     }
+}
+
+void Logger::LogInfo(const std::string &message)
+{
+    WriteLog("[INFO]: " + message);
+}
+
+void Logger::LogWarning(const std::string &message)
+{
+    WriteLog("[WARNING]: " + message);
+}
+
+void Logger::LogError(const std::string &message)
+{
+    WriteLog("[ERROR]: " + message);
+}
+
+void Logger::LogTestResult(const TestResult &result)
+{
+    std::ostringstream oss;
+    oss << "[TEST " << (result.passed ? "PASSED" : "FAILED") << "]: " << result.name;
+    if (!result.message.empty())
+    {
+        oss << " - " << result.message;
+    }
+    WriteLog(oss.str());
 }
