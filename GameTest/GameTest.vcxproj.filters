@@ -211,6 +211,8 @@
     <ClInclude Include="Engine\Math\Vector2Tests.h" />
     <ClInclude Include="Engine\Math\Vector3Tests.h" />
     <ClInclude Include="Engine\Math\Vector4Tests.h" />
+    <ClInclude Include="Engine\Math\BoundingSphere.h" />
+    <ClInclude Include="Engine\Math\BoundingSphereTests.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

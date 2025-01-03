@@ -1,5 +1,5 @@
 #pragma once
-
+#include "BoundingSphere.h"
 #include "BoundingBox.h"
 #include <memory>
 #include <vector>
@@ -9,9 +9,9 @@
 struct ColliderEntry
 {
     unsigned int EntityID;
-    BoundingBox3D bounds;
+    BoundingSphere3D sphereBounds;
 
-    ColliderEntry(const BoundingBox3D &bounds_, unsigned int entityID);
+    ColliderEntry(const BoundingSphere3D &bounds_, unsigned int entityID);
 };
 
 class Octree

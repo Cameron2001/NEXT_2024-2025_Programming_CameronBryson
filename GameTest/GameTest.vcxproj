@@ -194,6 +194,8 @@
     <ClInclude Include="Engine\Graphics\Triangle.h" />
     <ClInclude Include="Engine\Math\BoundingBox.h" />
     <ClInclude Include="Engine\Math\BoundingBoxTests.h" />
+    <ClInclude Include="Engine\Math\BoundingSphere.h" />
+    <ClInclude Include="Engine\Math\BoundingSphereTests.h" />
     <ClInclude Include="Engine\Math\MathUtil.h" />
     <ClInclude Include="Engine\Math\Matrix4Tests.h" />
     <ClInclude Include="Engine\Math\OctreeTests.h" />

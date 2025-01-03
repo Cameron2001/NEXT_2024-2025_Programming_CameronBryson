@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Math/Vector2.h"
 #include "Engine/Math/Vector3.h"
+#include "BoundingSphere.h"
 #include <algorithm>
 
 class BoundingBox2D
@@ -49,7 +50,8 @@ class BoundingBox3D
     {
     }
 
-    BoundingBox3D(const float minX_, const float minY_, const float minZ_, const float maxX_, const float maxY_, const float max_z)
+    BoundingBox3D(const float minX_, const float minY_, const float minZ_, const float maxX_, const float maxY_,
+                  const float max_z)
         : minX(minX_), minY(minY_), minZ(minZ_), maxX(maxX_), maxY(maxY_), maxZ(max_z)
     {
     }
@@ -75,5 +77,26 @@ class BoundingBox3D
     {
         return (point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY && point.Z >= minZ &&
                 point.Z <= maxZ);
+    }
+    bool intersectsSphere(const BoundingSphere3D &sphere) const
+    {
+        float sqDist = 0.0f;
+
+        if (sphere.Center.X < minX)
+            sqDist += (minX - sphere.Center.X) * (minX - sphere.Center.X);
+        else if (sphere.Center.X > maxX)
+            sqDist += (sphere.Center.X - maxX) * (sphere.Center.X - maxX);
+
+        if (sphere.Center.Y < minY)
+            sqDist += (minY - sphere.Center.Y) * (minY - sphere.Center.Y);
+        else if (sphere.Center.Y > maxY)
+            sqDist += (sphere.Center.Y - maxY) * (sphere.Center.Y - maxY);
+
+        if (sphere.Center.Z < minZ)
+            sqDist += (minZ - sphere.Center.Z) * (minZ - sphere.Center.Z);
+        else if (sphere.Center.Z > maxZ)
+            sqDist += (sphere.Center.Z - maxZ) * (sphere.Center.Z - maxZ);
+
+        return sqDist <= (sphere.Radius * sphere.Radius);
     }
 };
