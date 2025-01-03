@@ -7,13 +7,14 @@
 #include <Engine/Math/Vector3.h>
 #include <Engine/Storage/Registry.h>
 #include <memory>
+#include "Engine/Core/Threadpool.h"
 
 Scene::Scene()
     : m_registry(std::make_shared<Registry>()), m_audioManager(std::make_shared<AudioManager>()),
       m_graphicsManager(std::make_shared<GraphicsManager>()),
       m_camera(std::make_shared<Camera>(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 90.0f)),
       m_renderSystem(m_registry.get(), m_graphicsManager.get(), m_camera.get()), m_collisionSystem(m_registry.get()),
-      m_physicsSystem(m_registry.get()), m_particleSystem(m_registry.get())
+      m_physicsSystem(m_registry.get()), m_particleSystem(m_registry.get()), m_threadpool(8)
 {
 }
 
@@ -35,17 +36,29 @@ void Scene::Update(const float dt)
     m_physicsSystem.Update(dt);
     m_collisionSystem.Update(dt);
     m_particleSystem.Update(dt);
+    m_renderSystem.Update();
+    /*std::vector<std::future<void>> updateFutures;
+    updateFutures.emplace_back(m_threadpool.QueueTask([this, dt]() { m_physicsSystem.Update(dt); }));
+    updateFutures.emplace_back(m_threadpool.QueueTask([this, dt]() { m_collisionSystem.Update(dt); }));
+    updateFutures.emplace_back(m_threadpool.QueueTask([this, dt]() { m_particleSystem.Update(dt); }));
+    updateFutures.emplace_back(m_threadpool.QueueTask([this]() { m_renderSystem.Update(); }));
+
+    Wait for All Other Systems to Complete Update
+    for (auto &future : updateFutures)
+   {
+        future.get();
+    }*/
 }
 
 void Scene::LateUpdate(const float dt)
 {
 }
-
+// Has to happen on main thread
 void Scene::Render()
 {
     m_renderSystem.Render();
 }
-
+// Has to happen on main thread
 void Scene::LateRender()
 {
     m_particleSystem.Render();

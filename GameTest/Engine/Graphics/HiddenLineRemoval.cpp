@@ -12,28 +12,27 @@
 #include <memory>
 #include <utility>
 #include <vector>
-HiddenLineRemoval::HiddenLineRemoval(const std::vector<Triangle2D> &triangles) : m_triangles(triangles)
+HiddenLineRemoval::HiddenLineRemoval()
 {
-    sortTrianglesByDepth();
-    initializeQuadtree();
-
-    // Reserve space for buffers
-    size_t estimatedSize = m_triangles.size() * 3;
-    m_visibleEdges.reserve(estimatedSize);
-    m_uniqueEdges.reserve(estimatedSize);
     m_intersectionPoints.reserve(3);
     m_sortedPoints.reserve(5);
-    m_segments.reserve(10);
-    m_clippedEdges.reserve(5);
-    m_potentialOccluders.reserve(50);
+    m_segments.reserve(20);
+    m_clippedEdges.reserve(10);
+    m_potentialOccluders.reserve(100);
 }
 
-std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines()
+std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D> &triangles)
 {
+    std::sort(triangles.begin(), triangles.end(),
+              [](const Triangle2D &a, const Triangle2D &b) { return a.avgZ < b.avgZ; });
+    initializeQuadtree(triangles);
+
     m_visibleEdges.clear();
     m_uniqueEdges.clear();
+    m_visibleEdges.reserve(triangles.size() * 3);
+    m_uniqueEdges.reserve(triangles.size() * 3);
 
-    for (const auto &triangle : m_triangles)
+    for (const auto &triangle : triangles)
     {
         processTriangle(triangle);
     }
@@ -41,14 +40,14 @@ std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines()
     return m_visibleEdges;
 }
 
-void HiddenLineRemoval::initializeQuadtree()
+void HiddenLineRemoval::initializeQuadtree(const std::vector<Triangle2D> &triangles)
 {
     float minX = std::numeric_limits<float>::max();
     float minY = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
     float maxY = std::numeric_limits<float>::lowest();
 
-    for (const auto &triangle : m_triangles)
+    for (const auto &triangle : triangles)
     {
         minX = std::min(minX, std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X}));
         minY = std::min(minY, std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y}));
@@ -57,26 +56,20 @@ void HiddenLineRemoval::initializeQuadtree()
     }
 
     BoundingBox2D rootBounds(minX, minY, maxX, maxY);
-    m_quadtree.reset(new Quadtree(rootBounds, 4, 4));
-}
-
-void HiddenLineRemoval::sortTrianglesByDepth()
-{
-    std::sort(m_triangles.begin(), m_triangles.end(),
-              [](const Triangle2D &a, const Triangle2D &b) { return a.avgZ < b.avgZ; });
+    m_quadtree = std::make_unique<Quadtree>(rootBounds, 4, 4);
 }
 
 void HiddenLineRemoval::processTriangle(const Triangle2D &triangle)
 {
-    Edge2D edges[3];
-    createTriangleEdges(triangle, edges);
-
-    m_potentialOccluders = m_quadtree->queryTriangle(triangle);
+    m_quadtree->queryTriangle(triangle, m_potentialOccluders);
 
     m_potentialOccluders.erase(
         std::remove_if(m_potentialOccluders.begin(), m_potentialOccluders.end(),
                        [&](const Triangle2D &occluder) { return sharesVertex(occluder, triangle); }),
         m_potentialOccluders.end());
+
+    Edge2D edges[3];
+    createTriangleEdges(triangle, edges);
 
     for (int i = 0; i < 3; ++i)
     {
@@ -88,6 +81,7 @@ void HiddenLineRemoval::processTriangle(const Triangle2D &triangle)
     }
 
     m_quadtree->insert(triangle);
+    m_potentialOccluders.clear();
 }
 
 void HiddenLineRemoval::processEdge(const Edge2D &edge, const std::vector<Triangle2D> &occluders)
@@ -152,6 +146,7 @@ void HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edge, const Triang
 
     m_sortedPoints.emplace_back(edge.start);
     for (const auto &point : m_intersectionPoints)
+
     {
         m_sortedPoints.emplace_back(point);
     }
@@ -166,10 +161,10 @@ void HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edge, const Triang
         FVector2 midPoint = (m_sortedPoints[i] + m_sortedPoints[i + 1]) * 0.5f;
         if (!isPointInsideTriangle(midPoint, triangle))
         {
-            Edge2D newEdge(m_sortedPoints[i], m_sortedPoints[i + 1]);
-            if ((newEdge.end - newEdge.start).LengthSquared() >= 1e-5f)
+            FVector2 delta = m_sortedPoints[i + 1] - m_sortedPoints[i];
+            if (delta.LengthSquared() >= 1e-5f)
             {
-                m_clippedEdges.emplace_back(newEdge);
+                m_clippedEdges.emplace_back(m_sortedPoints[i], m_sortedPoints[i + 1]);
             }
         }
     }

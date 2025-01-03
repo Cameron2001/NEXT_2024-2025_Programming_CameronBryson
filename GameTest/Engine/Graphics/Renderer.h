@@ -20,17 +20,10 @@ class Renderer
     Renderer &operator=(const Renderer &) = delete;
     Renderer(Renderer &&) = delete;
     Renderer &operator=(Renderer &&) = delete;
-    static void QueueMesh(const Mesh &mesh, const Matrix4 &MVP);
-    static void QueueModel(const Model &model, const Matrix4 &MVP);
-    static void SubmitQueue();
-    static void ClearQueue();
+    static void SubmitQueue(const std::vector<Triangle2D> &triangles);
+    static bool QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2);
 
   private:
-    static std::vector<Triangle2D> m_triangles;
-
-    static bool QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2);
-    // LiangBarsky
-    static Edge2D LiangBarsky(const Edge2D &edge);
 };
 inline bool Renderer::QuickReject(const Edge3D &edge0, const Edge3D &edge1, const Edge3D &edge2)
 {

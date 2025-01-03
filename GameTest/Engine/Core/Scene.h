@@ -8,7 +8,7 @@
 #include "Engine/Systems/PhysicsSystem.h"
 #include "Engine/Systems/RenderSystem.h"
 #include "Engine/Systems/ParticleSystem.h"
-
+#include "Engine/Core/Threadpool.h"
 class Scene
 {
   public:
@@ -58,6 +58,7 @@ class Scene
     PhysicsSystem m_physicsSystem;
     ParticleSystem m_particleSystem;
 
+    Threadpool m_threadpool;
     // Rendersystem only reads data
     // Physics system reads and edits data
     // Collision system reads and edits data

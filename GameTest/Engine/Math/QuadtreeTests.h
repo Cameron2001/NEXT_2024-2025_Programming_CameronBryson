@@ -16,7 +16,8 @@ inline TestResult InsertSingleTriangle()
     Quadtree quadtree(bounds, 4, 5);
     Triangle2D triangle(FVector2(10.0f, 10.0f), FVector2(20.0f, 10.0f), FVector2(15.0f, 20.0f), 15.0f);
     bool inserted = quadtree.insert(triangle);
-    std::vector<Triangle2D> queried = quadtree.queryArea(bounds);
+    std::vector<Triangle2D> queried;
+    quadtree.queryArea(bounds, queried);
     bool isEqual = (queried.size() == 1 && queried[0] == triangle);
     std::ostringstream oss;
     if (isEqual)
@@ -36,7 +37,8 @@ inline TestResult InsertMultipleTriangles()
         Triangle2D(FVector2(50.0f, 50.0f), FVector2(60.0f, 50.0f), FVector2(55.0f, 60.0f), 55.0f)};
     for (const auto &triangle : triangles)
         quadtree.insert(triangle);
-    std::vector<Triangle2D> queried = quadtree.queryArea(bounds);
+    std::vector<Triangle2D> queried;
+    quadtree.queryArea(bounds, queried);
     bool allFound = (queried.size() == triangles.size());
     for (const auto &triangle : triangles)
         if (std::find(queried.begin(), queried.end(), triangle) == queried.end())
@@ -62,7 +64,8 @@ inline TestResult QuadtreeSubdivision()
         Triangle2D(FVector2(30.0f, 30.0f), FVector2(40.0f, 30.0f), FVector2(35.0f, 40.0f), 35.0f)};
     for (const auto &triangle : triangles)
         quadtree.insert(triangle);
-    std::vector<Triangle2D> queried = quadtree.queryArea(bounds);
+    std::vector<Triangle2D> queried;
+    quadtree.queryArea(bounds, queried);
     bool correct = (queried.size() == 3);
     std::ostringstream oss;
     if (correct)
@@ -83,7 +86,8 @@ inline TestResult QueryArea()
     for (const auto &triangle : triangles)
         quadtree.insert(triangle);
     BoundingBox2D queryRange(5.0f, 5.0f, 45.0f, 45.0f);
-    std::vector<Triangle2D> queried = quadtree.queryArea(queryRange);
+    std::vector<Triangle2D> queried;
+    quadtree.queryArea(queryRange, queried);
     bool correct = (queried.size() == 2) &&
                    (std::find(queried.begin(), queried.end(), triangles[0]) != queried.end()) &&
                    (std::find(queried.begin(), queried.end(), triangles[1]) != queried.end());
@@ -101,7 +105,8 @@ inline TestResult InsertSpanningTriangles()
     Quadtree quadtree(bounds, 2, 3);
     Triangle2D spanningTriangle(FVector2(45.0f, 45.0f), FVector2(55.0f, 45.0f), FVector2(50.0f, 55.0f), 50.0f);
     bool inserted = quadtree.insert(spanningTriangle);
-    std::vector<Triangle2D> queried = quadtree.queryArea(bounds);
+    std::vector<Triangle2D> queried;
+    quadtree.queryArea(bounds, queried);
     bool isEqual = (queried.size() == 1 && queried[0] == spanningTriangle);
     std::ostringstream oss;
     if (isEqual)

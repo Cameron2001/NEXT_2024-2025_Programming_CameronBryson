@@ -15,7 +15,7 @@ struct Edge2DHash;
 class HiddenLineRemoval
 {
   public:
-    explicit HiddenLineRemoval(const std::vector<Triangle2D> &triangles);
+    HiddenLineRemoval();
     ~HiddenLineRemoval() = default;
 
     HiddenLineRemoval(const HiddenLineRemoval &) = delete;
@@ -23,11 +23,10 @@ class HiddenLineRemoval
     HiddenLineRemoval(HiddenLineRemoval &&) = default;
     HiddenLineRemoval &operator=(HiddenLineRemoval &&) = default;
 
-    std::vector<Edge2D> removeHiddenLines();
+    std::vector<Edge2D> removeHiddenLines(std::vector<Triangle2D> &triangles);
 
   private:
-    void initializeQuadtree();
-    void sortTrianglesByDepth();
+    void initializeQuadtree(const std::vector<Triangle2D> &triangles);
     void processTriangle(const Triangle2D &triangle);
     void processEdge(const Edge2D &edge, const std::vector<Triangle2D> &occluders);
     void clipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle);
@@ -37,20 +36,18 @@ class HiddenLineRemoval
     static void createTriangleEdges(const Triangle2D &triangle, Edge2D edges[3]);
     static bool sharesVertex(const Triangle2D &triangleA, const Triangle2D &triangleB);
 
-    std::vector<Triangle2D> m_triangles;
     std::unique_ptr<Quadtree> m_quadtree;
     std::unordered_set<Edge2D, Edge2DHash> m_uniqueEdges;
     std::vector<Edge2D> m_visibleEdges;
 
     // Reusable buffers to avoid dynamic allocations
-    mutable std::vector<FVector2> m_intersectionPoints;
-    mutable std::vector<FVector2> m_sortedPoints;
-    mutable std::vector<Edge2D> m_segments;
-    mutable std::vector<Edge2D> m_clippedEdges;
-    mutable std::vector<Triangle2D> m_potentialOccluders;
+    std::vector<FVector2> m_intersectionPoints;
+    std::vector<FVector2> m_sortedPoints;
+    std::vector<Edge2D> m_segments;
+    std::vector<Edge2D> m_clippedEdges;
+    std::vector<Triangle2D> m_potentialOccluders;
 };
 
-// Inline function implementations
 inline void HiddenLineRemoval::createTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])
 {
     edges[0] = Edge2D(triangle.v0, triangle.v1);
