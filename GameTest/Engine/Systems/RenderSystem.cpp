@@ -91,9 +91,12 @@ void RenderSystem::Update()
 }
 void RenderSystem::Render()
 {
-
     for (const auto &edge : m_visibleSegments)
     {
+        if (std::isnan(edge.start.X) || std::isnan(edge.start.Y) || std::isnan(edge.end.X) || std::isnan(edge.end.Y))
+        {
+            continue; // Skip invalid edges
+        }
         Renderer2D::DrawLine(edge, {1.0f, 1.0f, 1.0f});
     }
     m_triangles.clear();

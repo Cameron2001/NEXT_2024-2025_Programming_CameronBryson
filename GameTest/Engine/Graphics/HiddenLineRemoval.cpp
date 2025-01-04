@@ -12,11 +12,10 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include <ppl.h> // Include PPL header
+#include <ppl.h>
 
 HiddenLineRemoval::HiddenLineRemoval()
 {
-    // Initialization if necessary
 }
 
 std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D> &triangles)
@@ -27,10 +26,6 @@ std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D>
         m_quadtree->insert(triangle);
     }
 
-    m_visibleEdges.clear();
-    m_visibleEdges.reserve(triangles.size() * 3);
-
-    // Parallelize the processing of triangles
     concurrency::parallel_for_each(triangles.begin(), triangles.end(), [&](const Triangle2D &triangle) {
         // Thread-local reusable vectors
         thread_local std::vector<Triangle2D> potentialOccluders;
@@ -54,12 +49,12 @@ std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D>
         processTriangle(triangle, potentialOccluders, clippedEdges, segments, newClippedEdges);
     });
 
+    // Combine all local vectors into a single result
     std::vector<Edge2D> result;
-    result.reserve(m_visibleEdges.size());
-    for (const auto &segment : m_visibleEdges)
-    {
-        result.emplace_back(std::move(segment));
-    }
+    m_visibleEdges.combine_each([&result](const std::vector<Edge2D> &localEdges) {
+        result.insert(result.end(), localEdges.begin(), localEdges.end());
+    });
+    m_visibleEdges.clear();
     return result;
 }
 
@@ -129,28 +124,31 @@ void HiddenLineRemoval::processEdge(const Edge2D &edge, const std::vector<Triang
     }
 
     // Append remaining visible segments to clippedEdges
-    clippedEdges.insert(clippedEdges.end(), segments.begin(), segments.end());
-
-    // Add the clipped edges to the concurrent visible edges
     for (const auto &segment : segments)
     {
-        m_visibleEdges.push_back(segment);
+        clippedEdges.emplace_back(segment);
+    }
+
+    // Add the clipped edges to the combinable visible edges
+    for (const auto &segment : segments)
+    {
+        m_visibleEdges.local().emplace_back(segment);
     }
 }
 
 void HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle,
                                                 std::vector<Edge2D> &clippedEdges)
 {
-    FVector2 intersectionPoints[3];
+    FVector2 intersectionPoints[2];
     size_t intersectionCount = 0;
-    FVector2 sortedPoints[5];
+    FVector2 sortedPoints[4];
     size_t sortedCount = 0;
 
     Edge2D triEdges[3];
     createTriangleEdges(triangle, triEdges);
 
-    // Find intersection points (maximum of 3)
-    for (int i = 0; i < 3 && intersectionCount < 3; ++i)
+    // Find intersection points (maximum of 2)
+    for (int i = 0; i < 3 && intersectionCount < 2; ++i)
     {
         FVector2 intersectionPoint;
         if (getEdgeIntersection(edge, triEdges[i], intersectionPoint))

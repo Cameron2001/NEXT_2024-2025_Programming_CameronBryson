@@ -3,15 +3,11 @@
 #include "Edge.h"
 #include "Triangle.h"
 #include <Engine/Math/Quadtree.h>
-#include <Engine/Math/BoundingBox.h>
 #include <memory>
-#include <unordered_set>
+#include <ppl.h>
 #include <vector>
-#include <concurrent_vector.h>
 
 class FVector2;
-
-struct Edge2DHash;
 
 class HiddenLineRemoval
 {
@@ -43,7 +39,7 @@ class HiddenLineRemoval
     static bool sharesVertex(const Triangle2D &triangleA, const Triangle2D &triangleB);
 
     std::unique_ptr<Quadtree> m_quadtree;
-    concurrency::concurrent_vector<Edge2D> m_visibleEdges;
+    concurrency::combinable<std::vector<Edge2D>> m_visibleEdges;
 };
 
 inline void HiddenLineRemoval::createTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])
