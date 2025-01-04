@@ -14,8 +14,6 @@
 #include <vector>
 HiddenLineRemoval::HiddenLineRemoval()
 {
-    m_intersectionPoints.reserve(3);
-    m_sortedPoints.reserve(5);
     m_segments.reserve(20);
     m_clippedEdges.reserve(10);
     m_potentialOccluders.reserve(100);
@@ -23,21 +21,25 @@ HiddenLineRemoval::HiddenLineRemoval()
 
 std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D> &triangles)
 {
-    std::sort(triangles.begin(), triangles.end(),
-              [](const Triangle2D &a, const Triangle2D &b) { return a.avgZ < b.avgZ; });
     initializeQuadtree(triangles);
+    for (const auto &triangle : triangles)
+    {
+        m_quadtree->insert(triangle);
+    }
 
     m_visibleEdges.clear();
-    m_uniqueEdges.clear();
     m_visibleEdges.reserve(triangles.size() * 3);
-    m_uniqueEdges.reserve(triangles.size() * 3);
 
     for (const auto &triangle : triangles)
     {
         processTriangle(triangle);
     }
-
-    return m_visibleEdges;
+    std::vector<Edge2D> result;
+    for (const auto &segment : m_visibleEdges)
+    {
+        result.emplace_back(std::move(segment));
+    }
+    return result;
 }
 
 void HiddenLineRemoval::initializeQuadtree(const std::vector<Triangle2D> &triangles)
@@ -74,13 +76,9 @@ void HiddenLineRemoval::processTriangle(const Triangle2D &triangle)
     for (int i = 0; i < 3; ++i)
     {
         const Edge2D &edge = edges[i];
-        if (m_uniqueEdges.insert(edge).second)
-        {
-            processEdge(edge, m_potentialOccluders);
-        }
+        processEdge(edge, m_potentialOccluders);
     }
 
-    m_quadtree->insert(triangle);
     m_potentialOccluders.clear();
 }
 
@@ -108,28 +106,31 @@ void HiddenLineRemoval::processEdge(const Edge2D &edge, const std::vector<Triang
     }
     for (const auto &segment : m_segments)
     {
-        m_visibleEdges.emplace_back(segment);
+        m_visibleEdges.push_back(segment);
     }
 }
 
 void HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle)
 {
-    m_intersectionPoints.clear();
-    m_sortedPoints.clear();
+    FVector2 intersectionPoints[3];
+    size_t intersectionCount = 0;
+    FVector2 sortedPoints[5];
+    size_t sortedCount = 0;
 
     Edge2D triEdges[3];
     createTriangleEdges(triangle, triEdges);
 
-    for (int i = 0; i < 3; ++i)
+    // Find intersection points (maximum of 3)
+    for (int i = 0; i < 3 && intersectionCount < 3; ++i)
     {
         FVector2 intersectionPoint;
         if (getEdgeIntersection(edge, triEdges[i], intersectionPoint))
         {
-            m_intersectionPoints.emplace_back(intersectionPoint);
+            intersectionPoints[intersectionCount++] = intersectionPoint;
         }
     }
 
-    if (m_intersectionPoints.empty())
+    if (intersectionCount == 0)
     {
         if (isPointInsideTriangle(edge.start, triangle) && isPointInsideTriangle(edge.end, triangle))
         {
@@ -144,27 +145,29 @@ void HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edge, const Triang
         }
     }
 
-    m_sortedPoints.emplace_back(edge.start);
-    for (const auto &point : m_intersectionPoints)
-
+    // Populate sortedPoints with start, intersections, and end
+    sortedPoints[sortedCount++] = edge.start;
+    for (size_t i = 0; i < intersectionCount; ++i)
     {
-        m_sortedPoints.emplace_back(point);
+        sortedPoints[sortedCount++] = intersectionPoints[i];
     }
-    m_sortedPoints.emplace_back(edge.end);
+    sortedPoints[sortedCount++] = edge.end;
 
-    std::sort(m_sortedPoints.begin(), m_sortedPoints.end(), [&](const FVector2 &a, const FVector2 &b) {
+    // Sort sortedPoints based on distance from edge.start
+    std::sort(sortedPoints, sortedPoints + sortedCount, [&](const FVector2 &a, const FVector2 &b) {
         return (a - edge.start).LengthSquared() < (b - edge.start).LengthSquared();
     });
 
-    for (size_t i = 0; i < m_sortedPoints.size() - 1; ++i)
+    // Create clipped edges based on sorted points
+    for (size_t i = 0; i < sortedCount - 1; ++i)
     {
-        FVector2 midPoint = (m_sortedPoints[i] + m_sortedPoints[i + 1]) * 0.5f;
+        FVector2 midPoint = (sortedPoints[i] + sortedPoints[i + 1]) * 0.5f;
         if (!isPointInsideTriangle(midPoint, triangle))
         {
-            FVector2 delta = m_sortedPoints[i + 1] - m_sortedPoints[i];
+            FVector2 delta = sortedPoints[i + 1] - sortedPoints[i];
             if (delta.LengthSquared() >= 1e-5f)
             {
-                m_clippedEdges.emplace_back(m_sortedPoints[i], m_sortedPoints[i + 1]);
+                m_clippedEdges.emplace_back(sortedPoints[i], sortedPoints[i + 1]);
             }
         }
     }

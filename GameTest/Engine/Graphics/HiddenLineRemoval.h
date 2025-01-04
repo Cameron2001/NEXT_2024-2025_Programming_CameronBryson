@@ -7,6 +7,7 @@
 #include <memory>
 #include <unordered_set>
 #include <vector>
+#include <concurrent_vector.h>
 
 class FVector2;
 
@@ -37,12 +38,9 @@ class HiddenLineRemoval
     static bool sharesVertex(const Triangle2D &triangleA, const Triangle2D &triangleB);
 
     std::unique_ptr<Quadtree> m_quadtree;
-    std::unordered_set<Edge2D, Edge2DHash> m_uniqueEdges;
-    std::vector<Edge2D> m_visibleEdges;
+    concurrency::concurrent_vector<Edge2D> m_visibleEdges;
 
     // Reusable buffers to avoid dynamic allocations
-    std::vector<FVector2> m_intersectionPoints;
-    std::vector<FVector2> m_sortedPoints;
     std::vector<Edge2D> m_segments;
     std::vector<Edge2D> m_clippedEdges;
     std::vector<Triangle2D> m_potentialOccluders;

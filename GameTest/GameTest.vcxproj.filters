@@ -81,6 +81,7 @@
     <ClCompile Include="Engine\Systems\ParticleSystem.cpp" />
     <ClCompile Include="Engine\Core\Events.cpp" />
     <ClCompile Include="Engine\Core\Logger.cpp" />
+    <ClCompile Include="Engine\Core\Semaphore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Engine\Math\Vector4Tests.h" />
     <ClInclude Include="Engine\Math\BoundingSphere.h" />
     <ClInclude Include="Engine\Math\BoundingSphereTests.h" />
+    <ClInclude Include="Engine\Core\Semaphore.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
