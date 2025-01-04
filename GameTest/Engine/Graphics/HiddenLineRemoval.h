@@ -28,9 +28,14 @@ class HiddenLineRemoval
 
   private:
     void initializeQuadtree(const std::vector<Triangle2D> &triangles);
-    void processTriangle(const Triangle2D &triangle);
-    void processEdge(const Edge2D &edge, const std::vector<Triangle2D> &occluders);
-    void clipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle);
+    void processTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &potentialOccluders,
+                         std::vector<Edge2D> &clippedEdges, std::vector<Edge2D> &segments,
+                         std::vector<Edge2D> &newClippedEdges);
+
+    void processEdge(const Edge2D &edge, const std::vector<Triangle2D> &occluders, std::vector<Edge2D> &clippedEdges,
+                     std::vector<Edge2D> &segments, std::vector<Edge2D> &newClippedEdges);
+
+    void clipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle, std::vector<Edge2D> &clippedEdges);
 
     static bool getEdgeIntersection(const Edge2D &edgeA, const Edge2D &edgeB, FVector2 &intersectionPoint);
     static bool isPointInsideTriangle(const FVector2 &point, const Triangle2D &triangle);
@@ -39,11 +44,6 @@ class HiddenLineRemoval
 
     std::unique_ptr<Quadtree> m_quadtree;
     concurrency::concurrent_vector<Edge2D> m_visibleEdges;
-
-    // Reusable buffers to avoid dynamic allocations
-    std::vector<Edge2D> m_segments;
-    std::vector<Edge2D> m_clippedEdges;
-    std::vector<Triangle2D> m_potentialOccluders;
 };
 
 inline void HiddenLineRemoval::createTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])
@@ -58,4 +58,21 @@ inline bool HiddenLineRemoval::sharesVertex(const Triangle2D &triangleA, const T
     return (triangleA.v0 == triangleB.v0 || triangleA.v0 == triangleB.v1 || triangleA.v0 == triangleB.v2 ||
             triangleA.v1 == triangleB.v0 || triangleA.v1 == triangleB.v1 || triangleA.v1 == triangleB.v2 ||
             triangleA.v2 == triangleB.v0 || triangleA.v2 == triangleB.v1 || triangleA.v2 == triangleB.v2);
+}
+inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector2 &point, const Triangle2D &triangle)
+{
+    float deltaX = point.X - triangle.v0.X;
+    float deltaY = point.Y - triangle.v0.Y;
+
+    bool isSideABPositive = (triangle.v1.X - triangle.v0.X) * deltaY - (triangle.v1.Y - triangle.v0.Y) * deltaX > 0;
+
+    if (((triangle.v2.X - triangle.v0.X) * deltaY - (triangle.v2.Y - triangle.v0.Y) * deltaX > 0) == isSideABPositive)
+        return false;
+
+    if (((triangle.v2.X - triangle.v1.X) * (point.Y - triangle.v1.Y) -
+             (triangle.v2.Y - triangle.v1.Y) * (point.X - triangle.v1.X) >
+         0) != isSideABPositive)
+        return false;
+
+    return true;
 }
