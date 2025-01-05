@@ -10,12 +10,21 @@
 #include <Engine/Math/Quadtree.h>
 #include <limits>
 #include <memory>
+#include <mutex>
+#include <ppl.h>
+#include <type_traits>
 #include <utility>
 #include <vector>
-#include <ppl.h>
 
 HiddenLineRemoval::HiddenLineRemoval()
 {
+    for (size_t i = 0; i < m_bufferPoolSize; ++i)
+    {
+        m_threadBuffers.emplace_back(std::make_unique<BufferContext>());
+        m_semaphore.release();
+    }
+    m_result.reserve(10000);
+    m_visibleEdges.local().reserve(10000);
 }
 
 std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D> &triangles)
@@ -26,36 +35,65 @@ std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D>
         m_quadtree->insert(triangle);
     }
 
-    concurrency::parallel_for_each(triangles.begin(), triangles.end(), [&](const Triangle2D &triangle) {
-        // Thread-local reusable vectors
-        thread_local std::vector<Triangle2D> potentialOccluders;
-        thread_local std::vector<Edge2D> clippedEdges;
-        thread_local std::vector<Edge2D> segments;
-        thread_local std::vector<Edge2D> newClippedEdges;
+    size_t totalTriangles = triangles.size();
+    size_t batchSize = totalTriangles / m_bufferPoolSize;
+    size_t numBatches = (totalTriangles + batchSize - 1) / batchSize;
 
-        // Clear and reserve capacity for reuse
-        potentialOccluders.clear();
-        potentialOccluders.reserve(100);
+    concurrency::parallel_for(size_t(0), numBatches, [&](size_t batchIndex) {
+        size_t startIdx = batchIndex * batchSize;
+        size_t endIdx = std::min(startIdx + batchSize, totalTriangles);
+        size_t currentBatchSize = endIdx - startIdx;
 
-        clippedEdges.clear();
-        clippedEdges.reserve(10);
+        // Acquire a buffer for the entire batch
+        m_semaphore.acquire();
 
-        segments.clear();
-        segments.reserve(20);
+        std::unique_ptr<BufferContext> buffer;
+        {
+            std::lock_guard<std::mutex> lock(m_bufferMutex);
+            if (m_threadBuffers.empty())
+            {
+                // This should not happen due to semaphore control
+                m_semaphore.release();
+                return;
+            }
+            buffer = std::move(m_threadBuffers.back());
+            m_threadBuffers.pop_back();
+        }
 
-        newClippedEdges.clear();
-        newClippedEdges.reserve(10);
+        for (size_t i = startIdx; i < endIdx; ++i)
+        {
+            const Triangle2D &triangle = triangles[i];
+            buffer->clear();
+            processTriangle(triangle, buffer->potentialOccluders, buffer->clippedEdges, buffer->segments,
+                            buffer->newClippedEdges);
+        }
 
-        processTriangle(triangle, potentialOccluders, clippedEdges, segments, newClippedEdges);
+        if (!buffer->clippedEdges.empty())
+        {
+            for (const auto &edge : buffer->clippedEdges)
+            {
+                m_visibleEdges.local().emplace_back(edge);
+            }
+        }
+
+        // Return the buffer to the pool
+        {
+            std::lock_guard<std::mutex> lock(m_bufferMutex);
+            m_threadBuffers.emplace_back(std::move(buffer));
+        }
+
+        m_semaphore.release();
     });
 
-    // Combine all local vectors into a single result
-    std::vector<Edge2D> result;
-    m_visibleEdges.combine_each([&result](const std::vector<Edge2D> &localEdges) {
-        result.insert(result.end(), localEdges.begin(), localEdges.end());
+    m_result.clear();
+    m_visibleEdges.combine_each([&](const std::vector<Edge2D> &localEdges) {
+        for (const auto &edge : localEdges)
+        {
+            m_result.emplace_back(edge);
+        }
     });
     m_visibleEdges.clear();
-    return result;
+    return m_result;
 }
 
 void HiddenLineRemoval::initializeQuadtree(const std::vector<Triangle2D> &triangles)
@@ -117,19 +155,16 @@ void HiddenLineRemoval::processEdge(const Edge2D &edge, const std::vector<Triang
         if (newClippedEdges.empty())
         {
             segments.clear();
-            break; // Edge is fully occluded
+            break;
         }
 
-        segments.swap(newClippedEdges);
+        segments = newClippedEdges;
     }
 
-    // Append remaining visible segments to clippedEdges
     for (const auto &segment : segments)
     {
         clippedEdges.emplace_back(segment);
     }
-
-    // Add the clipped edges to the combinable visible edges
     for (const auto &segment : segments)
     {
         m_visibleEdges.local().emplace_back(segment);
@@ -147,7 +182,6 @@ void HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edge, const Triang
     Edge2D triEdges[3];
     createTriangleEdges(triangle, triEdges);
 
-    // Find intersection points (maximum of 2)
     for (int i = 0; i < 3 && intersectionCount < 2; ++i)
     {
         FVector2 intersectionPoint;
@@ -161,18 +195,15 @@ void HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edge, const Triang
     {
         if (isPointInsideTriangle(edge.start, triangle) && isPointInsideTriangle(edge.end, triangle))
         {
-            // Edge is fully occluded
             return;
         }
         else
         {
-            // Edge is fully visible
             clippedEdges.emplace_back(edge);
             return;
         }
     }
 
-    // Populate sortedPoints with start, intersections, and end
     sortedPoints[sortedCount++] = edge.start;
     for (size_t i = 0; i < intersectionCount; ++i)
     {
@@ -180,12 +211,10 @@ void HiddenLineRemoval::clipEdgeAgainstTriangle(const Edge2D &edge, const Triang
     }
     sortedPoints[sortedCount++] = edge.end;
 
-    // Sort sortedPoints based on distance from edge.start
     std::sort(sortedPoints, sortedPoints + sortedCount, [&](const FVector2 &a, const FVector2 &b) {
         return (a - edge.start).LengthSquared() < (b - edge.start).LengthSquared();
     });
 
-    // Create clipped edges based on sorted points
     for (size_t i = 0; i < sortedCount - 1; ++i)
     {
         FVector2 midPoint = (sortedPoints[i] + sortedPoints[i + 1]) * 0.5f;
@@ -216,7 +245,7 @@ bool HiddenLineRemoval::getEdgeIntersection(const Edge2D &edgeA, const Edge2D &e
 
     if (std::abs(denominator) < EPSILON)
     {
-        return false; // Lines are parallel or coincident
+        return false;
     }
 
     const float numeratorA = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4);
@@ -225,7 +254,7 @@ bool HiddenLineRemoval::getEdgeIntersection(const Edge2D &edgeA, const Edge2D &e
     const float u = numeratorB / denominator;
 
     if (t < -EPSILON || t > 1.0f + EPSILON || u < -EPSILON || u > 1.0f + EPSILON)
-        return false; // Intersection not within the segments
+        return false;
 
     intersectionPoint.X = x1 + t * (x2 - x1);
     intersectionPoint.Y = y1 + t * (y2 - y1);

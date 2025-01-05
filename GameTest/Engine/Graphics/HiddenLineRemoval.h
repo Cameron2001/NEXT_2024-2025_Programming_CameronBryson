@@ -6,8 +6,33 @@
 #include <memory>
 #include <ppl.h>
 #include <vector>
-
+#include "Engine/Core/Semaphore.h"
 class FVector2;
+
+struct BufferContext
+{
+    std::vector<Triangle2D> potentialOccluders;
+    std::vector<Edge2D> clippedEdges;
+    std::vector<Edge2D> segments;
+    std::vector<Edge2D> newClippedEdges;
+    // we dont need a visable segments buffer
+
+    BufferContext()
+    {
+        potentialOccluders.reserve(100);
+        clippedEdges.reserve(100);
+        segments.reserve(200);
+        newClippedEdges.reserve(100);
+    }
+
+    void clear()
+    {
+        potentialOccluders.clear();
+        clippedEdges.clear();
+        segments.clear();
+        newClippedEdges.clear();
+    }
+};
 
 class HiddenLineRemoval
 {
@@ -38,8 +63,13 @@ class HiddenLineRemoval
     static void createTriangleEdges(const Triangle2D &triangle, Edge2D edges[3]);
     static bool sharesVertex(const Triangle2D &triangleA, const Triangle2D &triangleB);
 
+    std::vector<Edge2D> m_result;
     std::unique_ptr<Quadtree> m_quadtree;
+    Semaphore m_semaphore;
+    std::vector<std::unique_ptr<BufferContext>> m_threadBuffers;
+    std::mutex m_bufferMutex;
     concurrency::combinable<std::vector<Edge2D>> m_visibleEdges;
+    size_t m_bufferPoolSize = 12;
 };
 
 inline void HiddenLineRemoval::createTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])
@@ -55,6 +85,7 @@ inline bool HiddenLineRemoval::sharesVertex(const Triangle2D &triangleA, const T
             triangleA.v1 == triangleB.v0 || triangleA.v1 == triangleB.v1 || triangleA.v1 == triangleB.v2 ||
             triangleA.v2 == triangleB.v0 || triangleA.v2 == triangleB.v1 || triangleA.v2 == triangleB.v2);
 }
+
 inline bool HiddenLineRemoval::isPointInsideTriangle(const FVector2 &point, const Triangle2D &triangle)
 {
     float deltaX = point.X - triangle.v0.X;
