@@ -82,6 +82,7 @@
     <ClCompile Include="Engine\Core\Events.cpp" />
     <ClCompile Include="Engine\Core\Logger.cpp" />
     <ClCompile Include="Engine\Core\Semaphore.cpp" />
+    <ClCompile Include="Engine\Core\SemaphoreGuard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="Engine\Math\BoundingSphere.h" />
     <ClInclude Include="Engine\Math\BoundingSphereTests.h" />
     <ClInclude Include="Engine\Core\Semaphore.h" />
+    <ClInclude Include="Engine\Core\SemaphoreGuard.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

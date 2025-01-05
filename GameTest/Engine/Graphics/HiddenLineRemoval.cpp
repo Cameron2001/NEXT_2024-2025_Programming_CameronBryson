@@ -15,6 +15,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include "Engine/Core/SemaphoreGuard.h"
 
 HiddenLineRemoval::HiddenLineRemoval()
 {
@@ -45,7 +46,7 @@ std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D>
         size_t currentBatchSize = endIdx - startIdx;
 
         // Acquire a buffer for the entire batch
-        m_semaphore.acquire();
+        SemaphoreGuard guard(m_semaphore);
 
         std::unique_ptr<BufferContext> buffer;
         {
@@ -63,6 +64,7 @@ std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D>
         for (size_t i = startIdx; i < endIdx; ++i)
         {
             const Triangle2D &triangle = triangles[i];
+            // I should probably change this. Clearning stuff that is cleared later.
             buffer->clear();
             processTriangle(triangle, buffer->potentialOccluders, buffer->clippedEdges, buffer->segments,
                             buffer->newClippedEdges);
@@ -81,8 +83,6 @@ std::vector<Edge2D> HiddenLineRemoval::removeHiddenLines(std::vector<Triangle2D>
             std::lock_guard<std::mutex> lock(m_bufferMutex);
             m_threadBuffers.emplace_back(std::move(buffer));
         }
-
-        m_semaphore.release();
     });
 
     m_result.clear();

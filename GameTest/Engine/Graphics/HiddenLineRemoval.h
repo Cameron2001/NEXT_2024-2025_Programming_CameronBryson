@@ -69,7 +69,7 @@ class HiddenLineRemoval
     std::vector<std::unique_ptr<BufferContext>> m_threadBuffers;
     std::mutex m_bufferMutex;
     concurrency::combinable<std::vector<Edge2D>> m_visibleEdges;
-    size_t m_bufferPoolSize = 12;
+    size_t m_bufferPoolSize = 6;
 };
 
 inline void HiddenLineRemoval::createTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])
