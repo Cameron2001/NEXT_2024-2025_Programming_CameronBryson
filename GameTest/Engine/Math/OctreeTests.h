@@ -25,11 +25,11 @@ inline TestResult InsertSphereCollider()
     TransformComponent transform(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID = 1;
 
-    octree.insert(sphere, transform, entityID);
+    octree.Insert(sphere, transform, entityID);
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Since there's only one collider, there should be no potential collisions
     bool passed = potentialCollisions.empty();
@@ -51,11 +51,11 @@ inline TestResult InsertBoxCollider()
     TransformComponent transform(FVector3(10.0f, 10.0f, 10.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(2.0f, 2.0f, 2.0f));
     unsigned int entityID = 2;
 
-    octree.insert(box, transform, entityID);
+    octree.Insert(box, transform, entityID);
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Since there's only one collider, there should be no potential collisions
     bool passed = potentialCollisions.empty();
@@ -93,13 +93,13 @@ inline TestResult DetectPotentialCollisions()
     unsigned int entityID3 = 3;
 
     // Insert colliders
-    octree.insert(sphere1, transform1, entityID1);
-    octree.insert(sphere2, transform2, entityID2);
-    octree.insert(sphere3, transform3, entityID3);
+    octree.Insert(sphere1, transform1, entityID1);
+    octree.Insert(sphere2, transform2, entityID2);
+    octree.Insert(sphere3, transform3, entityID3);
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Expecting one potential collision between entityID1 and entityID2
     bool passed = (potentialCollisions.size() == 1) &&
@@ -129,13 +129,13 @@ inline TestResult SubdivideAfterCapacity()
         SphereBoundsComponent sphere(5.0f);
         TransformComponent transform(FVector3(i * 10.0f, i * 10.0f, i * 10.0f), FVector3(0.0f, 0.0f, 0.0f),
                                      FVector3(1.0f, 1.0f, 1.0f));
-        octree.insert(sphere, transform, i);
+        octree.Insert(sphere, transform, i);
     }
 
     // Since we don't have direct access to check subdivision, we'll check potential collisions
     // There should be potential collisions between colliders if subdivision and insertion are correct
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Verify that the correct number of potential collisions are detected
     // With 3 colliders, only 2 pairs overlap (assuming positions)
@@ -164,12 +164,12 @@ inline TestResult NoFalsePositives()
         SphereBoundsComponent sphere(5.0f);
         TransformComponent transform(FVector3(i * 50.0f, i * 50.0f, i * 50.0f), FVector3(0.0f, 0.0f, 0.0f),
                                      FVector3(1.0f, 1.0f, 1.0f));
-        octree.insert(sphere, transform, i);
+        octree.Insert(sphere, transform, i);
     }
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Expecting zero potential collisions since colliders are far apart
     bool passed = potentialCollisions.empty();
@@ -194,18 +194,18 @@ inline TestResult OverlappingCollidersAcrossNodes()
     SphereBoundsComponent sphere1(30.0f);
     TransformComponent transform1(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID1 = 1;
-    octree.insert(sphere1, transform1, entityID1);
+    octree.Insert(sphere1, transform1, entityID1);
 
     // Collider 2: Overlaps multiple child nodes
     SphereBoundsComponent sphere2(30.0f);
     TransformComponent transform2(FVector3(25.0f, 25.0f, 25.0f), FVector3(0.0f, 0.0f, 0.0f),
                                   FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID2 = 2;
-    octree.insert(sphere2, transform2, entityID2);
+    octree.Insert(sphere2, transform2, entityID2);
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Expecting one potential collision between entityID1 and entityID2
     bool passed = (potentialCollisions.size() == 1) &&
@@ -236,17 +236,17 @@ inline TestResult CollidersOnNodeBoundaries()
     SphereBoundsComponent sphere1(10.0f);
     TransformComponent transform1(FVector3(50.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID1 = 1;
-    octree.insert(sphere1, transform1, entityID1);
+    octree.Insert(sphere1, transform1, entityID1);
 
     // Collider 2: Exactly on the negative boundary of the root
     SphereBoundsComponent sphere2(10.0f);
     TransformComponent transform2(FVector3(-50.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID2 = 2;
-    octree.insert(sphere2, transform2, entityID2);
+    octree.Insert(sphere2, transform2, entityID2);
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Expecting no potential collisions
     bool passed = potentialCollisions.empty();
@@ -274,12 +274,12 @@ inline TestResult MultipleCollidersInSingleNode()
         SphereBoundsComponent sphere(10.0f);
         TransformComponent transform(FVector3(i * 10.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f),
                                      FVector3(1.0f, 1.0f, 1.0f));
-        octree.insert(sphere, transform, i);
+        octree.Insert(sphere, transform, i);
     }
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Adjust expected collisions to include touching pairs
     // For simplicity, assuming that each collider overlaps with its immediate neighbor
@@ -312,17 +312,17 @@ inline TestResult NonOverlappingAdjacentColliders()
     SphereBoundsComponent sphere1(10.0f);
     TransformComponent transform1(FVector3(-50.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID1 = 1;
-    octree.insert(sphere1, transform1, entityID1);
+    octree.Insert(sphere1, transform1, entityID1);
 
     // Collider 2: In an adjacent child node, no overlap
     SphereBoundsComponent sphere2(10.0f);
     TransformComponent transform2(FVector3(50.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID2 = 2;
-    octree.insert(sphere2, transform2, entityID2);
+    octree.Insert(sphere2, transform2, entityID2);
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Expecting no potential collisions
     bool passed = potentialCollisions.empty();
@@ -349,23 +349,23 @@ inline TestResult NoDuplicatePairsDifferentOrder()
     SphereBoundsComponent sphere1(10.0f);
     TransformComponent transform1(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID1 = 1;
-    octree.insert(sphere1, transform1, entityID1);
+    octree.Insert(sphere1, transform1, entityID1);
 
     // Collider 2
     SphereBoundsComponent sphere2(10.0f);
     TransformComponent transform2(FVector3(5.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID2 = 2;
-    octree.insert(sphere2, transform2, entityID2);
+    octree.Insert(sphere2, transform2, entityID2);
 
     // Collider 3 (overlapping with both Collider 1 and Collider 2)
     SphereBoundsComponent sphere3(10.0f);
     TransformComponent transform3(FVector3(2.5f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID3 = 3;
-    octree.insert(sphere3, transform3, entityID3);
+    octree.Insert(sphere3, transform3, entityID3);
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Expected unique pairs: (1,2), (1,3), (2,3)
     std::set<std::pair<unsigned int, unsigned int>> expectedPairs = {{1, 2}, {1, 3}, {2, 3}};
@@ -402,22 +402,22 @@ inline TestResult NoDuplicatePairsSameOrder()
     TransformComponent transform1(FVector3(10.0f, 10.0f, 10.0f), FVector3(0.0f, 0.0f, 0.0f),
                                   FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID1 = 1;
-    octree.insert(sphere1, transform1, entityID1);
+    octree.Insert(sphere1, transform1, entityID1);
 
     // Collider 2 (overlaps with collider 1)
     SphereBoundsComponent sphere2(15.0f);
     TransformComponent transform2(FVector3(20.0f, 10.0f, 10.0f), FVector3(0.0f, 0.0f, 0.0f),
                                   FVector3(1.0f, 1.0f, 1.0f));
     unsigned int entityID2 = 2;
-    octree.insert(sphere2, transform2, entityID2);
+    octree.Insert(sphere2, transform2, entityID2);
 
     // Insert the same pair again
-    octree.insert(sphere1, transform1, entityID1);
-    octree.insert(sphere2, transform2, entityID2);
+    octree.Insert(sphere1, transform1, entityID1);
+    octree.Insert(sphere2, transform2, entityID2);
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Expected unique pair: (1,2)
     std::set<std::pair<unsigned int, unsigned int>> expectedPairs = {{1, 2}};
@@ -468,13 +468,13 @@ inline TestResult NoMultipleDuplicatePairs()
     // Insert each collider multiple times
     for (const auto &collider : colliders)
     {
-        octree.insert(collider.sphere, collider.transform, collider.entityID);
-        octree.insert(collider.sphere, collider.transform, collider.entityID);
+        octree.Insert(collider.sphere, collider.transform, collider.entityID);
+        octree.Insert(collider.sphere, collider.transform, collider.entityID);
     }
 
     // Retrieve potential collisions
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    octree.getPotentialCollisions(potentialCollisions);
+    octree.GetPotentialCollisions(potentialCollisions);
 
     // Expected unique pairs: (1,2), (1,3), (2,3)
     std::set<std::pair<unsigned int, unsigned int>> expectedPairs = {{1, 2}, {1, 3}, {2, 3}};

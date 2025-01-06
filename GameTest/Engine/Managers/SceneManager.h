@@ -19,5 +19,7 @@ class SceneManager
     static Scene &GetCurrentScene();
 
   private:
+      //Do we want this static?
+      //Could use events instead
     static std::shared_ptr<Scene> m_currentScene;
 };

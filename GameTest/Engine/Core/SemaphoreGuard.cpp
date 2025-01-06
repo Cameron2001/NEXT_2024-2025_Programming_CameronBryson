@@ -3,12 +3,12 @@
 
 SemaphoreGuard::SemaphoreGuard(Semaphore &semaphore) : m_semaphore(&semaphore), m_owns(false)
 {
-    m_semaphore->acquire();
+    m_semaphore->Acquire();
     m_owns = true;
 }
 SemaphoreGuard::~SemaphoreGuard()
 {
-    release();
+    Release();
 }
 
 SemaphoreGuard::SemaphoreGuard(SemaphoreGuard &&other) noexcept : m_semaphore(other.m_semaphore), m_owns(other.m_owns)
@@ -21,7 +21,7 @@ SemaphoreGuard &SemaphoreGuard::operator=(SemaphoreGuard &&other) noexcept
 {
     if (this != &other)
     {
-        release();
+        Release();
         m_semaphore = other.m_semaphore;
         m_owns = other.m_owns;
         other.m_semaphore = nullptr;
@@ -30,11 +30,11 @@ SemaphoreGuard &SemaphoreGuard::operator=(SemaphoreGuard &&other) noexcept
     return *this;
 }
 
-void SemaphoreGuard::release()
+void SemaphoreGuard::Release()
 {
     if (m_owns && m_semaphore)
     {
-        m_semaphore->release();
+        m_semaphore->Release();
         m_owns = false;
     }
 }

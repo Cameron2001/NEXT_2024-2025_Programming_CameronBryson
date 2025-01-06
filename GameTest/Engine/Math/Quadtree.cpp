@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-triangleEntry::triangleEntry(const Triangle2D &f) : triangle(f)
+TriangleEntry::TriangleEntry(const Triangle2D &f) : triangle(f)
 {
     const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
     const float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
@@ -21,11 +21,11 @@ Quadtree::Quadtree(const BoundingBox2D &bounds, int capacity, int maxDepth, int 
 {
 }
 
-bool Quadtree::insert(const Triangle2D &triangle)
+bool Quadtree::Insert(const Triangle2D &triangle)
 {
-    triangleEntry entry(triangle);
+    TriangleEntry entry(triangle);
 
-    if (!m_bounds.intersects(entry.bounds))
+    if (!m_bounds.Intersects(entry.bounds))
     {
         return false;
     }
@@ -39,23 +39,23 @@ bool Quadtree::insert(const Triangle2D &triangle)
     // Subdivide if not already divided
     if (!m_divided)
     {
-        subdivide();
+        Subdivide();
     }
 
     // Determine the quadrant for the triangle's bounding box
-    int quadrant = getQuadrant(m_bounds, entry.bounds);
+    int quadrant = GetQuadrant(m_bounds, entry.bounds);
     if (quadrant != -1)
     {
         switch (quadrant)
         {
         case 0:
-            return m_northWest->insert(triangle);
+            return m_northWest->Insert(triangle);
         case 1:
-            return m_northEast->insert(triangle);
+            return m_northEast->Insert(triangle);
         case 2:
-            return m_southWest->insert(triangle);
+            return m_southWest->Insert(triangle);
         case 3:
-            return m_southEast->insert(triangle);
+            return m_southEast->Insert(triangle);
         default:
             break;
         }
@@ -66,23 +66,12 @@ bool Quadtree::insert(const Triangle2D &triangle)
     return true;
 }
 
-void Quadtree::queryArea(const BoundingBox2D &range, std::vector<Triangle2D> &found) const
+void Quadtree::QueryArea(const BoundingBox2D &range, std::vector<Triangle2D> &found) const
 {
-    query(range, found);
+    Query(range, found);
 }
 
-void Quadtree::queryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found) const
-{
-    const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-    const float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
-    const float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-    const float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
-    BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
-
-    query(triangleBounds, found, triangle.avgZ);
-}
-
-void Quadtree::queryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found, float maxAvgZ) const
+void Quadtree::QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found) const
 {
     const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
     const float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
@@ -90,10 +79,21 @@ void Quadtree::queryTriangle(const Triangle2D &triangle, std::vector<Triangle2D>
     const float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
     BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
 
-    query(triangleBounds, found, maxAvgZ);
+    Query(triangleBounds, found, triangle.avgZ);
 }
 
-void Quadtree::queryEdge(const Edge2D &edge, std::vector<Triangle2D> &found) const
+void Quadtree::QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found, float maxAvgZ) const
+{
+    const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
+    const float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
+    const float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
+    const float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
+    BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
+
+    Query(triangleBounds, found, maxAvgZ);
+}
+
+void Quadtree::QueryEdge(const Edge2D &edge, std::vector<Triangle2D> &found) const
 {
     const float minX = std::min(edge.start.X, edge.end.X);
     const float minY = std::min(edge.start.Y, edge.end.Y);
@@ -101,19 +101,19 @@ void Quadtree::queryEdge(const Edge2D &edge, std::vector<Triangle2D> &found) con
     const float maxY = std::max(edge.start.Y, edge.end.Y);
     BoundingBox2D edgeBounds(minX, minY, maxX, maxY);
 
-    query(edgeBounds, found);
+    Query(edgeBounds, found);
 }
 
-void Quadtree::query(const BoundingBox2D &range, std::vector<Triangle2D> &found) const
+void Quadtree::Query(const BoundingBox2D &range, std::vector<Triangle2D> &found) const
 {
-    if (!m_bounds.intersects(range))
+    if (!m_bounds.Intersects(range))
     {
         return;
     }
 
     for (const auto &entry : m_triangles)
     {
-        if (range.intersects(entry.bounds))
+        if (range.Intersects(entry.bounds))
         {
             found.emplace_back(entry.triangle);
         }
@@ -122,23 +122,23 @@ void Quadtree::query(const BoundingBox2D &range, std::vector<Triangle2D> &found)
     // Recursively query child quadrants
     if (m_divided)
     {
-        m_northWest->query(range, found);
-        m_northEast->query(range, found);
-        m_southWest->query(range, found);
-        m_southEast->query(range, found);
+        m_northWest->Query(range, found);
+        m_northEast->Query(range, found);
+        m_southWest->Query(range, found);
+        m_southEast->Query(range, found);
     }
 }
 
-void Quadtree::query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ) const
+void Quadtree::Query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ) const
 {
-    if (!m_bounds.intersects(range))
+    if (!m_bounds.Intersects(range))
     {
         return;
     }
 
     for (const auto &entry : m_triangles)
     {
-        if (range.intersects(entry.bounds) && entry.triangle.avgZ < maxAvgZ)
+        if (range.Intersects(entry.bounds) && entry.triangle.avgZ < maxAvgZ)
         {
             found.emplace_back(entry.triangle);
         }
@@ -147,19 +147,19 @@ void Quadtree::query(const BoundingBox2D &range, std::vector<Triangle2D> &found,
     // Recursively query child quadrants
     if (m_divided)
     {
-        m_northWest->query(range, found, maxAvgZ);
-        m_northEast->query(range, found, maxAvgZ);
-        m_southWest->query(range, found, maxAvgZ);
-        m_southEast->query(range, found, maxAvgZ);
+        m_northWest->Query(range, found, maxAvgZ);
+        m_northEast->Query(range, found, maxAvgZ);
+        m_southWest->Query(range, found, maxAvgZ);
+        m_southEast->Query(range, found, maxAvgZ);
     }
 }
 
-void Quadtree::subdivide()
+void Quadtree::Subdivide()
 {
-    BoundingBox2D nw = computeBox(m_bounds, 0);
-    BoundingBox2D ne = computeBox(m_bounds, 1);
-    BoundingBox2D sw = computeBox(m_bounds, 2);
-    BoundingBox2D se = computeBox(m_bounds, 3);
+    BoundingBox2D nw = ComputeBox(m_bounds, 0);
+    BoundingBox2D ne = ComputeBox(m_bounds, 1);
+    BoundingBox2D sw = ComputeBox(m_bounds, 2);
+    BoundingBox2D se = ComputeBox(m_bounds, 3);
 
     m_northWest = std::make_unique<Quadtree>(nw, m_capacity, m_maxDepth, m_level + 1);
     m_northEast = std::make_unique<Quadtree>(ne, m_capacity, m_maxDepth, m_level + 1);
@@ -168,27 +168,27 @@ void Quadtree::subdivide()
 
     m_divided = true;
 
-    std::vector<triangleEntry> remainingTriangles;
+    std::vector<TriangleEntry> remainingTriangles;
     remainingTriangles.reserve(m_triangles.size());
 
     for (const auto &entry : m_triangles)
     {
-        int quadrant = getQuadrant(m_bounds, entry.bounds);
+        int quadrant = GetQuadrant(m_bounds, entry.bounds);
         if (quadrant != -1)
         {
             switch (quadrant)
             {
             case 0:
-                m_northWest->insert(entry.triangle);
+                m_northWest->Insert(entry.triangle);
                 break;
             case 1:
-                m_northEast->insert(entry.triangle);
+                m_northEast->Insert(entry.triangle);
                 break;
             case 2:
-                m_southWest->insert(entry.triangle);
+                m_southWest->Insert(entry.triangle);
                 break;
             case 3:
-                m_southEast->insert(entry.triangle);
+                m_southEast->Insert(entry.triangle);
                 break;
             }
         }
@@ -201,7 +201,7 @@ void Quadtree::subdivide()
     m_triangles.swap(remainingTriangles);
 }
 
-BoundingBox2D Quadtree::computeBox(const BoundingBox2D &box, int quadrant) const
+BoundingBox2D Quadtree::ComputeBox(const BoundingBox2D &box, int quadrant) const
 {
     const float x = box.minX;
     const float y = box.minY;
@@ -223,7 +223,7 @@ BoundingBox2D Quadtree::computeBox(const BoundingBox2D &box, int quadrant) const
     }
 }
 
-int Quadtree::getQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &valueBox) const
+int Quadtree::GetQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &valueBox) const
 {
     const float midX = nodeBox.minX + (nodeBox.maxX - nodeBox.minX) / 2.0f;
     const float midY = nodeBox.minY + (nodeBox.maxY - nodeBox.minY) / 2.0f;

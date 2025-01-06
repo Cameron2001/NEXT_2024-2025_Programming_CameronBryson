@@ -17,7 +17,7 @@ Octree::Octree(const BoundingBox3D &bounds, int capacity, int maxDepth, int leve
     }
 }
 
-void Octree::insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID)
+void Octree::Insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID)
 {
     // Calculate scaled radius considering the maximum scale component
     float scaledRadius = sphere.radius * std::max({transform.Scale.X, transform.Scale.Y, transform.Scale.Z});
@@ -26,10 +26,10 @@ void Octree::insert(const SphereBoundsComponent &sphere, const TransformComponen
 
     ColliderEntry colliderEntry(colliderSphere, entityID);
 
-    insert(colliderEntry);
+    Insert(colliderEntry);
 }
 
-void Octree::insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID)
+void Octree::Insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID)
 {
     // Calculate scaled half-extents
     FVector3 scaledExtents(box.extents.X * transform.Scale.X, box.extents.Y * transform.Scale.Y,
@@ -41,13 +41,13 @@ void Octree::insert(const BoxBoundsComponent &box, const TransformComponent &tra
 
     ColliderEntry colliderEntry(colliderSphere, entityID);
 
-    insert(colliderEntry);
+    Insert(colliderEntry);
 }
 
-void Octree::insert(const ColliderEntry &entry)
+void Octree::Insert(const ColliderEntry &entry)
 {
     // Check if the sphere intersects with this node's bounds (AABB)
-    if (!m_bounds.intersectsSphere(entry.sphereBounds))
+    if (!m_bounds.IntersectsSphere(entry.sphereBounds))
     {
         return;
     }
@@ -57,7 +57,7 @@ void Octree::insert(const ColliderEntry &entry)
     {
         if (m_colliders.size() >= static_cast<size_t>(m_capacity))
         {
-            subdivide();
+            Subdivide();
         }
     }
 
@@ -66,9 +66,9 @@ void Octree::insert(const ColliderEntry &entry)
     {
         for (auto &child : m_children)
         {
-            if (child->m_bounds.intersectsSphere(entry.sphereBounds))
+            if (child->m_bounds.IntersectsSphere(entry.sphereBounds))
             {
-                child->insert(entry);
+                child->Insert(entry);
                 insertedIntoChild = true;
                 // Do not break; the entry can reside in multiple children
             }
@@ -82,7 +82,7 @@ void Octree::insert(const ColliderEntry &entry)
     }
 }
 
-void Octree::subdivide()
+void Octree::Subdivide()
 {
     const float x = m_bounds.minX;
     const float y = m_bounds.minY;
@@ -114,18 +114,18 @@ void Octree::subdivide()
     m_colliders.clear();
     for (const auto &entry : oldColliders)
     {
-        insert(entry);
+        Insert(entry);
     }
 }
 
-void Octree::getPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
+void Octree::GetPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
 {
     std::set<std::pair<unsigned int, unsigned int>> collisionsSet;
-    collectPotentialCollisions(collisionsSet);
+    CollectPotentialCollisions(collisionsSet);
     potentialCollisions.assign(collisionsSet.begin(), collisionsSet.end());
 }
 
-void Octree::collectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
+void Octree::CollectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
 {
     // Check all pairs within this node
     for (size_t i = 0; i < m_colliders.size(); ++i)
@@ -133,7 +133,7 @@ void Octree::collectPotentialCollisions(std::set<std::pair<unsigned int, unsigne
         for (size_t j = i + 1; j < m_colliders.size(); ++j)
         {
             // Sphere-Sphere intersection
-            if (m_colliders[i].sphereBounds.intersects(m_colliders[j].sphereBounds))
+            if (m_colliders[i].sphereBounds.Intersects(m_colliders[j].sphereBounds))
             {
                 potentialCollisions.emplace(std::minmax(m_colliders[i].EntityID, m_colliders[j].EntityID));
             }
@@ -147,22 +147,22 @@ void Octree::collectPotentialCollisions(std::set<std::pair<unsigned int, unsigne
             // Check collisions between this node's colliders and child's colliders
             for (const auto &entry : m_colliders)
             {
-                child->collectCollisionsWithEntry(entry, potentialCollisions);
+                child->CollectCollisionsWithEntry(entry, potentialCollisions);
             }
 
             // Recursively collect potential collisions from children
-            child->collectPotentialCollisions(potentialCollisions);
+            child->CollectPotentialCollisions(potentialCollisions);
         }
     }
 }
 
-void Octree::collectCollisionsWithEntry(const ColliderEntry &entry,
+void Octree::CollectCollisionsWithEntry(const ColliderEntry &entry,
                                         std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
 {
     for (const auto &collider : m_colliders)
     {
         // Sphere-Sphere intersection
-        if (entry.sphereBounds.intersects(collider.sphereBounds))
+        if (entry.sphereBounds.Intersects(collider.sphereBounds))
         {
             potentialCollisions.emplace(std::minmax(entry.EntityID, collider.EntityID));
         }
@@ -173,7 +173,7 @@ void Octree::collectCollisionsWithEntry(const ColliderEntry &entry,
     {
         if (child)
         {
-            child->collectCollisionsWithEntry(entry, potentialCollisions);
+            child->CollectCollisionsWithEntry(entry, potentialCollisions);
         }
     }
 }

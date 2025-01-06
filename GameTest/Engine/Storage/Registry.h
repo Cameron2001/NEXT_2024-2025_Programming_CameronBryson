@@ -1,10 +1,9 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include <unordered_map>
-#include <typeindex>
 #include "Engine/Storage/ComponentArray.h"
 #include "View.h"
+#include "IComponentArray.h"
 
 class Registry
 {

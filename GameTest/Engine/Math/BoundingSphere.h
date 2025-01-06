@@ -22,23 +22,20 @@ class BoundingSphere2D
     {
     }
 
-    // Check if this sphere intersects with another BoundingSphere2D
-    bool intersects(const BoundingSphere2D &other) const
+    bool Intersects(const BoundingSphere2D &other) const
     {
         float distanceSquared = (Center - other.Center).LengthSquared();
         float radiusSum = Radius + other.Radius;
         return distanceSquared <= (radiusSum * radiusSum);
     }
 
-    // Check if this sphere contains another BoundingSphere2D
-    bool contains(const BoundingSphere2D &other) const
+    bool Contains(const BoundingSphere2D &other) const
     {
         float distance = (Center - other.Center).Length();
         return distance + other.Radius <= Radius;
     }
 
-    // Check if this sphere contains a point
-    bool containsPoint(const FVector2 &point) const
+    bool ContainsPoint(const FVector2 &point) const
     {
         float distanceSquared = (point - Center).LengthSquared();
         return distanceSquared <= (Radius * Radius);
@@ -65,7 +62,7 @@ class BoundingSphere3D
     }
 
     // Check if this sphere intersects with another BoundingSphere3D
-    bool intersects(const BoundingSphere3D &other) const
+    bool Intersects(const BoundingSphere3D &other) const
     {
         float distanceSquared = (Center - other.Center).LengthSquared();
         float radiusSum = Radius + other.Radius;
@@ -73,14 +70,14 @@ class BoundingSphere3D
     }
 
     // Check if this sphere contains another BoundingSphere3D
-    bool contains(const BoundingSphere3D &other) const
+    bool Contains(const BoundingSphere3D &other) const
     {
         float distance = (Center - other.Center).Length();
         return distance + other.Radius <= Radius;
     }
 
     // Check if this sphere contains a point
-    bool containsPoint(const FVector3 &point) const
+    bool ContainsPoint(const FVector3 &point) const
     {
         float distanceSquared = (point - Center).LengthSquared();
         return distanceSquared <= (Radius * Radius);

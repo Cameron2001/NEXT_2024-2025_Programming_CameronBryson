@@ -19,19 +19,19 @@ class Octree
   public:
     Octree(const BoundingBox3D &bounds, int capacity = 4, int maxDepth = 10, int level = 0);
 
-    void insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID);
-    void insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID);
+    void Insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID);
+    void Insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID);
 
-    void insert(const ColliderEntry &entry);
+    void Insert(const ColliderEntry &entry);
 
-    void getPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
+    void GetPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
 
   private:
-    void subdivide();
+    void Subdivide();
 
-    void collectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
+    void CollectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
 
-    void collectCollisionsWithEntry(const ColliderEntry &entry,
+    void CollectCollisionsWithEntry(const ColliderEntry &entry,
                                     std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
 
     BoundingBox3D m_bounds;

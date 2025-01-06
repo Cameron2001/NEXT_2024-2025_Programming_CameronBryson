@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
-#include "Engine/Storage/ComponentArray.h"
 #include "Engine/Core/Components.h"
 #include "Engine/Storage/Registry.h"
 #include "Engine/Core/Collision.h"
-#include <unordered_map>
 #include <Engine/Math/Octree.h>
+#include <vector>
+#include <Engine/Storage/IComponentArray.h>
 class CollisionSystem
 {
   public:

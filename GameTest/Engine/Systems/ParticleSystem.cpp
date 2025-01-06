@@ -4,6 +4,12 @@
 #include "Engine/Graphics/Renderer2D.h"
 #include "App/AppSettings.h"
 #include <concurrent_vector.h>
+#include <tuple>
+#include <Engine/Math/Vector2.h>
+#include <Engine/Math/Vector3.h>
+#include <Engine/Storage/IComponentArray.h>
+#include <Engine/Storage/Registry.h>
+#include <Engine/Storage/View.h>
 
 ParticleSystem::ParticleSystem(Registry *registry) : m_registry(registry)
 {

@@ -24,17 +24,17 @@ class BoundingBox2D
     {
     }
 
-    bool intersects(const BoundingBox2D &other) const
+    bool Intersects(const BoundingBox2D &other) const
     {
         return !(maxX < other.minX || minX > other.maxX || maxY < other.minY || minY > other.maxY);
     }
 
-    bool contains(const BoundingBox2D &other) const
+    bool Contains(const BoundingBox2D &other) const
     {
         return (minX <= other.minX && maxX >= other.maxX && minY <= other.minY && maxY >= other.maxY);
     }
 
-    bool containsPoint(const FVector2 &point) const
+    bool ContainsPoint(const FVector2 &point) const
     {
         return (point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY);
     }
@@ -61,24 +61,24 @@ class BoundingBox3D
     {
     }
 
-    bool intersects(const BoundingBox3D &other) const
+    bool Intersects(const BoundingBox3D &other) const
     {
         return !(maxX < other.minX || minX > other.maxX || maxY < other.minY || minY > other.maxY ||
                  maxZ < other.minZ || minZ > other.maxZ);
     }
 
-    bool contains(const BoundingBox3D &other) const
+    bool Contains(const BoundingBox3D &other) const
     {
         return (minX <= other.minX && maxX >= other.maxX && minY <= other.minY && maxY >= other.maxY &&
                 minZ <= other.minZ && maxZ >= other.maxZ);
     }
 
-    bool containsPoint(const FVector3 &point) const
+    bool ContainsPoint(const FVector3 &point) const
     {
         return (point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY && point.Z >= minZ &&
                 point.Z <= maxZ);
     }
-    bool intersectsSphere(const BoundingSphere3D &sphere) const
+    bool IntersectsSphere(const BoundingSphere3D &sphere) const
     {
         float sqDist = 0.0f;
 

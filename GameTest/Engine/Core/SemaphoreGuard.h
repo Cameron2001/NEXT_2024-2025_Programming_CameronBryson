@@ -12,7 +12,7 @@ class SemaphoreGuard
     SemaphoreGuard &operator=(SemaphoreGuard &&other) noexcept;
 
   private:
-    void release();
+    void Release();
     Semaphore *m_semaphore;
     bool m_owns;
 };

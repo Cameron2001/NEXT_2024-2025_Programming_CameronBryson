@@ -1,6 +1,15 @@
 #include "stdafx.h"
 #include "CollisionSystem.h"
 #include <Engine/Core/Components.h>
+#include <memory>
+#include <tuple>
+#include <utility>
+#include <vector>
+#include <Engine/Math/BoundingBox.h>
+#include <Engine/Math/Octree.h>
+#include <Engine/Math/Vector3.h>
+#include <Engine/Storage/IComponentArray.h>
+#include <Engine/Storage/Registry.h>
 
 CollisionSystem::CollisionSystem(Registry *registry) : m_registry(registry)
 {
@@ -39,14 +48,14 @@ void CollisionSystem::BuildOctree()
         auto entityID = std::get<0>(box);
         auto &transform = std::get<1>(box);
         auto &boxBounds = std::get<2>(box);
-        m_octree->insert(boxBounds, transform, entityID);
+        m_octree->Insert(boxBounds, transform, entityID);
     }
     for (const auto &sphere : sphereView)
     {
         auto entityID = std::get<0>(sphere);
         auto &transform = std::get<1>(sphere);
         auto &sphereBounds = std::get<2>(sphere);
-        m_octree->insert(sphereBounds, transform, entityID);
+        m_octree->Insert(sphereBounds, transform, entityID);
     }
 }
 
@@ -79,7 +88,7 @@ bool CollisionSystem::CanCollide(const ColliderComponent &collider1, const Colli
 void CollisionSystem::DetectCollisions()
 {
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    m_octree->getPotentialCollisions(potentialCollisions);
+    m_octree->GetPotentialCollisions(potentialCollisions);
     auto &transforms = m_registry->GetComponentArray<TransformComponent>();
     auto &boxBounds = m_registry->GetComponentArray<BoxBoundsComponent>();
     auto &sphereBounds = m_registry->GetComponentArray<SphereBoundsComponent>();
@@ -110,5 +119,6 @@ void CollisionSystem::ResolveCollisions()
 {
     for (const auto &collision : m_collisions)
     {
+        
     }
 }

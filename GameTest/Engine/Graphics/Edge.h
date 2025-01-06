@@ -37,16 +37,6 @@ struct Edge2D
     FVector2 end;
 };
 
-struct Edge2DHash
-{
-    std::size_t operator()(const Edge2D &edge) const
-    {
-        const std::size_t h1 = std::hash<float>()(edge.start.X) ^ (std::hash<float>()(edge.start.Y) << 1);
-        const std::size_t h2 = std::hash<float>()(edge.end.X) ^ (std::hash<float>()(edge.end.Y) << 1);
-
-        return h1 ^ h2;
-    }
-};
 
 struct Edge3D
 {
@@ -68,15 +58,3 @@ struct Edge3D
     Edge3D &operator=(Edge3D &&other) noexcept = default;
 };
 
-// Hash function for Edge3D
-struct Edge3DHash
-{
-    std::size_t operator()(const Edge3D &edge) const
-    {
-        const std::size_t h1 =
-            std::hash<float>()(edge.start.X) ^ std::hash<float>()(edge.start.Y) ^ std::hash<float>()(edge.start.Z);
-        const std::size_t h2 =
-            std::hash<float>()(edge.end.X) ^ std::hash<float>()(edge.end.Y) ^ std::hash<float>()(edge.end.Z);
-        return h1 ^ h2;
-    }
-};

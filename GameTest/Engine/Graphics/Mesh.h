@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "Engine/Graphics/Triangle.h"
-#include <Engine/Math/Matrix4.h>
 
 struct Mesh
 {

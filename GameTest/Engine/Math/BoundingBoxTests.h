@@ -13,7 +13,7 @@ inline TestResult IntersectOverlap()
 {
     BoundingBox3D box1(FVector3(0.0f, 0.0f, 0.0f), FVector3(10.0f, 10.0f, 10.0f));
     BoundingBox3D box2(FVector3(5.0f, 5.0f, 5.0f), FVector3(15.0f, 15.0f, 15.0f));
-    bool intersects = box1.intersects(box2);
+    bool intersects = box1.Intersects(box2);
     std::ostringstream oss;
     if (intersects)
         oss << "Passed.";
@@ -26,7 +26,7 @@ inline TestResult IntersectNoOverlap()
 {
     BoundingBox3D box1(FVector3(0.0f, 0.0f, 0.0f), FVector3(10.0f, 10.0f, 10.0f));
     BoundingBox3D box2(FVector3(20.0f, 20.0f, 20.0f), FVector3(30.0f, 30.0f, 30.0f));
-    bool intersects = box1.intersects(box2);
+    bool intersects = box1.Intersects(box2);
     std::ostringstream oss;
     if (!intersects)
         oss << "Passed.";
@@ -39,7 +39,7 @@ inline TestResult Contains()
 {
     BoundingBox3D outerBox(FVector3(0.0f, 0.0f, 0.0f), FVector3(20.0f, 20.0f, 20.0f));
     BoundingBox3D innerBox(FVector3(5.0f, 5.0f, 5.0f), FVector3(15.0f, 15.0f, 15.0f));
-    bool contains = outerBox.contains(innerBox);
+    bool contains = outerBox.Contains(innerBox);
     std::ostringstream oss;
     if (contains)
         oss << "Passed.";
@@ -52,7 +52,7 @@ inline TestResult ContainsPointInside()
 {
     BoundingBox3D box(FVector3(0.0f, 0.0f, 0.0f), FVector3(10.0f, 10.0f, 10.0f));
     FVector3 point(5.0f, 5.0f, 5.0f);
-    bool contains = box.containsPoint(point);
+    bool contains = box.ContainsPoint(point);
     std::ostringstream oss;
     if (contains)
         oss << "Passed.";
@@ -65,7 +65,7 @@ inline TestResult ContainsPointOutside()
 {
     BoundingBox3D box(FVector3(0.0f, 0.0f, 0.0f), FVector3(10.0f, 10.0f, 10.0f));
     FVector3 point(15.0f, 15.0f, 15.0f);
-    bool contains = box.containsPoint(point);
+    bool contains = box.ContainsPoint(point);
     std::ostringstream oss;
     if (!contains)
         oss << "Passed.";

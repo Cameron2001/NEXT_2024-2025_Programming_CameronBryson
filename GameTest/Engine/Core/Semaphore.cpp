@@ -1,20 +1,20 @@
 #include "stdafx.h"
 #include "Semaphore.h"
 
-Semaphore::Semaphore(int count) : count_(count)
+Semaphore::Semaphore(int count) : m_count(count)
 {
 }
 
-void Semaphore::acquire()
+void Semaphore::Acquire()
 {
-    std::unique_lock<std::mutex> lock(mtx_);
-    cv_.wait(lock, [&]() { return count_ > 0; });
-    --count_;
+    std::unique_lock<std::mutex> lock(m_mutex);
+    m_condition.wait(lock, [&]() { return m_count > 0; });
+    --m_count;
 }
 
-void Semaphore::release()
+void Semaphore::Release()
 {
-    std::unique_lock<std::mutex> lock(mtx_);
-    ++count_;
-    cv_.notify_one();
+    std::unique_lock<std::mutex> lock(m_mutex);
+    ++m_count;
+    m_condition.notify_one();
 }

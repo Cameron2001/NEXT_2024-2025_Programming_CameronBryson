@@ -87,7 +87,7 @@ void RenderSystem::Update()
     m_triangleList.reserve(m_triangles.size());
     m_triangleList.insert(m_triangleList.end(), std::make_move_iterator(m_triangles.begin()),
                           std::make_move_iterator(m_triangles.end()));
-    m_visibleSegments = m_hiddenLineRemoval.removeHiddenLines(m_triangleList);
+    m_visibleSegments = m_hiddenLineRemoval.RemoveHiddenLines(m_triangleList);
 }
 void RenderSystem::Render()
 {

@@ -6,12 +6,12 @@
 #include <vector>
 #include <Engine/Graphics/Edge.h>
 
-struct triangleEntry
+struct TriangleEntry
 {
     Triangle2D triangle;
     BoundingBox2D bounds;
 
-    explicit triangleEntry(const Triangle2D &f);
+    explicit TriangleEntry(const Triangle2D &f);
 };
 
 class Quadtree
@@ -19,28 +19,28 @@ class Quadtree
   public:
     Quadtree(const BoundingBox2D &bounds, int capacity = 4, int maxDepth = 10, int level = 0);
 
-    bool insert(const Triangle2D &triangle);
+    bool Insert(const Triangle2D &triangle);
 
-    void queryArea(const BoundingBox2D &range, std::vector<Triangle2D> &found) const;
-    void queryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found) const;
-    void queryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found, float maxAvgZ) const;
-    void queryEdge(const Edge2D &edge, std::vector<Triangle2D> &found) const;
+    void QueryArea(const BoundingBox2D &range, std::vector<Triangle2D> &found) const;
+    void QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found) const;
+    void QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found, float maxAvgZ) const;
+    void QueryEdge(const Edge2D &edge, std::vector<Triangle2D> &found) const;
 
   private:
-    void subdivide();
+    void Subdivide();
 
-    void query(const BoundingBox2D &range, std::vector<Triangle2D> &found) const;
-    void query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ) const;
+    void Query(const BoundingBox2D &range, std::vector<Triangle2D> &found) const;
+    void Query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ) const;
 
-    BoundingBox2D computeBox(const BoundingBox2D &box, int quadrant) const;
+    BoundingBox2D ComputeBox(const BoundingBox2D &box, int quadrant) const;
 
-    int getQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &valueBox) const;
+    int GetQuadrant(const BoundingBox2D &nodeBox, const BoundingBox2D &valueBox) const;
 
     BoundingBox2D m_bounds;
     int m_capacity;
     int m_maxDepth;
     int m_level;
-    std::vector<triangleEntry> m_triangles;
+    std::vector<TriangleEntry> m_triangles;
     bool m_divided;
 
     // Child quadrants

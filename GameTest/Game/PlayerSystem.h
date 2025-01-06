@@ -1,8 +1,4 @@
 #pragma once
-#include <memory>
-#include "Engine/Storage/ComponentArray.h"
-#include "Engine/Core/Components.h"
-#include "Game/GameComponents.h"
 #include <Engine/Storage/Registry.h>
 
 class PlayerSystem

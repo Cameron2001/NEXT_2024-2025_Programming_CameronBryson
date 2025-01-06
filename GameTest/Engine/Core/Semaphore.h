@@ -7,11 +7,11 @@ class Semaphore
 {
   public:
     explicit Semaphore(int count = 0);
-    void acquire();
-    void release();
+    void Acquire();
+    void Release();
 
   private:
-    std::mutex mtx_;
-    std::condition_variable cv_;
-    int count_;
+    std::mutex m_mutex;
+    std::condition_variable m_condition;
+    int m_count;
 };
