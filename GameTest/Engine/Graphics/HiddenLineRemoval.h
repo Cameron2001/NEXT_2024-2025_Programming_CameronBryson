@@ -14,21 +14,18 @@ struct BufferContext
 {
     std::vector<Triangle2D> potentialOccluders;
     std::vector<Edge2D> segments;
-    std::vector<Edge2D> newClippedEdges;
     // we dont need a visable segments buffer
 
     BufferContext()
     {
         potentialOccluders.reserve(100);
         segments.reserve(100);
-        newClippedEdges.reserve(50);
     }
 
     void clear()
     {
         potentialOccluders.clear();
         segments.clear();
-        newClippedEdges.clear();
     }
 };
 
@@ -48,10 +45,9 @@ class HiddenLineRemoval
   private:
     void InitializeQuadtree(const std::vector<Triangle2D> &triangles);
     void ProcessTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &potentialOccluders,
-                         std::vector<Edge2D> &segments, std::vector<Edge2D> &newClippedEdges);
+                         std::vector<Edge2D> &segments);
 
-    void ProcessEdge(const Edge2D &edge, const std::vector<Triangle2D> &occluders, std::vector<Edge2D> &segments,
-                     std::vector<Edge2D> &newClippedEdges);
+    void ProcessEdge(const Edge2D &edge, const std::vector<Triangle2D> &occluders, std::vector<Edge2D> &segments);
 
     void ClipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle, std::vector<Edge2D> &clippedEdges);
 
@@ -66,7 +62,7 @@ class HiddenLineRemoval
     std::mutex m_bufferMutex;
     std::vector<Edge2D> m_result;
     std::unique_ptr<Quadtree> m_quadtree;
-    size_t m_bufferPoolSize = 6;
+    size_t m_bufferPoolSize = 8;
 };
 
 inline void HiddenLineRemoval::CreateTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])
