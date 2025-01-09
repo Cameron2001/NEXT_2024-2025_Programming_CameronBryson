@@ -156,8 +156,7 @@ void HiddenLineRemoval::ProcessEdge(const Edge2D &edge, const std::vector<Triang
             segments.clear();
             break;
         }
-
-        segments = newClippedEdges;
+        segments.swap(newClippedEdges);
     }
 
     for (const auto &segment : segments)

@@ -64,13 +64,13 @@ class HiddenLineRemoval
     static void CreateTriangleEdges(const Triangle2D &triangle, Edge2D edges[3]);
     static bool SharesVertex(const Triangle2D &triangleA, const Triangle2D &triangleB);
 
-    std::vector<Edge2D> m_result;
-    std::unique_ptr<Quadtree> m_quadtree;
     Semaphore m_semaphore;
+    concurrency::combinable<std::vector<Edge2D>> m_visibleEdges;
     std::vector<std::unique_ptr<BufferContext>> m_threadBuffers;
     std::mutex m_bufferMutex;
-    concurrency::combinable<std::vector<Edge2D>> m_visibleEdges;
-    size_t m_bufferPoolSize = 6;
+    std::vector<Edge2D> m_result;
+    std::unique_ptr<Quadtree> m_quadtree;
+    size_t m_bufferPoolSize = 8;
 };
 
 inline void HiddenLineRemoval::CreateTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])

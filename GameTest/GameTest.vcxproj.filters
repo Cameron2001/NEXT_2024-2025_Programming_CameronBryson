@@ -45,9 +45,6 @@
     <ClCompile Include="Engine\Math\Matrix4.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Renderer.cpp">
-      <Filter>Engine\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Managers\SceneManager.cpp">
       <Filter>Engine\Managers</Filter>
     </ClCompile>
@@ -153,9 +150,6 @@
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Graphics\Model.h">
-      <Filter>Engine\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Renderer.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Managers\SceneManager.h">

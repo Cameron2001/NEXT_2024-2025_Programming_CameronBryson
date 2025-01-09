@@ -229,7 +229,6 @@
     <ClInclude Include="Engine\Core\Scene.h" />
     <ClInclude Include="Engine\Storage\Registry.h" />
     <ClInclude Include="Engine\Managers\SceneManager.h" />
-    <ClInclude Include="Engine\Graphics\Renderer.h" />
     <ClInclude Include="Engine\Graphics\Renderer2D.h" />
     <ClInclude Include="Engine\Math\Octree.h" />
     <ClInclude Include="Engine\Math\Quadtree.h" />
@@ -267,7 +266,6 @@
     <ClCompile Include="Engine\Core\Scene.cpp" />
     <ClCompile Include="Engine\Storage\Registry.cpp" />
     <ClCompile Include="Engine\Managers\SceneManager.cpp" />
-    <ClCompile Include="Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="Engine\Graphics\Renderer2D.cpp" />
     <ClCompile Include="Engine\Math\Octree.cpp" />
     <ClCompile Include="Engine\Math\Quadtree.cpp" />

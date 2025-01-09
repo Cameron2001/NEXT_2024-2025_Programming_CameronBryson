@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Engine/Graphics/Camera.h"
 #include "Engine/Graphics/HiddenLineRemoval.h"
-#include "Engine/Graphics/Renderer.h"
 #include "RenderSystem.h"
 #include <concurrent_vector.h>
 #include <Engine/Core/Components.h>
@@ -16,6 +15,7 @@
 #include <Engine/Storage/Registry.h>
 #include <Engine/Storage/View.h>
 #include <vector>
+#include <cmath>
 
 RenderSystem::RenderSystem(Registry *registry, GraphicsManager *graphicsManager, Camera *camera)
     : m_registry(registry), m_graphicsManager(graphicsManager), m_camera(camera), m_hiddenLineRemoval(), m_triangles(),
@@ -56,19 +56,18 @@ void RenderSystem::Update()
                 FVector3 mvpVertex1 = mvpMatrix.TransformWithPerspectiveDivide(face.v1);
                 FVector3 mvpVertex2 = mvpMatrix.TransformWithPerspectiveDivide(face.v2);
 
-                if (Renderer::QuickReject(Edge3D(mvpVertex0, mvpVertex1), Edge3D(mvpVertex1, mvpVertex2),
-                                          Edge3D(mvpVertex2, mvpVertex0)))
+                if (RejectTriangle(mvpVertex0, mvpVertex1, mvpVertex2))
                 {
                     continue;
                 }
 
                 // Backface culling
-                const float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
+                /*const float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
                                           ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
                 if (determinant < 0)
                 {
                     continue;
-                }
+                }*/
 
                 // Pre-Compute average depth (Z value)
                 float avgZ = (mvpVertex0.Z + mvpVertex1.Z + mvpVertex2.Z) / 3.0f;
@@ -111,4 +110,14 @@ void RenderSystem::LateRender()
 
 void RenderSystem::Shutdown()
 {
+}
+
+bool RenderSystem::RejectTriangle(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2)
+{
+    const float determinant = ((v1.X - v0.X) * (v2.Y - v0.Y)) - ((v1.Y - v0.Y) * (v2.X - v0.X));
+    if (determinant < 0)
+    {
+        return true;
+    }
+    return false;
 }

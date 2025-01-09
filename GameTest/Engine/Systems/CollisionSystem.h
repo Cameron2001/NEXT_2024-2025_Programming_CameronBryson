@@ -27,6 +27,7 @@ class CollisionSystem
     void ResolveCollisions();
     Registry *m_registry;
     std::unique_ptr<Octree> m_octree;
+    //We should decide if we want to defer collision resolution. Or resolve as they are found.
     std::vector<Collision> m_collisions;
 };
 

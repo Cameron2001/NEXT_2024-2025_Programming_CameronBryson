@@ -37,6 +37,7 @@ void CollisionSystem::Shutdown()
 
 void CollisionSystem::BuildOctree()
 {
+    // Abartary bounds for now
     FVector3 minPoint(-100.0f, -100.0f, -100.0f);
     FVector3 maxPoint(100.0f, 100.0f, 100.0f);
     BoundingBox3D sceneBounds(minPoint, maxPoint);
@@ -87,6 +88,7 @@ bool CollisionSystem::CanCollide(const ColliderComponent &collider1, const Colli
 
 void CollisionSystem::DetectCollisions()
 {
+    //All potitential collisions in the scene
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
     m_octree->GetPotentialCollisions(potentialCollisions);
     auto &transforms = m_registry->GetComponentArray<TransformComponent>();

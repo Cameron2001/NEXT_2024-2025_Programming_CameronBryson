@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Storage/Registry.h"
+#include <Engine/Math/Vector2.h>
 class ParticleSystem
 {
   public:
