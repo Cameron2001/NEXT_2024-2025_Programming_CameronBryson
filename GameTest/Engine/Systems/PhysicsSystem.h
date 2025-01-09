@@ -6,21 +6,22 @@
 
 class PhysicsSystem
 {
-public:
-    PhysicsSystem(Registry* registry);
+  public:
+    PhysicsSystem(Registry *registry);
     ~PhysicsSystem() = default;
     void Init();
     void Update(float dt);
     void Shutdown();
 
-private:
+  private:
     Registry *m_registry;
+    View<TransformComponent, RigidBodyComponent> m_view;
 };
 
-//Read:
-//transform
-//rigidbody
+// Read:
+// transform
+// rigidbody
 
-//Write:
-//transform
-//rigidbody
+// Write:
+// transform
+// rigidbody

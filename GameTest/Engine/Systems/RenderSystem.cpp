@@ -18,8 +18,8 @@
 #include <cmath>
 
 RenderSystem::RenderSystem(Registry *registry, GraphicsManager *graphicsManager, Camera *camera)
-    : m_registry(registry), m_graphicsManager(graphicsManager), m_camera(camera), m_hiddenLineRemoval(), m_triangles(),
-      m_triangleList(), m_visibleSegments()
+    : m_registry(registry), m_view(registry), m_graphicsManager(graphicsManager), m_camera(camera),
+      m_hiddenLineRemoval(), m_triangles(), m_triangleList(), m_visibleSegments()
 {
     m_triangles.reserve(2000);
     m_triangleList.reserve(2000);
@@ -31,14 +31,11 @@ void RenderSystem::Init()
 }
 void RenderSystem::Update()
 {
+    m_view.Update();
     auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
-    auto modelView = m_registry->CreateView<TransformComponent, ModelComponent>();
 
-    // Process entities in parallel
-    modelView.ParallelForEach([&](const auto &entityTuple) {
-        auto &transform = std::get<1>(entityTuple);
-        auto &modelComponent = std::get<2>(entityTuple);
-
+    // Process entities in parallel with updated lambda signature
+    m_view.ParallelForEach([&](Entity entity, TransformComponent &transform, ModelComponent &modelComponent) {
         auto &model = m_graphicsManager->GetModel(modelComponent.modelName);
         auto modelMatrix = Matrix4::CreateTranslationMatrix(transform.Position) *
                            Matrix4::CreateScaleMatrix(transform.Scale) *
@@ -61,7 +58,7 @@ void RenderSystem::Update()
                     continue;
                 }
 
-                // Backface culling
+                // Backface culling (commented out)
                 /*const float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
                                           ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
                 if (determinant < 0)

@@ -11,20 +11,17 @@
 #include <Engine/Storage/Registry.h>
 #include <Engine/Storage/View.h>
 
-ParticleSystem::ParticleSystem(Registry *registry) : m_registry(registry)
+ParticleSystem::ParticleSystem(Registry *registry) : m_registry(registry), m_view(registry)
 {
 }
 
 void ParticleSystem::Update(float deltaTime)
 {
-    auto view = m_registry->CreateView<ParticleComponent>();
+    m_view.Update();
 
     Concurrency::concurrent_vector<Entity> entitiesToDestroy;
 
-    view.ParallelForEach([&](const auto &entityTuple) {
-        const Entity entity = std::get<0>(entityTuple);
-        auto &particle = std::get<1>(entityTuple);
-
+    m_view.ParallelForEach([&](Entity entity, ParticleComponent &particle) {
         particle.position += particle.linearVelocity * deltaTime;
         particle.rotation += particle.angularVelocity * deltaTime;
         particle.age += deltaTime;
@@ -35,6 +32,7 @@ void ParticleSystem::Update(float deltaTime)
             entitiesToDestroy.push_back(entity);
         }
     });
+
     for (const auto &entity : entitiesToDestroy)
     {
         m_registry->DestroyEntity(entity);

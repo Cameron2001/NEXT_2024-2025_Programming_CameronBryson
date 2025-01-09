@@ -88,7 +88,7 @@ bool CollisionSystem::CanCollide(const ColliderComponent &collider1, const Colli
 
 void CollisionSystem::DetectCollisions()
 {
-    //All potitential collisions in the scene
+    // All potitential collisions in the scene
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
     m_octree->GetPotentialCollisions(potentialCollisions);
     auto &transforms = m_registry->GetComponentArray<TransformComponent>();
@@ -121,6 +121,5 @@ void CollisionSystem::ResolveCollisions()
 {
     for (const auto &collision : m_collisions)
     {
-        
     }
 }

@@ -5,9 +5,8 @@
 #include <Engine/Storage/Registry.h>
 #include <tuple>
 
-PhysicsSystem::PhysicsSystem(Registry *registry)
+PhysicsSystem::PhysicsSystem(Registry *registry) : m_registry(registry), m_view(registry)
 {
-    m_registry = registry;
 }
 
 void PhysicsSystem::Init()
@@ -16,19 +15,17 @@ void PhysicsSystem::Init()
 
 void PhysicsSystem::Update(const float dt)
 {
-    auto view = m_registry->CreateView<TransformComponent, RigidBodyComponent>();
+    // Update the view to reflect any changes in entities or components
+    m_view.Update();
 
-    view.ParallelForEach([this, dt](const auto &entityTuple) {
-        auto &transform = std::get<1>(entityTuple);
-        auto &rigidBody = std::get<2>(entityTuple);
-
+    m_view.ParallelForEach([this, dt](Entity entity, TransformComponent &transform, RigidBodyComponent &rigidBody) {
         // Update velocities
         rigidBody.linearVelocity += rigidBody.linearAcceleration * dt;
         rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;
 
         // Apply damping
-        rigidBody.linearVelocity *= std::pow(1 - rigidBody.linearDrag, dt);
-        rigidBody.angularVelocity *= std::pow(1 - rigidBody.angularDrag, dt);
+        rigidBody.linearVelocity *= std::pow(1.0f - rigidBody.linearDrag, dt);
+        rigidBody.angularVelocity *= std::pow(1.0f - rigidBody.angularDrag, dt);
 
         // Update transform
         transform.Position += rigidBody.linearVelocity * dt;

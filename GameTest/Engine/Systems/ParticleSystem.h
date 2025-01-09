@@ -15,4 +15,5 @@ class ParticleSystem
   private:
     float GenerateRandomLifeTime();
     FVector2 GenerateRandomAcceleration();
+    View<ParticleComponent> m_view;
 };

@@ -33,10 +33,8 @@ void PlayerSystem::Update(float dt)
 
     constexpr float rotationSpeed = 100.0f;
 
-    view.ForEach([&](const auto &entityTuple) {
-        auto &player = std::get<1>(entityTuple);
-        auto &rigidbody = std::get<2>(entityTuple);
-
+    // Process entities in parallel with updated lambda signature
+    view.ParallelForEach([&](Entity entity, PlayerComponent &player, RigidBodyComponent &rigidbody) {
         // Movement
         if (UP)
             rigidbody.linearAcceleration += FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
