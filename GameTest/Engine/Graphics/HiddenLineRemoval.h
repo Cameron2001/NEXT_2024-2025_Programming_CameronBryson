@@ -21,7 +21,11 @@ struct BufferContext
         potentialOccluders.reserve(100);
         segments.reserve(100);
     }
+    BufferContext(const BufferContext &) = delete;
+    BufferContext &operator=(const BufferContext &) = delete;
 
+    BufferContext(BufferContext &&) = default;
+    BufferContext &operator=(BufferContext &&) = default;
     void clear()
     {
         potentialOccluders.clear();
@@ -62,7 +66,7 @@ class HiddenLineRemoval
     std::mutex m_bufferMutex;
     std::vector<Edge2D> m_result;
     std::unique_ptr<Quadtree> m_quadtree;
-    size_t m_bufferPoolSize = 8;
+    size_t m_bufferPoolSize = 4;
 };
 
 inline void HiddenLineRemoval::CreateTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])

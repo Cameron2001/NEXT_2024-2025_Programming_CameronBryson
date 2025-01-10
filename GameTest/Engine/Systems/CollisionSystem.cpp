@@ -23,6 +23,7 @@ void CollisionSystem::Update(const float dt)
 {
     BuildOctree();
     DetectCollisions();
+    ResolveCollisions();
 
     // we should prefetch potential collisions
 }
@@ -60,18 +61,54 @@ void CollisionSystem::BuildOctree()
     }
 }
 
+bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const Matrix4 &rotation1,
+                                      const BoxBoundsComponent &box2, const Matrix4 &rotation2,
+                                      const FVector3 &translation, float &minimalPenetration,
+                                      FVector3 &collisionNormal) const
+{
+    if (axis.LengthSquared() < 0.00001f)
+    {
+        return true;
+    }
+    return false;
+}
+
 bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
 {
+    // Append to m_collisions
+    auto &transform1 = m_registry->GetComponent<TransformComponent>(ID1);
+    auto &transform2 = m_registry->GetComponent<TransformComponent>(ID2);
+
+    auto &box1 = m_registry->GetComponent<BoxBoundsComponent>(ID1);
+    auto &box2 = m_registry->GetComponent<BoxBoundsComponent>(ID2);
+
+    const Matrix4 rotation1 = Matrix4::CreateEulerAngleMatrixXYZ(transform1.Rotation);
+    const Matrix4 rotation2 = Matrix4::CreateEulerAngleMatrixXYZ(transform2.Rotation);
+
     return false;
 }
 
 bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
 {
+    // Append to m_collisions
+    auto &transform1 = m_registry->GetComponent<TransformComponent>(ID1);
+    auto &transform2 = m_registry->GetComponent<TransformComponent>(ID2);
+
+    auto &sphere1 = m_registry->GetComponent<SphereBoundsComponent>(ID1);
+    auto &sphere2 = m_registry->GetComponent<SphereBoundsComponent>(ID2);
     return false;
 }
 
 bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
 {
+    // Append to m_collisions
+    auto &sphereTransform = m_registry->GetComponent<TransformComponent>(ID1);
+    auto &boxTransform = m_registry->GetComponent<TransformComponent>(ID2);
+
+    auto &sphereBounds = m_registry->GetComponent<SphereBoundsComponent>(ID1);
+    auto &boxBounds = m_registry->GetComponent<BoxBoundsComponent>(ID2);
+
+    const Matrix4 rotation = Matrix4::CreateEulerAngleMatrixXYZ(boxTransform.Rotation);
     return false;
 }
 
@@ -88,38 +125,62 @@ bool CollisionSystem::CanCollide(const ColliderComponent &collider1, const Colli
 
 void CollisionSystem::DetectCollisions()
 {
-    // All potitential collisions in the scene
+    m_collisions.clear(); // Clear previous collisions
+
+    // Retrieve potential collisions from the octree
     std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
     m_octree->GetPotentialCollisions(potentialCollisions);
-    auto &transforms = m_registry->GetComponentArray<TransformComponent>();
-    auto &boxBounds = m_registry->GetComponentArray<BoxBoundsComponent>();
-    auto &sphereBounds = m_registry->GetComponentArray<SphereBoundsComponent>();
-    auto &colliders = m_registry->GetComponentArray<ColliderComponent>();
-    std::vector<std::pair<unsigned int, unsigned int>> filteredCollisions;
-    for (const auto &collision : potentialCollisions)
-    {
-        auto entityID1 = collision.first;
-        auto entityID2 = collision.second;
-        auto &collider1 = colliders.GetComponent(entityID1);
-        auto &collider2 = colliders.GetComponent(entityID2);
-        if (CanCollide(collider1, collider2))
-        {
-            filteredCollisions.emplace_back(collision);
-        }
-    }
 
-    for (const auto &collision : filteredCollisions)
+    auto &colliders = m_registry->GetComponentArray<ColliderComponent>();
+
+    // Iterate over potential collision pairs
+    for (const auto &collisionPair : potentialCollisions)
     {
-        auto entityID1 = collision.first;
-        auto entityID2 = collision.second;
-        auto &transform1 = transforms.GetComponent(entityID1);
-        auto &transform2 = transforms.GetComponent(entityID2);
+        unsigned int entityID1 = collisionPair.first;
+        unsigned int entityID2 = collisionPair.second;
+
+        const auto &collider1 = colliders.GetComponent(entityID1);
+        const auto &collider2 = colliders.GetComponent(entityID2);
+
+        // Check if the colliders can collide based on their properties
+        if (!CanCollide(collider1, collider2))
+            continue;
+
+        bool collisionDetected = false;
+
+        // Determine collider types and call the appropriate collision detection function
+        if (collider1.type == ColliderType::Sphere && collider2.type == ColliderType::Sphere)
+        {
+            collisionDetected = SpherevsSphere(entityID1, entityID2);
+        }
+        else if (collider1.type == ColliderType::Box && collider2.type == ColliderType::Box)
+        {
+            collisionDetected = OOBvsOOB(entityID1, entityID2);
+        }
+        else if (collider1.type == ColliderType::Sphere && collider2.type == ColliderType::Box)
+        {
+            collisionDetected = SpherevsOOB(entityID1, entityID2);
+        }
+        else if (collider1.type == ColliderType::Box && collider2.type == ColliderType::Sphere)
+        {
+            // Swap entities to match SpherevsOOB parameter expectations
+            collisionDetected = SpherevsOOB(entityID2, entityID1);
+        }
     }
 }
 
+// Do we want to refer the resolution? or do we want to resolve them as they are found
 void CollisionSystem::ResolveCollisions()
 {
     for (const auto &collision : m_collisions)
     {
+        unsigned int entityID1 = collision.ID1;
+        unsigned int entityID2 = collision.ID2;
+
+        auto &transform1 = m_registry->GetComponent<TransformComponent>(entityID1);
+        auto &transform2 = m_registry->GetComponent<TransformComponent>(entityID2);
+
+        bool isDynamic1 = m_registry->HasComponent<RigidBodyComponent>(entityID1);
+        bool isDynamic2 = m_registry->HasComponent<RigidBodyComponent>(entityID2);
     }
 }

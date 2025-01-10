@@ -69,6 +69,7 @@ struct RigidBodyComponent
     FVector3 angularAcceleration = {0, 0, 0};
     float linearDrag = 0;
     float angularDrag = 0;
+    float mass = 1.0f;
 };
 
 struct TextComponent
