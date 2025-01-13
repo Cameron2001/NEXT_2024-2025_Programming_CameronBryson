@@ -138,7 +138,7 @@ void Quadtree::Query(const BoundingBox2D &range, std::vector<Triangle2D> &found,
 
     for (const auto &entry : m_triangles)
     {
-        if (range.Intersects(entry.bounds) && entry.triangle.avgZ < maxAvgZ)
+        if (entry.triangle.avgZ <= maxAvgZ && range.Intersects(entry.bounds))
         {
             found.emplace_back(entry.triangle);
         }

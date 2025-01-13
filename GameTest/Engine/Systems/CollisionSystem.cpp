@@ -10,6 +10,10 @@
 #include <Engine/Math/Vector3.h>
 #include <Engine/Storage/IComponentArray.h>
 #include <Engine/Storage/Registry.h>
+#include <cmath>
+#include <limits>
+#include <Engine/Core/Collision.h>
+#include <Engine/Math/Matrix4.h>
 
 CollisionSystem::CollisionSystem(Registry *registry) : m_registry(registry)
 {
@@ -66,8 +70,6 @@ bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsCompo
                                       const Matrix4 &rotation2, const FVector3 &translation, float &minimalPenetration,
                                       FVector3 &collisionNormal) const
 {
-    // We need to scale still
-    // This solution doesnt incorperate scale yet
     FVector3 scaledBox1Extents = box1.extents * scale1;
     FVector3 scaledBox2Extents = box2.extents * scale2;
     float projection1 = scaledBox1Extents.x * fabs(rotation1.GetRight().Dot(axis)) +
@@ -157,18 +159,37 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
 
 bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
 {
-    // Append to m_collisions
     auto &transform1 = m_registry->GetComponent<TransformComponent>(ID1);
     auto &transform2 = m_registry->GetComponent<TransformComponent>(ID2);
 
     auto &sphere1 = m_registry->GetComponent<SphereBoundsComponent>(ID1);
     auto &sphere2 = m_registry->GetComponent<SphereBoundsComponent>(ID2);
+
+    float radius1 = sphere1.radius * (transform1.Scale.x + transform1.Scale.y + transform1.Scale.z) / 3;
+    float radius2 = sphere2.radius * (transform2.Scale.x + transform2.Scale.y + transform2.Scale.z) / 3;
+
+    FVector3 delta = transform2.Position - transform1.Position;
+    float distanceSquared = delta.LengthSquared();
+    float radiusSum = radius1 + radius2;
+
+    if (distanceSquared < radiusSum * radiusSum)
+    {
+        float distance = sqrt(distanceSquared);
+        float penetration = radiusSum - distance;
+
+        FVector3 collisionNormal = (distance != 0.0f) ? (delta / distance) : FVector3(1.0f, 0.0f, 0.0f);
+
+        Collision collision(ID1, ID2, penetration, collisionNormal);
+        m_collisions.emplace_back(collision);
+        return true;
+    }
+
     return false;
 }
 
+
 bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
 {
-    // Append to m_collisions
     auto &sphereTransform = m_registry->GetComponent<TransformComponent>(ID1);
     auto &boxTransform = m_registry->GetComponent<TransformComponent>(ID2);
 
@@ -176,6 +197,12 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
     auto &boxBounds = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
     const Matrix4 rotation = boxTransform.Rotation.GetRotationMatrix();
+    const float radius =
+        sphereBounds.radius * (sphereTransform.Scale.x + sphereTransform.Scale.y + sphereTransform.Scale.z) / 3;
+    float minimalPentration = std::numeric_limits<float>::max();
+    FVector3 delta = boxTransform.Position - sphereTransform.Position;
+    FVector3 collisionNormal;
+    FVector3 closestPoint;
     return false;
 }
 
