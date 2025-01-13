@@ -24,7 +24,7 @@ template <typename... Args> class Event
     template <typename T> void AddListener(std::shared_ptr<T> instance, void (T::*memberFn)(Args...))
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        Listener listener;
+        Listener listener{};
         listener.owner = instance;
         std::weak_ptr<T> weakInstance = instance;
 

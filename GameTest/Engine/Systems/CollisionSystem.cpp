@@ -43,9 +43,9 @@ void CollisionSystem::Shutdown()
 void CollisionSystem::BuildOctree()
 {
     // Abartary bounds for now
-    FVector3 minPoint(-100.0f, -100.0f, -100.0f);
-    FVector3 maxPoint(100.0f, 100.0f, 100.0f);
-    BoundingBox3D sceneBounds(minPoint, maxPoint);
+    const FVector3 minPoint(-100.0f, -100.0f, -100.0f);
+    const FVector3 maxPoint(100.0f, 100.0f, 100.0f);
+    const BoundingBox3D sceneBounds(minPoint, maxPoint);
     m_octree = std::make_unique<Octree>(sceneBounds);
     auto boxView = m_registry->CreateView<TransformComponent, BoxBoundsComponent>();
     auto sphereView = m_registry->CreateView<TransformComponent, SphereBoundsComponent>();
@@ -70,20 +70,19 @@ bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsCompo
                                       const Matrix4 &rotation2, const FVector3 &translation, float &minimalPenetration,
                                       FVector3 &collisionNormal) const
 {
-    FVector3 scaledBox1Extents = box1.extents * scale1;
-    FVector3 scaledBox2Extents = box2.extents * scale2;
-    float projection1 = scaledBox1Extents.x * fabs(rotation1.GetRight().Dot(axis)) +
+    const FVector3 scaledBox1Extents = box1.extents * scale1;
+    const FVector3 scaledBox2Extents = box2.extents * scale2;
+    const float projection1 = scaledBox1Extents.x * fabs(rotation1.GetRight().Dot(axis)) +
                         scaledBox1Extents.y * fabs(rotation1.GetUp().Dot(axis)) +
                         scaledBox1Extents.z * fabs(rotation1.GetForward().Dot(axis));
-    float projection2 = scaledBox2Extents.x * fabs(rotation2.GetRight().Dot(axis)) +
+    const float projection2 = scaledBox2Extents.x * fabs(rotation2.GetRight().Dot(axis)) +
                         scaledBox2Extents.y * fabs(rotation2.GetUp().Dot(axis)) +
                         scaledBox2Extents.z * fabs(rotation2.GetForward().Dot(axis));
 
-    // Project the translation vector onto the axis
-    float projectionTranslation = translation.Dot(axis);
+    const float projectionTranslation = translation.Dot(axis);
 
     // Calculate overlap
-    float overlap = (projection1 + projection2) - fabs(projectionTranslation);
+    const float overlap = (projection1 + projection2) - fabs(projectionTranslation);
 
     if (overlap < 0.0f)
     {
@@ -91,7 +90,7 @@ bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsCompo
         return false;
     }
 
-    // Update minimal penetration and collision normal if necessary
+    // Update minimal penetration and collision normal
     if (overlap < minimalPenetration)
     {
         minimalPenetration = overlap;
@@ -109,32 +108,32 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
     auto &box1 = m_registry->GetComponent<BoxBoundsComponent>(ID1);
     auto &box2 = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
-    Matrix4 rotation1 = transform1.Rotation.GetRotationMatrix();
-    Matrix4 rotation2 = transform2.Rotation.GetRotationMatrix();
+    const Matrix4 rotation1 = transform1.Rotation.GetRotationMatrix();
+    const Matrix4 rotation2 = transform2.Rotation.GetRotationMatrix();
 
-    FVector3 translation = transform2.Position - transform1.Position;
+    const FVector3 translation = transform2.Position - transform1.Position;
 
     float minimalPenetration = std::numeric_limits<float>::max();
     FVector3 collisionNormal;
 
     std::vector<FVector3> axes;
-    axes.push_back(rotation1.GetRight().Normalize());
-    axes.push_back(rotation1.GetUp().Normalize());
-    axes.push_back(rotation1.GetForward().Normalize());
+    axes.emplace_back(rotation1.GetRight().Normalize());
+    axes.emplace_back(rotation1.GetUp().Normalize());
+    axes.emplace_back(rotation1.GetForward().Normalize());
 
-    axes.push_back(rotation2.GetRight().Normalize());
-    axes.push_back(rotation2.GetUp().Normalize());
-    axes.push_back(rotation2.GetForward().Normalize());
+    axes.emplace_back(rotation2.GetRight().Normalize());
+    axes.emplace_back(rotation2.GetUp().Normalize());
+    axes.emplace_back(rotation2.GetForward().Normalize());
 
     // Add cross product axes
     for (int i = 0; i < 3; ++i)
     {
         for (int j = 3; j < 6; ++j)
         {
-            FVector3 axis = axes[i].Cross(axes[j]).Normalize();
+            const FVector3 axis = axes[i].Cross(axes[j]).Normalize();
             if (axis.LengthSquared() > 0.00001f)
             {
-                axes.push_back(axis);
+                axes.emplace_back(axis);
             }
         }
     }
@@ -148,7 +147,7 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
         }
     }
     Collision collision(ID1, ID2, minimalPenetration, collisionNormal);
-    FVector3 direction = (transform2.Position - transform1.Position).Normalize();
+    const FVector3 direction = (transform2.Position - transform1.Position).Normalize();
     if (collision.normal.Dot(direction) < 0)
         collision.normal = collision.normal * -1.0f;
 
@@ -165,22 +164,21 @@ bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
     auto &sphere1 = m_registry->GetComponent<SphereBoundsComponent>(ID1);
     auto &sphere2 = m_registry->GetComponent<SphereBoundsComponent>(ID2);
 
-    float radius1 = sphere1.radius * (transform1.Scale.x + transform1.Scale.y + transform1.Scale.z) / 3;
-    float radius2 = sphere2.radius * (transform2.Scale.x + transform2.Scale.y + transform2.Scale.z) / 3;
+    const float radius1 = sphere1.radius * (transform1.Scale.x + transform1.Scale.y + transform1.Scale.z) / 3;
+    const float radius2 = sphere2.radius * (transform2.Scale.x + transform2.Scale.y + transform2.Scale.z) / 3;
 
-    FVector3 delta = transform2.Position - transform1.Position;
-    float distanceSquared = delta.LengthSquared();
-    float radiusSum = radius1 + radius2;
+    const FVector3 delta = transform2.Position - transform1.Position;
+    const float distanceSquared = delta.LengthSquared();
+    const float radiusSum = radius1 + radius2;
 
     if (distanceSquared < radiusSum * radiusSum)
     {
-        float distance = sqrt(distanceSquared);
-        float penetration = radiusSum - distance;
+        const float distance = sqrt(distanceSquared);
+        const float penetration = radiusSum - distance;
 
-        FVector3 collisionNormal = (distance != 0.0f) ? (delta / distance) : FVector3(1.0f, 0.0f, 0.0f);
+        const FVector3 collisionNormal = (distance != 0.0f) ? (delta / distance) : FVector3(1.0f, 0.0f, 0.0f);
 
-        Collision collision(ID1, ID2, penetration, collisionNormal);
-        m_collisions.emplace_back(collision);
+        m_collisions.emplace_back(ID1, ID2, penetration, collisionNormal);
         return true;
     }
 
@@ -199,8 +197,8 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
     const Matrix4 rotation = boxTransform.Rotation.GetRotationMatrix();
     const float radius =
         sphereBounds.radius * (sphereTransform.Scale.x + sphereTransform.Scale.y + sphereTransform.Scale.z) / 3;
-    float minimalPentration = std::numeric_limits<float>::max();
-    FVector3 delta = boxTransform.Position - sphereTransform.Position;
+    const float minimalPentration = std::numeric_limits<float>::max();
+    const FVector3 delta = boxTransform.Position - sphereTransform.Position;
     FVector3 collisionNormal;
     FVector3 closestPoint;
     return false;
@@ -283,5 +281,4 @@ void CollisionSystem::ResolveCollisions()
         FVector3 relativeVelocity;
         float velocityAlongNormal;
     }
-    m_collisions.clear();
 }

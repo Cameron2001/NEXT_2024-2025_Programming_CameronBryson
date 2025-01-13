@@ -3,8 +3,9 @@
 #include <tuple>
 #include <utility>
 #include <vector>
+#include <iterator>
+#include "ComponentArray.h"
 #include <ppl.h>
-#include <cstddef>
 
 class Registry;
 using Entity = unsigned int;

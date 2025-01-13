@@ -7,8 +7,6 @@ struct Collision
         : ID1(ID1), ID2(ID2), penetration(penetration), normal(normal)
     {
     }
-    // Should we store collision type?
-    //  DynamicVSStatic, DynamicVSDynamic, StaticVSStatic
     FVector3 normal = {0, 0, 0};
     float penetration = 0.0f;
     unsigned int ID1 = 0;
