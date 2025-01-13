@@ -81,9 +81,9 @@ void Camera::UpdateAxes()
     const float radYaw = MathUtil::DegreesToRadians(m_yaw);
     const float radPitch = MathUtil::DegreesToRadians(m_pitch);
 
-    m_forward.X = cosf(radYaw) * cosf(radPitch);
-    m_forward.Y = sinf(radPitch);
-    m_forward.Z = sinf(radYaw) * cosf(radPitch);
+    m_forward.x = cosf(radYaw) * cosf(radPitch);
+    m_forward.y = sinf(radPitch);
+    m_forward.z = sinf(radYaw) * cosf(radPitch);
     m_forward = m_forward.Normalize();
 
     m_right = m_forward.Cross(m_worldUp).Normalize();

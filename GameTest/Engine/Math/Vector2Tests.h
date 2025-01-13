@@ -16,7 +16,7 @@ inline TestResult FVectorAddition()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (4.0, 6.0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (4.0, 6.0), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::FVectorAddition", isEqual, message);
 }
 
@@ -29,7 +29,7 @@ inline TestResult FVectorSubtraction()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (3.0, 4.0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (3.0, 4.0), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::FVectorSubtraction", isEqual, message);
 }
 
@@ -42,7 +42,7 @@ inline TestResult FVectorScalarMultiplication()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (8.0, 12.0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (8.0, 12.0), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::FVectorScalarMultiplication", isEqual, message);
 }
 
@@ -55,7 +55,7 @@ inline TestResult FVectorScalarDivision()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (2.0, 3.0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (2.0, 3.0), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::FVectorScalarDivision", isEqual, message);
 }
 
@@ -113,7 +113,7 @@ inline TestResult FVectorNormalize()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (0.6, 0.8), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (0.6, 0.8), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::FVectorNormalize", isEqual, message);
 }
 
@@ -127,7 +127,7 @@ inline TestResult FVectorClamp()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (4.0, 0.0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (4.0, 0.0), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::FVectorClamp", isEqual, message);
 }
 
@@ -140,7 +140,7 @@ inline TestResult FVectorProject()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (3.0, 0.0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (3.0, 0.0), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::FVectorProject", isEqual, message);
 }
 
@@ -153,7 +153,7 @@ inline TestResult IVectorAddition()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (4, 6), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (4, 6), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::IVectorAddition", isEqual, message);
 }
 
@@ -166,7 +166,7 @@ inline TestResult IVectorSubtraction()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (3, 4), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (3, 4), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::IVectorSubtraction", isEqual, message);
 }
 
@@ -179,7 +179,7 @@ inline TestResult IVectorScalarMultiplication()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (8, 12), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (8, 12), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::IVectorScalarMultiplication", isEqual, message);
 }
 
@@ -192,7 +192,7 @@ inline TestResult IVectorScalarDivision()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (2, 3), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (2, 3), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::IVectorScalarDivision", isEqual, message);
 }
 
@@ -240,17 +240,6 @@ inline TestResult IVectorLengthSquared()
     return TestResult("Vector2Tests::IVectorLengthSquared", isEqual, message);
 }
 
-inline TestResult IVectorNormalize()
-{
-    IVector2 v(3, 4);
-    IVector2 expected(0, 0);
-    IVector2 result = v.Normalize();
-    bool isEqual = (result == expected);
-    std::string message =
-        isEqual ? "Passed"
-                : "Expected: (0, 0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
-    return TestResult("Vector2Tests::IVectorNormalize", isEqual, message);
-}
 
 inline TestResult IVectorClamp()
 {
@@ -262,22 +251,11 @@ inline TestResult IVectorClamp()
     bool isEqual = (result == expected);
     std::string message =
         isEqual ? "Passed"
-                : "Expected: (4, 0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
+                : "Expected: (4, 0), Actual: (" + std::to_string(result.x) + ", " + std::to_string(result.y) + ")";
     return TestResult("Vector2Tests::IVectorClamp", isEqual, message);
 }
 
-inline TestResult IVectorProject()
-{
-    IVector2 v(3, 4);
-    IVector2 normal(1, 0);
-    IVector2 expected(3, 0);
-    IVector2 result = v.Project(normal);
-    bool isEqual = (result == expected);
-    std::string message =
-        isEqual ? "Passed"
-                : "Expected: (3, 0), Actual: (" + std::to_string(result.X) + ", " + std::to_string(result.Y) + ")";
-    return TestResult("Vector2Tests::IVectorProject", isEqual, message);
-}
+
 
 inline std::vector<TestResult> RunAllTests()
 {
@@ -300,8 +278,6 @@ inline std::vector<TestResult> RunAllTests()
             IVectorCrossProduct(),
             IVectorLength(),
             IVectorLengthSquared(),
-            IVectorNormalize(),
-            IVectorClamp(),
-            IVectorProject()};
+            IVectorClamp()};
 }
 } // namespace Vector2Tests

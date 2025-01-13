@@ -20,8 +20,8 @@ void PlayScene::Init()
     TestEvent.AddListener(self, &PlayScene::Test);
     TestEvent2.AddListener(self, &PlayScene::Test);
     auto player = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(player, FVector3(0.3f, 0.1f, -3.0f), FVector3(0.0f, 0.0f, 0.0f),
-                                                 FVector3(0.15f, 0.15f, 0.15f));
+    m_registry->AddComponent<TransformComponent>(player, FVector3(1.5f, 0.8f, -20.0f), FVector3(0.0f, 0.0f, 0.0f),
+                                                 FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<PlayerComponent>(player, 2.0f);
     m_registry->AddComponent<ModelComponent>(player, "CubeOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player);
@@ -30,8 +30,8 @@ void PlayScene::Init()
     //  m_event.Notify(10);
 
     auto cube = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(cube, FVector3(-0.4f, -0.1f, -3.0f), FVector3(0.0f, 0.0f, 0.0f),
-                                                 FVector3(0.1f, 0.1f, 0.1f));
+    m_registry->AddComponent<TransformComponent>(cube, FVector3(-1.5f, -0.8f, -20.0f), FVector3(0.0f, 0.0f, 0.0f),
+                                                 FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<ModelComponent>(cube, "CubeOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube);
     m_registry->AddComponent<ColliderComponent>(cube, ColliderType::Box, true);

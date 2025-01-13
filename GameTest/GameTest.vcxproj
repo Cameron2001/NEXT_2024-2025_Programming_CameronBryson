@@ -200,6 +200,7 @@
     <ClInclude Include="Engine\Math\Matrix4Tests.h" />
     <ClInclude Include="Engine\Math\OctreeTests.h" />
     <ClInclude Include="Engine\Math\QuadtreeTests.h" />
+    <ClInclude Include="Engine\Math\QuaternionTests.h" />
     <ClInclude Include="Engine\Math\Vector2Tests.h" />
     <ClInclude Include="Engine\Math\Vector3Tests.h" />
     <ClInclude Include="Engine\Math\Vector4Tests.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="Engine\Systems\ParticleSystem.h" />
     <ClInclude Include="Engine\Core\Semaphore.h" />
     <ClInclude Include="Engine\Core\SemaphoreGuard.h" />
+    <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="stb_image\stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -272,6 +274,7 @@
     <ClCompile Include="Engine\Systems\ParticleSystem.cpp" />
     <ClCompile Include="Engine\Core\Semaphore.cpp" />
     <ClCompile Include="Engine\Core\SemaphoreGuard.cpp" />
+    <ClCompile Include="Engine\Math\Quaternion.cpp" />
     <ClCompile Include="stb_image\stb_image.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -1,7 +1,8 @@
 #pragma once
 #include "Engine/Math/Vector3.h"
-#include <string>
+#include <Engine/Math/Quaternion.h>
 #include <Engine/Math/Vector2.h>
+#include <string>
 constexpr unsigned int LAYER_DEFAULT = 1 << 0;
 enum class ColliderType : unsigned int
 {
@@ -11,17 +12,17 @@ enum class ColliderType : unsigned int
 struct TransformComponent
 {
     TransformComponent()
-        : Position(FVector3(0.0f, 0.0f, 0.0f)), Rotation(FVector3(0.0f, 0.0f, 0.0f)), Scale(FVector3(1.0f, 1.0f, 1.0f))
+        : Position(FVector3(0.0f, 0.0f, 0.0f)), Rotation(Quaternion()), Scale(FVector3(1.0f, 1.0f, 1.0f))
     {
     }
 
     TransformComponent(const FVector3 &position, const FVector3 &rotation, const FVector3 &scale)
-        : Position(position), Rotation(rotation), Scale(scale)
+        : Position(position), Rotation(Quaternion(rotation)), Scale(scale)
     {
     }
 
+    Quaternion Rotation;
     FVector3 Position;
-    FVector3 Rotation;
     FVector3 Scale;
 };
 struct BoxBoundsComponent
@@ -59,17 +60,19 @@ struct RigidBodyComponent
     }
     RigidBodyComponent(const float linearDrag, const float angularDrag, const FVector3 &initialLinearAcceleration,
                        const FVector3 &initialAngularAcceleration)
-        : linearDrag(linearDrag), linearAcceleration(initialLinearAcceleration), angularDrag(angularDrag),
-          angularAcceleration(initialAngularAcceleration)
+        : linearDrag(linearDrag), accumulatedForce(initialLinearAcceleration), angularDrag(angularDrag),
+          accumulatedTorque(initialAngularAcceleration)
     {
     }
     FVector3 linearVelocity = {0, 0, 0};
-    FVector3 linearAcceleration = {0, 0, 0};
     FVector3 angularVelocity = {0, 0, 0};
-    FVector3 angularAcceleration = {0, 0, 0};
+    FVector3 accumulatedForce = {0, 0, 0};
+    FVector3 accumulatedTorque = {0, 0, 0};
     float linearDrag = 0;
     float angularDrag = 0;
-    float mass = 1.0f;
+    float inverseMass = 1.0f;
+    float restitution = 0.0f;
+    float friction = 0.0f;
 };
 
 struct TextComponent

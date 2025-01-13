@@ -6,8 +6,8 @@
 class FVector2
 {
   public:
-    float X;
-    float Y;
+    float x;
+    float y;
 
     FVector2();
     FVector2(float X, float Y);
@@ -44,8 +44,8 @@ class FVector2
 class IVector2
 {
   public:
-    int X;
-    int Y;
+    int x;
+    int y;
 
     IVector2();
     IVector2(int X, int Y);
@@ -72,9 +72,7 @@ class IVector2
     // Member Functions
     float Length() const;
     float LengthSquared() const;
-    IVector2 Normalize() const;
     float Dot(const IVector2 &obj) const;
     float Cross(const IVector2 &obj) const;
     IVector2 Clamp(int min, int max) const;
-    IVector2 Project(const IVector2 &normal) const;
 };

@@ -8,6 +8,8 @@
 #include <Engine/Math/Vector2Tests.h>
 #include <Engine/Math/Vector3Tests.h>
 #include <Engine/Math/Vector4Tests.h>
+#include <Engine/Math/BoundingSphereTests.h>
+#include <Engine/Math/QuaternionTests.h>
 
 inline std::vector<TestResult> RunTests()
 {
@@ -33,6 +35,12 @@ inline std::vector<TestResult> RunTests()
 
     std::vector<TestResult> vector4Results = Vector4Tests::RunAllTests();
     results.insert(results.end(), vector4Results.begin(), vector4Results.end());
+
+    std::vector<TestResult> boundingSphereResults = BoundingSphereTests::RunAllTests();
+    results.insert(results.end(), boundingSphereResults.begin(), boundingSphereResults.end());
+
+    std::vector<TestResult> quaternionResults = QuaternionTests::RunAllTests();
+    results.insert(results.end(), quaternionResults.begin(), quaternionResults.end());
 
     return results;
 }

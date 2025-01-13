@@ -221,55 +221,6 @@ inline TestResult CreateScaleMatrix()
     return TestResult("Matrix4Tests::CreateScaleMatrix", isEqual, oss.str());
 }
 
-inline TestResult CreateEulerAngleMatrixXYZ()
-{
-    FVector3 rotation(90.0f, 0.0f, 0.0f);
-    Matrix4 rotationMatrix = Matrix4::CreateEulerAngleMatrixXYZ(rotation);
-    Matrix4 expected;
-    expected.Set(0, 0, 1.0f);
-    expected.Set(0, 1, 0.0f);
-    expected.Set(0, 2, 0.0f);
-    expected.Set(0, 3, 0.0f);
-
-    expected.Set(1, 0, 0.0f);
-    expected.Set(1, 1, 0.0f);
-    expected.Set(1, 2, -1.0f);
-    expected.Set(1, 3, 0.0f);
-
-    expected.Set(2, 0, 0.0f);
-    expected.Set(2, 1, 1.0f);
-    expected.Set(2, 2, 0.0f);
-    expected.Set(2, 3, 0.0f);
-
-    expected.Set(3, 0, 0.0f);
-    expected.Set(3, 1, 0.0f);
-    expected.Set(3, 2, 0.0f);
-    expected.Set(3, 3, 1.0f);
-
-    bool isEqual = (rotationMatrix == expected);
-    std::ostringstream oss;
-    if (isEqual)
-        oss << "Passed.";
-    else
-    {
-        oss << "Failed: ";
-        for (int row = 0; row < 4; ++row)
-        {
-            for (int col = 0; col < 4; ++col)
-            {
-                float expectedValue = expected.m[col * 4 + row];
-                float actualValue = rotationMatrix.m[col * 4 + row];
-                if (expectedValue != actualValue)
-                {
-                    oss << "Expected [" << row << "][" << col << "]=" << expectedValue << ", Actual=[" << row << "]["
-                        << col << "]=" << actualValue << "; ";
-                }
-            }
-        }
-    }
-    return TestResult("Matrix4Tests::CreateEulerAngleMatrixXYZ", isEqual, oss.str());
-}
-
 inline TestResult CreatePerspectiveMatrix()
 {
     float fov = 90.0f;
@@ -355,7 +306,7 @@ inline TestResult GetRight()
     if (isEqual)
         oss << "Passed.";
     else
-        oss << "Failed: Expected (1.0, 0.0, 0.0), Actual: (" << right.X << ", " << right.Y << ", " << right.Z << ").";
+        oss << "Failed: Expected (1.0, 0.0, 0.0), Actual: (" << right.x << ", " << right.y << ", " << right.z << ").";
     return TestResult("Matrix4Tests::GetRight", isEqual, oss.str());
 }
 
@@ -369,7 +320,7 @@ inline TestResult GetUp()
     if (isEqual)
         oss << "Passed.";
     else
-        oss << "Failed: Expected (0.0, 1.0, 0.0), Actual: (" << up.X << ", " << up.Y << ", " << up.Z << ").";
+        oss << "Failed: Expected (0.0, 1.0, 0.0), Actual: (" << up.x << ", " << up.y << ", " << up.z << ").";
     return TestResult("Matrix4Tests::GetUp", isEqual, oss.str());
 }
 
@@ -383,7 +334,7 @@ inline TestResult GetForward()
     if (isEqual)
         oss << "Passed.";
     else
-        oss << "Failed: Expected (0.0, 0.0, 1.0), Actual: (" << forward.X << ", " << forward.Y << ", " << forward.Z
+        oss << "Failed: Expected (0.0, 0.0, 1.0), Actual: (" << forward.x << ", " << forward.y << ", " << forward.z
             << ").";
     return TestResult("Matrix4Tests::GetForward", isEqual, oss.str());
 }
@@ -399,7 +350,7 @@ inline TestResult OperatorMultiplyFVector3()
     if (isEqual)
         oss << "Passed.";
     else
-        oss << "Failed: Expected (1.0, 2.0, 3.0), Actual: (" << result.X << ", " << result.Y << ", " << result.Z
+        oss << "Failed: Expected (1.0, 2.0, 3.0), Actual: (" << result.x << ", " << result.y << ", " << result.z
             << ").";
     return TestResult("Matrix4Tests::OperatorMultiplyFVector3", isEqual, oss.str());
 }
@@ -415,8 +366,8 @@ inline TestResult OperatorMultiplyFVector4()
     if (isEqual)
         oss << "Passed.";
     else
-        oss << "Failed: Expected (1.0, 2.0, 3.0, 1.0), Actual: (" << result.X << ", " << result.Y << ", " << result.Z
-            << ", " << result.W << ").";
+        oss << "Failed: Expected (1.0, 2.0, 3.0, 1.0), Actual: (" << result.x << ", " << result.y << ", " << result.z
+            << ", " << result.w << ").";
     return TestResult("Matrix4Tests::OperatorMultiplyFVector4", isEqual, oss.str());
 }
 
@@ -431,7 +382,7 @@ inline TestResult TransformWithPerspectiveDivide()
     if (isEqual)
         oss << "Passed.";
     else
-        oss << "Failed: Expected (1.0, 2.0, 3.0), Actual: (" << result.X << ", " << result.Y << ", " << result.Z
+        oss << "Failed: Expected (1.0, 2.0, 3.0), Actual: (" << result.x << ", " << result.y << ", " << result.z
             << ").";
     return TestResult("Matrix4Tests::TransformWithPerspectiveDivide", isEqual, oss.str());
 }
@@ -444,7 +395,6 @@ inline std::vector<TestResult> RunAllTests()
             TransposeMatrix(),
             CreateTranslationMatrix(),
             CreateScaleMatrix(),
-            CreateEulerAngleMatrixXYZ(),
             CreatePerspectiveMatrix(),
             CreateViewMatrix(),
             GetRight(),

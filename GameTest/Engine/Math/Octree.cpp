@@ -20,7 +20,7 @@ Octree::Octree(const BoundingBox3D &bounds, int capacity, int maxDepth, int leve
 void Octree::Insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID)
 {
     // Calculate scaled radius considering the maximum scale component
-    float scaledRadius = sphere.radius * std::max({transform.Scale.X, transform.Scale.Y, transform.Scale.Z});
+    float scaledRadius = sphere.radius * std::max({transform.Scale.x, transform.Scale.y, transform.Scale.z});
 
     BoundingSphere3D colliderSphere(transform.Position, scaledRadius);
 
@@ -32,8 +32,8 @@ void Octree::Insert(const SphereBoundsComponent &sphere, const TransformComponen
 void Octree::Insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID)
 {
     // Calculate scaled half-extents
-    FVector3 scaledExtents(box.extents.X * transform.Scale.X, box.extents.Y * transform.Scale.Y,
-                           box.extents.Z * transform.Scale.Z);
+    FVector3 scaledExtents(box.extents.x * transform.Scale.x, box.extents.y * transform.Scale.y,
+                           box.extents.z * transform.Scale.z);
 
     float radius = scaledExtents.Length();
 

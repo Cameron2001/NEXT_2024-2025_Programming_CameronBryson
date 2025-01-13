@@ -17,13 +17,13 @@ struct Edge2D
     }
     bool operator<(const Edge2D &other) const
     {
-        if (start.X != other.start.X)
-            return start.X < other.start.X;
-        if (start.Y != other.start.Y)
-            return start.Y < other.start.Y;
-        if (end.X != other.end.X)
-            return end.X < other.end.X;
-        return end.Y < other.end.Y;
+        if (start.x != other.start.x)
+            return start.x < other.start.x;
+        if (start.y != other.start.y)
+            return start.y < other.start.y;
+        if (end.x != other.end.x)
+            return end.x < other.end.x;
+        return end.y < other.end.y;
     }
     Edge2D(const Edge2D &other) = default;
 

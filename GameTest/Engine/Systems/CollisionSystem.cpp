@@ -66,26 +66,91 @@ bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsCompo
                                       const FVector3 &translation, float &minimalPenetration,
                                       FVector3 &collisionNormal) const
 {
-    if (axis.LengthSquared() < 0.00001f)
+    // We need to scale still
+    // This solution doesnt incorperate scale yet
+    float projection1 = box1.extents.x * fabs(rotation1.GetRight().Dot(axis)) +
+                        box1.extents.y * fabs(rotation1.GetUp().Dot(axis)) +
+                        box1.extents.z * fabs(rotation1.GetForward().Dot(axis));
+
+    float projection2 = box2.extents.x * fabs(rotation2.GetRight().Dot(axis)) +
+                        box2.extents.y * fabs(rotation2.GetUp().Dot(axis)) +
+                        box2.extents.z * fabs(rotation2.GetForward().Dot(axis));
+
+    // Project the translation vector onto the axis
+    float projectionTranslation = translation.Dot(axis);
+
+    // Calculate overlap
+    float overlap = (projection1 + projection2) - fabs(projectionTranslation);
+
+    if (overlap < 0.0f)
     {
-        return true;
+        // Separating axis found
+        return false;
     }
-    return false;
+
+    // Update minimal penetration and collision normal if necessary
+    if (overlap < minimalPenetration)
+    {
+        minimalPenetration = overlap;
+        collisionNormal = axis;
+    }
+
+    return true;
 }
 
 bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
 {
-    // Append to m_collisions
     auto &transform1 = m_registry->GetComponent<TransformComponent>(ID1);
     auto &transform2 = m_registry->GetComponent<TransformComponent>(ID2);
 
     auto &box1 = m_registry->GetComponent<BoxBoundsComponent>(ID1);
     auto &box2 = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
-    const Matrix4 rotation1 = Matrix4::CreateEulerAngleMatrixXYZ(transform1.Rotation);
-    const Matrix4 rotation2 = Matrix4::CreateEulerAngleMatrixXYZ(transform2.Rotation);
+    Matrix4 rotation1 = transform1.Rotation.GetRotationMatrix();
+    Matrix4 rotation2 = transform2.Rotation.GetRotationMatrix();
 
-    return false;
+    FVector3 translation = transform2.Position - transform1.Position;
+
+    float minimalPenetration = std::numeric_limits<float>::max();
+    FVector3 collisionNormal;
+
+    std::vector<FVector3> axes;
+    axes.push_back(rotation1.GetRight().Normalize());
+    axes.push_back(rotation1.GetUp().Normalize());
+    axes.push_back(rotation1.GetForward().Normalize());
+
+    axes.push_back(rotation2.GetRight().Normalize());
+    axes.push_back(rotation2.GetUp().Normalize());
+    axes.push_back(rotation2.GetForward().Normalize());
+
+    // Add cross product axes
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 3; j < 6; ++j)
+        {
+            FVector3 axis = axes[i].Cross(axes[j]).Normalize();
+            if (axis.LengthSquared() > 0.00001f)
+            {
+                axes.push_back(axis);
+            }
+        }
+    }
+
+    for (const auto &axis : axes)
+    {
+        if (!TestAxisOverlap(axis, box1, rotation1, box2, rotation2, translation, minimalPenetration, collisionNormal))
+        {
+            return false;
+        }
+    }
+    Collision collision(ID1, ID2, minimalPenetration, collisionNormal);
+    FVector3 direction = (transform2.Position - transform1.Position).Normalize();
+    if (collision.normal.Dot(direction) < 0)
+        collision.normal = collision.normal * -1.0f;
+
+    m_collisions.emplace_back(collision);
+
+    return true;
 }
 
 bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
@@ -108,7 +173,7 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
     auto &sphereBounds = m_registry->GetComponent<SphereBoundsComponent>(ID1);
     auto &boxBounds = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
-    const Matrix4 rotation = Matrix4::CreateEulerAngleMatrixXYZ(boxTransform.Rotation);
+    const Matrix4 rotation = boxTransform.Rotation.GetRotationMatrix();
     return false;
 }
 
@@ -182,5 +247,9 @@ void CollisionSystem::ResolveCollisions()
 
         bool isDynamic1 = m_registry->HasComponent<RigidBodyComponent>(entityID1);
         bool isDynamic2 = m_registry->HasComponent<RigidBodyComponent>(entityID2);
+
+        FVector3 relativeVelocity;
+        float velocityAlongNormal;
     }
+    m_collisions.clear();
 }

@@ -38,8 +38,7 @@ void RenderSystem::Update()
     m_view.ParallelForEach([&](Entity entity, TransformComponent &transform, ModelComponent &modelComponent) {
         auto &model = m_graphicsManager->GetModel(modelComponent.modelName);
         auto modelMatrix = Matrix4::CreateTranslationMatrix(transform.Position) *
-                           Matrix4::CreateScaleMatrix(transform.Scale) *
-                           Matrix4::CreateEulerAngleMatrixXYZ(transform.Rotation);
+                           Matrix4::CreateScaleMatrix(transform.Scale) * transform.Rotation.GetRotationMatrix();
         auto mvpMatrix = viewProjectionMatrix * modelMatrix;
 
         // For each mesh in the model
@@ -58,7 +57,7 @@ void RenderSystem::Update()
                     continue;
                 }
 
-                // Backface culling (commented out)
+                // Backface culling
                 /*const float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
                                           ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
                 if (determinant < 0)
@@ -67,12 +66,12 @@ void RenderSystem::Update()
                 }*/
 
                 // Pre-Compute average depth (Z value)
-                float avgZ = (mvpVertex0.Z + mvpVertex1.Z + mvpVertex2.Z) / 3.0f;
+                float avgZ = (mvpVertex0.z + mvpVertex1.z + mvpVertex2.z) / 3.0f;
 
                 // Create 2D vertices
-                FVector2 v0(mvpVertex0.X, mvpVertex0.Y);
-                FVector2 v1(mvpVertex1.X, mvpVertex1.Y);
-                FVector2 v2(mvpVertex2.X, mvpVertex2.Y);
+                FVector2 v0(mvpVertex0.x, mvpVertex0.y);
+                FVector2 v1(mvpVertex1.x, mvpVertex1.y);
+                FVector2 v2(mvpVertex2.x, mvpVertex2.y);
 
                 // Add triangle to the concurrent vector
                 m_triangles.push_back(Triangle2D(v0, v1, v2, avgZ));
@@ -89,7 +88,7 @@ void RenderSystem::Render()
 {
     for (const auto &edge : m_visibleSegments)
     {
-        if (std::isnan(edge.start.X) || std::isnan(edge.start.Y) || std::isnan(edge.end.X) || std::isnan(edge.end.Y))
+        if (std::isnan(edge.start.x) || std::isnan(edge.start.y) || std::isnan(edge.end.x) || std::isnan(edge.end.y))
         {
             continue; // Skip invalid edges
         }
@@ -111,7 +110,7 @@ void RenderSystem::Shutdown()
 
 bool RenderSystem::RejectTriangle(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2)
 {
-    const float determinant = ((v1.X - v0.X) * (v2.Y - v0.Y)) - ((v1.Y - v0.Y) * (v2.X - v0.X));
+    const float determinant = ((v1.x - v0.x) * (v2.y - v0.y)) - ((v1.y - v0.y) * (v2.x - v0.x));
     if (determinant < 0)
     {
         return true;

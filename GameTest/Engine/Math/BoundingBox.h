@@ -20,7 +20,7 @@ class BoundingBox2D
     }
 
     BoundingBox2D(const FVector2 &minPoint, const FVector2 &maxPoint)
-        : minX(minPoint.X), minY(minPoint.Y), maxX(maxPoint.X), maxY(maxPoint.Y)
+        : minX(minPoint.x), minY(minPoint.y), maxX(maxPoint.x), maxY(maxPoint.y)
     {
     }
 
@@ -36,7 +36,7 @@ class BoundingBox2D
 
     bool ContainsPoint(const FVector2 &point) const
     {
-        return (point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY);
+        return (point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY);
     }
 };
 
@@ -57,7 +57,7 @@ class BoundingBox3D
     }
 
     BoundingBox3D(const FVector3 &minPoint, const FVector3 &maxPoint)
-        : minX(minPoint.X), minY(minPoint.Y), minZ(minPoint.Z), maxX(maxPoint.X), maxY(maxPoint.Y), maxZ(maxPoint.Z)
+        : minX(minPoint.x), minY(minPoint.y), minZ(minPoint.z), maxX(maxPoint.x), maxY(maxPoint.y), maxZ(maxPoint.z)
     {
     }
 
@@ -75,27 +75,27 @@ class BoundingBox3D
 
     bool ContainsPoint(const FVector3 &point) const
     {
-        return (point.X >= minX && point.X <= maxX && point.Y >= minY && point.Y <= maxY && point.Z >= minZ &&
-                point.Z <= maxZ);
+        return (point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY && point.z >= minZ &&
+                point.z <= maxZ);
     }
     bool IntersectsSphere(const BoundingSphere3D &sphere) const
     {
         float sqDist = 0.0f;
 
-        if (sphere.Center.X < minX)
-            sqDist += (minX - sphere.Center.X) * (minX - sphere.Center.X);
-        else if (sphere.Center.X > maxX)
-            sqDist += (sphere.Center.X - maxX) * (sphere.Center.X - maxX);
+        if (sphere.Center.x < minX)
+            sqDist += (minX - sphere.Center.x) * (minX - sphere.Center.x);
+        else if (sphere.Center.x > maxX)
+            sqDist += (sphere.Center.x - maxX) * (sphere.Center.x - maxX);
 
-        if (sphere.Center.Y < minY)
-            sqDist += (minY - sphere.Center.Y) * (minY - sphere.Center.Y);
-        else if (sphere.Center.Y > maxY)
-            sqDist += (sphere.Center.Y - maxY) * (sphere.Center.Y - maxY);
+        if (sphere.Center.y < minY)
+            sqDist += (minY - sphere.Center.y) * (minY - sphere.Center.y);
+        else if (sphere.Center.y > maxY)
+            sqDist += (sphere.Center.y - maxY) * (sphere.Center.y - maxY);
 
-        if (sphere.Center.Z < minZ)
-            sqDist += (minZ - sphere.Center.Z) * (minZ - sphere.Center.Z);
-        else if (sphere.Center.Z > maxZ)
-            sqDist += (sphere.Center.Z - maxZ) * (sphere.Center.Z - maxZ);
+        if (sphere.Center.z < minZ)
+            sqDist += (minZ - sphere.Center.z) * (minZ - sphere.Center.z);
+        else if (sphere.Center.z > maxZ)
+            sqDist += (sphere.Center.z - maxZ) * (sphere.Center.z - maxZ);
 
         return sqDist <= (sphere.Radius * sphere.Radius);
     }

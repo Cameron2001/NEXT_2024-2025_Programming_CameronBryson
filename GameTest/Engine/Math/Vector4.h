@@ -6,10 +6,10 @@
 class FVector4
 {
   public:
-    float X;
-    float Y;
-    float Z;
-    float W;
+    float x;
+    float y;
+    float z;
+    float w;
 
     FVector4();
     FVector4(float X, float Y, float Z, float W);
@@ -43,10 +43,10 @@ class FVector4
 class IVector4
 {
   public:
-    int X;
-    int Y;
-    int Z;
-    int W;
+    int x;
+    int y;
+    int z;
+    int w;
 
     IVector4();
     IVector4(int X, int Y, int Z, int W);
@@ -71,8 +71,6 @@ class IVector4
 
     float Length() const;
     float LengthSquared() const;
-    IVector4 Normalize() const;
     int Dot(const IVector4 &obj) const;
     IVector4 Clamp(int min, int max) const;
-    IVector4 Project(const IVector4 &normal) const;
 };

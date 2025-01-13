@@ -9,10 +9,10 @@
 
 TriangleEntry::TriangleEntry(const Triangle2D &f) : triangle(f)
 {
-    const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-    const float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
-    const float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-    const float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
+    const float minX = std::min({triangle.v0.x, triangle.v1.x, triangle.v2.x});
+    const float minY = std::min({triangle.v0.y, triangle.v1.y, triangle.v2.y});
+    const float maxX = std::max({triangle.v0.x, triangle.v1.x, triangle.v2.x});
+    const float maxY = std::max({triangle.v0.y, triangle.v1.y, triangle.v2.y});
     bounds = BoundingBox2D(minX, minY, maxX, maxY);
 }
 
@@ -73,10 +73,10 @@ void Quadtree::QueryArea(const BoundingBox2D &range, std::vector<Triangle2D> &fo
 
 void Quadtree::QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found) const
 {
-    const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-    const float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
-    const float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-    const float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
+    const float minX = std::min({triangle.v0.x, triangle.v1.x, triangle.v2.x});
+    const float minY = std::min({triangle.v0.y, triangle.v1.y, triangle.v2.y});
+    const float maxX = std::max({triangle.v0.x, triangle.v1.x, triangle.v2.x});
+    const float maxY = std::max({triangle.v0.y, triangle.v1.y, triangle.v2.y});
     BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
 
     Query(triangleBounds, found, triangle.avgZ);
@@ -84,10 +84,10 @@ void Quadtree::QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D>
 
 void Quadtree::QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found, float maxAvgZ) const
 {
-    const float minX = std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-    const float minY = std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
-    const float maxX = std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X});
-    const float maxY = std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y});
+    const float minX = std::min({triangle.v0.x, triangle.v1.x, triangle.v2.x});
+    const float minY = std::min({triangle.v0.y, triangle.v1.y, triangle.v2.y});
+    const float maxX = std::max({triangle.v0.x, triangle.v1.x, triangle.v2.x});
+    const float maxY = std::max({triangle.v0.y, triangle.v1.y, triangle.v2.y});
     BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
 
     Query(triangleBounds, found, maxAvgZ);
@@ -95,10 +95,10 @@ void Quadtree::QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D>
 
 void Quadtree::QueryEdge(const Edge2D &edge, std::vector<Triangle2D> &found) const
 {
-    const float minX = std::min(edge.start.X, edge.end.X);
-    const float minY = std::min(edge.start.Y, edge.end.Y);
-    const float maxX = std::max(edge.start.X, edge.end.X);
-    const float maxY = std::max(edge.start.Y, edge.end.Y);
+    const float minX = std::min(edge.start.x, edge.end.x);
+    const float minY = std::min(edge.start.y, edge.end.y);
+    const float maxX = std::max(edge.start.x, edge.end.x);
+    const float maxY = std::max(edge.start.y, edge.end.y);
     BoundingBox2D edgeBounds(minX, minY, maxX, maxY);
 
     Query(edgeBounds, found);

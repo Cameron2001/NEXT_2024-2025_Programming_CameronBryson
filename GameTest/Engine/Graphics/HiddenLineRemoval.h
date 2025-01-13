@@ -85,16 +85,16 @@ inline bool HiddenLineRemoval::SharesVertex(const Triangle2D &triangleA, const T
 
 inline bool HiddenLineRemoval::IsPointInsideTriangle(const FVector2 &point, const Triangle2D &triangle)
 {
-    float deltaX = point.X - triangle.v0.X;
-    float deltaY = point.Y - triangle.v0.Y;
+    float deltaX = point.x - triangle.v0.x;
+    float deltaY = point.y - triangle.v0.y;
 
-    bool isSideABPositive = (triangle.v1.X - triangle.v0.X) * deltaY - (triangle.v1.Y - triangle.v0.Y) * deltaX > 0;
+    bool isSideABPositive = (triangle.v1.x - triangle.v0.x) * deltaY - (triangle.v1.y - triangle.v0.y) * deltaX > 0;
 
-    if (((triangle.v2.X - triangle.v0.X) * deltaY - (triangle.v2.Y - triangle.v0.Y) * deltaX > 0) == isSideABPositive)
+    if (((triangle.v2.x - triangle.v0.x) * deltaY - (triangle.v2.y - triangle.v0.y) * deltaX > 0) == isSideABPositive)
         return false;
 
-    if (((triangle.v2.X - triangle.v1.X) * (point.Y - triangle.v1.Y) -
-             (triangle.v2.Y - triangle.v1.Y) * (point.X - triangle.v1.X) >
+    if (((triangle.v2.x - triangle.v1.x) * (point.y - triangle.v1.y) -
+             (triangle.v2.y - triangle.v1.y) * (point.x - triangle.v1.x) >
          0) != isSideABPositive)
         return false;
 

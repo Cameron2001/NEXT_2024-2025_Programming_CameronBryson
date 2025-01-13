@@ -93,10 +93,10 @@ void HiddenLineRemoval::InitializeQuadtree(const std::vector<Triangle2D> &triang
 
     for (const auto &triangle : triangles)
     {
-        minX = std::min(minX, std::min({triangle.v0.X, triangle.v1.X, triangle.v2.X}));
-        minY = std::min(minY, std::min({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y}));
-        maxX = std::max(maxX, std::max({triangle.v0.X, triangle.v1.X, triangle.v2.X}));
-        maxY = std::max(maxY, std::max({triangle.v0.Y, triangle.v1.Y, triangle.v2.Y}));
+        minX = std::min(minX, std::min({triangle.v0.x, triangle.v1.x, triangle.v2.x}));
+        minY = std::min(minY, std::min({triangle.v0.y, triangle.v1.y, triangle.v2.y}));
+        maxX = std::max(maxX, std::max({triangle.v0.x, triangle.v1.x, triangle.v2.x}));
+        maxY = std::max(maxY, std::max({triangle.v0.y, triangle.v1.y, triangle.v2.y}));
     }
 
     BoundingBox2D rootBounds(minX, minY, maxX, maxY);
@@ -220,14 +220,14 @@ void HiddenLineRemoval::ClipEdgeAgainstTriangle(const Edge2D &edge, const Triang
 
 bool HiddenLineRemoval::GetEdgeIntersection(const Edge2D &edgeA, const Edge2D &edgeB, FVector2 &intersectionPoint)
 {
-    const float x1 = edgeA.start.X;
-    const float y1 = edgeA.start.Y;
-    const float x2 = edgeA.end.X;
-    const float y2 = edgeA.end.Y;
-    const float x3 = edgeB.start.X;
-    const float y3 = edgeB.start.Y;
-    const float x4 = edgeB.end.X;
-    const float y4 = edgeB.end.Y;
+    const float x1 = edgeA.start.x;
+    const float y1 = edgeA.start.y;
+    const float x2 = edgeA.end.x;
+    const float y2 = edgeA.end.y;
+    const float x3 = edgeB.start.x;
+    const float y3 = edgeB.start.y;
+    const float x4 = edgeB.end.x;
+    const float y4 = edgeB.end.y;
 
     const float denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
     constexpr float EPSILON = 1e-6f;
@@ -245,7 +245,7 @@ bool HiddenLineRemoval::GetEdgeIntersection(const Edge2D &edgeA, const Edge2D &e
     if (t < -EPSILON || t > 1.0f + EPSILON || u < -EPSILON || u > 1.0f + EPSILON)
         return false;
 
-    intersectionPoint.X = x1 + t * (x2 - x1);
-    intersectionPoint.Y = y1 + t * (y2 - y1);
+    intersectionPoint.x = x1 + t * (x2 - x1);
+    intersectionPoint.y = y1 + t * (y2 - y1);
     return true;
 }
