@@ -250,6 +250,9 @@ void CollisionSystem::ResolveCollisions()
         bool isDynamic1 = m_registry->HasComponent<RigidBodyComponent>(entityID1);
         bool isDynamic2 = m_registry->HasComponent<RigidBodyComponent>(entityID2);
 
+        transform1.Position -= collision.normal * collision.penetration * (isDynamic1 ? 0.5f : 1.0f);
+        transform2.Position += collision.normal * collision.penetration * (isDynamic2 ? 0.5f : 1.0f);
+
         FVector3 relativeVelocity;
         float velocityAlongNormal;
     }

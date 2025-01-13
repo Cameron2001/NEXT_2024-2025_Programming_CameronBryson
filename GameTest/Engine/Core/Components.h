@@ -72,7 +72,6 @@ struct RigidBodyComponent
     float angularDrag = 0;
     float inverseMass = 1.0f;
     float restitution = 0.0f;
-    float friction = 0.0f;
 };
 
 struct TextComponent
