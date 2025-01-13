@@ -61,20 +61,21 @@ void CollisionSystem::BuildOctree()
     }
 }
 
-bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const Matrix4 &rotation1,
-                                      const BoxBoundsComponent &box2, const Matrix4 &rotation2,
-                                      const FVector3 &translation, float &minimalPenetration,
+bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const FVector3 &scale1,
+                                      const Matrix4 &rotation1, const BoxBoundsComponent &box2, const FVector3 &scale2,
+                                      const Matrix4 &rotation2, const FVector3 &translation, float &minimalPenetration,
                                       FVector3 &collisionNormal) const
 {
     // We need to scale still
     // This solution doesnt incorperate scale yet
-    float projection1 = box1.extents.x * fabs(rotation1.GetRight().Dot(axis)) +
-                        box1.extents.y * fabs(rotation1.GetUp().Dot(axis)) +
-                        box1.extents.z * fabs(rotation1.GetForward().Dot(axis));
-
-    float projection2 = box2.extents.x * fabs(rotation2.GetRight().Dot(axis)) +
-                        box2.extents.y * fabs(rotation2.GetUp().Dot(axis)) +
-                        box2.extents.z * fabs(rotation2.GetForward().Dot(axis));
+    FVector3 scaledBox1Extents = box1.extents * scale1;
+    FVector3 scaledBox2Extents = box2.extents * scale2;
+    float projection1 = scaledBox1Extents.x * fabs(rotation1.GetRight().Dot(axis)) +
+                        scaledBox1Extents.y * fabs(rotation1.GetUp().Dot(axis)) +
+                        scaledBox1Extents.z * fabs(rotation1.GetForward().Dot(axis));
+    float projection2 = scaledBox2Extents.x * fabs(rotation2.GetRight().Dot(axis)) +
+                        scaledBox2Extents.y * fabs(rotation2.GetUp().Dot(axis)) +
+                        scaledBox2Extents.z * fabs(rotation2.GetForward().Dot(axis));
 
     // Project the translation vector onto the axis
     float projectionTranslation = translation.Dot(axis);
@@ -138,7 +139,8 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
 
     for (const auto &axis : axes)
     {
-        if (!TestAxisOverlap(axis, box1, rotation1, box2, rotation2, translation, minimalPenetration, collisionNormal))
+        if (!TestAxisOverlap(axis, box1, transform1.Scale, rotation1, box2, transform2.Scale, rotation2, translation,
+                             minimalPenetration, collisionNormal))
         {
             return false;
         }

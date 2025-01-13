@@ -19,9 +19,10 @@ class CollisionSystem
 
   private:
     void BuildOctree();
-    bool TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const Matrix4 &rotation1,
-                         const BoxBoundsComponent &box2, const Matrix4 &rotation2, const FVector3 &translation,
-                         float &minimalPenetration, FVector3 &collisionNormal) const;
+    bool TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const FVector3 &scale1,
+                         const Matrix4 &rotation1, const BoxBoundsComponent &box2, const FVector3 &scale2,
+                         const Matrix4 &rotation2, const FVector3 &translation, float &minimalPenetration,
+                         FVector3 &collisionNormal) const;
     bool OOBvsOOB(Entity ID1, Entity ID2);
     bool SpherevsSphere(Entity ID1, Entity ID2);
     bool SpherevsOOB(Entity ID1, Entity ID2);
