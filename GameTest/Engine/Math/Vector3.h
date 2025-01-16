@@ -38,6 +38,7 @@ class FVector3
     float Dot(const FVector3 &obj) const;
     FVector3 Cross(const FVector3 &obj) const;
     FVector3 Clamp(float min, float max) const;
+    FVector3 Clamp(const FVector3 &min, const FVector3 &max) const;
     FVector3 Project(const FVector3 &normal) const;
 };
 

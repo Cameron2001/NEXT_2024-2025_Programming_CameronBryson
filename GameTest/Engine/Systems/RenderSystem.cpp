@@ -18,8 +18,8 @@
 #include <cmath>
 
 RenderSystem::RenderSystem(Registry *registry, GraphicsManager *graphicsManager, Camera *camera)
-    : m_registry(registry), m_view(registry), m_graphicsManager(graphicsManager), m_camera(camera),
-      m_hiddenLineRemoval(), m_triangles(), m_triangleList(), m_visibleSegments()
+    : m_registry(registry), m_modelView(registry), m_graphicsManager(graphicsManager), m_camera(camera),
+      m_hiddenLineRemoval(), m_triangles(), m_triangleList(), m_visibleSegments(), m_textView(registry)
 {
     m_triangles.reserve(2000);
     m_triangleList.reserve(2000);
@@ -31,14 +31,14 @@ void RenderSystem::Init()
 }
 void RenderSystem::Update()
 {
-    m_view.Update();
+    m_modelView.Update();
     auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
 
     // Process entities in parallel with updated lambda signature
-    m_view.ParallelForEach([&](Entity entity, TransformComponent &transform, ModelComponent &modelComponent) {
+    m_modelView.ParallelForEach([&](Entity entity, TransformComponent &transform, ModelComponent &modelComponent) {
         auto &model = m_graphicsManager->GetModel(modelComponent.modelName);
         auto modelMatrix = Matrix4::CreateTranslationMatrix(transform.Position) *
-                           Matrix4::CreateScaleMatrix(transform.Scale) * transform.Rotation.GetRotationMatrix();
+                           Matrix4::CreateScaleMatrix(transform.Scale) * transform.Rotation.GetRotationMatrix4();
         auto mvpMatrix = viewProjectionMatrix * modelMatrix;
 
         // For each mesh in the model
@@ -102,6 +102,10 @@ void RenderSystem::Render()
 void RenderSystem::LateRender()
 {
     //  UI Rendering
+    m_textView.Update();
+    m_textView.ForEach([&](Entity entity, TextComponent &text) {
+        Renderer2D::PrintText(text.text, text.position, {1.0f, 1.0f, 1.0f});
+    });
 }
 
 void RenderSystem::Shutdown()

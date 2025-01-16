@@ -24,6 +24,25 @@ void Matrix4::Set(const int row, const int column, const float value)
     m[column * 4 + row] = value;
 }
 
+void Matrix4::SetZero()
+{
+    for (int i = 0; i < 16; ++i)
+    {
+        m[i] = 0.0f;
+    }
+}
+
+void Matrix4::SetIdentity()
+{
+    for (int row = 0; row < 4; ++row)
+    {
+        for (int column = 0; column < 4; ++column)
+        {
+            Set(row, column, (row == column) ? 1.0f : 0.0f);
+        }
+    }
+}
+
 Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRatio, const float zNear, const float zFar)
 {
     Matrix4 perspectiveMatrix;

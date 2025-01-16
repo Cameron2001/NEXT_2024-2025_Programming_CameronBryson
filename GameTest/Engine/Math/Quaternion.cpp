@@ -104,7 +104,37 @@ FVector3 Quaternion::GetEulerAnglesXYZ() const
     return eulerAnglesXYZ;
 }
 
-Matrix4 Quaternion::GetRotationMatrix() const
+Matrix3 Quaternion::GetRotationMatrix3() const
+{
+    Matrix3 rotationMatrix;
+
+    Quaternion q = this->Normalize();
+
+    float xx = q.x * q.x;
+    float yy = q.y * q.y;
+    float zz = q.z * q.z;
+    float xy = q.x * q.y;
+    float xz = q.x * q.z;
+    float yz = q.y * q.z;
+    float wx = q.w * q.x;
+    float wy = q.w * q.y;
+    float wz = q.w * q.z;
+
+    rotationMatrix.Set(0, 0, 1.0f - 2.0f * (yy + zz));
+    rotationMatrix.Set(0, 1, 2.0f * (xy - wz));
+    rotationMatrix.Set(0, 2, 2.0f * (xz + wy));
+
+    rotationMatrix.Set(1, 0, 2.0f * (xy + wz));
+    rotationMatrix.Set(1, 1, 1.0f - 2.0f * (xx + zz));
+    rotationMatrix.Set(1, 2, 2.0f * (yz - wx));
+
+    rotationMatrix.Set(2, 0, 2.0f * (xz - wy));
+    rotationMatrix.Set(2, 1, 2.0f * (yz + wx));
+    rotationMatrix.Set(2, 2, 1.0f - 2.0f * (xx + yy));
+    return rotationMatrix;
+}
+
+Matrix4 Quaternion::GetRotationMatrix4() const
 {
     Matrix4 rotationMatrix;
 
@@ -309,8 +339,6 @@ Quaternion &Quaternion::operator*=(const Quaternion &obj)
     return *this;
 }
 
-// Quaternion-Vector Multiplication (Rotate Vector)
-// Quaternion-Vector Multiplication (Rotate Vector)
 FVector3 Quaternion::operator*(const FVector3 &v) const
 {
     // Convert the vector into a pure quaternion

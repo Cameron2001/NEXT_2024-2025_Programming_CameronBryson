@@ -23,46 +23,46 @@ void PlayScene::Init()
     m_registry->AddComponent<TransformComponent>(player, FVector3(1.5f, 0.8f, -20.0f), FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<PlayerComponent>(player, 2.0f);
-    m_registry->AddComponent<ModelComponent>(player, "SphereOBJ");
-    m_registry->AddComponent<RigidBodyComponent>(player);
-    m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true);
-    //m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);
-    //  m_event.Notify(10);
+    m_registry->AddComponent<ModelComponent>(player, "CubeOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(player, 0.5, 0.5);
+    m_registry->AddComponent<ColliderComponent>(player, ColliderType::Box, true);
+    m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
+    // m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);
+    //   m_event.Notify(10);
 
     auto cube = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(cube, FVector3(-1.5f, -0.8f, -20.0f), FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<ModelComponent>(cube, "SphereOBJ");
-    m_registry->AddComponent<RigidBodyComponent>(cube);
+    m_registry->AddComponent<ModelComponent>(cube, "CubeOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube, 0.5, 0.5);
     m_registry->AddComponent<ColliderComponent>(cube, ColliderType::Box, true);
     m_registry->AddComponent<BoxBoundsComponent>(cube, FVector3(1.0f, 1.0f, 1.0f));
-    //m_registry->AddComponent<SphereBoundsComponent>(cube, 1.0f);
+    // m_registry->AddComponent<SphereBoundsComponent>(cube, 1.0f);
 
-     auto cube2 = m_registry->CreateEntity();
-     m_registry->AddComponent<TransformComponent>(cube2, FVector3(-0.1f, -0.1f, -3.0f), FVector3(20.0f, 15.0f, 10.0f),
-                                                  FVector3(0.15f, 0.15f, 0.51f));
-     m_registry->AddComponent<ModelComponent>(cube2, "ShipOBJ");
-     m_registry->AddComponent<RigidBodyComponent>(cube2);
+    /*auto cube2 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube2, FVector3(-0.1f, -0.1f, -3.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube2, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube2);
 
-     auto cube3 = m_registry->CreateEntity();
-     m_registry->AddComponent<TransformComponent>(cube3, FVector3(0.3f, -0.3f, -8.0f), FVector3(20.0f, 15.0f, 10.0f),
-                                                  FVector3(0.15f, 0.15f, 0.51f));
-     m_registry->AddComponent<ModelComponent>(cube3, "ShipOBJ");
-     m_registry->AddComponent<RigidBodyComponent>(cube3);
+    auto cube3 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube3, FVector3(0.3f, -0.3f, -8.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube3, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube3);
 
-     auto cube4 = m_registry->CreateEntity();
-     m_registry->AddComponent<TransformComponent>(cube4, FVector3(0.4f, -0.2f, -4.0f), FVector3(20.0f, 15.0f, 10.0f),
-                                                  FVector3(0.15f, 0.15f, 0.51f));
-     m_registry->AddComponent<ModelComponent>(cube4, "ShipOBJ");
-     m_registry->AddComponent<RigidBodyComponent>(cube4);
+    auto cube4 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube4, FVector3(0.4f, -0.2f, -4.0f), FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube4, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube4);
 
-     auto cube5 = m_registry->CreateEntity();
-     m_registry->AddComponent<TransformComponent>(cube5, FVector3(-0.5f, -0.8f, -10.0f),
-     FVector3(20.0f, 15.0f, 10.0f),
-                                                  FVector3(0.15f, 0.15f, 0.51f));
-     m_registry->AddComponent<ModelComponent>(cube5, "ShipOBJ");
-     m_registry->AddComponent<RigidBodyComponent>(cube5);
+    auto cube5 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(cube5, FVector3(-0.5f, -0.8f, -10.0f),
+    FVector3(20.0f, 15.0f, 10.0f),
+                                                 FVector3(0.15f, 0.15f, 0.51f));
+    m_registry->AddComponent<ModelComponent>(cube5, "ShipOBJ");
+    m_registry->AddComponent<RigidBodyComponent>(cube5);*/
 
     // auto cube6 = m_registry->CreateEntity();
     // m_registry->AddComponent<TransformComponent>(cube6, FVector3(-0.5f, 0.6f, -5.0f), FVector3(20.0f, 15.0f, 10.0f),

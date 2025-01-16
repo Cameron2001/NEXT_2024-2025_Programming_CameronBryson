@@ -140,7 +140,13 @@ FVector3 FVector3::Clamp(float min, float max) const
     float clampedZ = std::max(min, std::min(z, max));
     return FVector3(clampedX, clampedY, clampedZ);
 }
-
+FVector3 FVector3::Clamp(const FVector3 &min, const FVector3 &max) const
+{
+    float clampedX = std::max(min.x, std::min(x, max.x));
+    float clampedY = std::max(min.y, std::min(y, max.y));
+    float clampedZ = std::max(min.z, std::min(z, max.z));
+    return FVector3(clampedX, clampedY, clampedZ);
+}
 FVector3 FVector3::Project(const FVector3 &normal) const
 {
     float dotProduct = Dot(normal);
@@ -280,4 +286,3 @@ IVector3 IVector3::Clamp(const int min, const int max) const
     const int clampedZ = std::max(min, std::min(z, max));
     return IVector3(clampedX, clampedY, clampedZ);
 }
-

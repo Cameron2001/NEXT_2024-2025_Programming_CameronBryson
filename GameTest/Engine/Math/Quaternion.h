@@ -1,6 +1,7 @@
 #pragma once
 #include "Vector3.h"
 #include "Matrix4.h"
+#include "Matrix3.h"
 #include <cmath>
 
 class Quaternion
@@ -21,7 +22,8 @@ class Quaternion
     static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
 
     FVector3 GetEulerAnglesXYZ() const;
-    Matrix4 GetRotationMatrix() const;
+    Matrix3 GetRotationMatrix3() const;
+    Matrix4 GetRotationMatrix4() const;
 
     float Dot(const Quaternion &other) const;
     float Length() const;

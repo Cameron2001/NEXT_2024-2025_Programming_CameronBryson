@@ -25,7 +25,8 @@ class RenderSystem
   private:
     bool RejectTriangle(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2);
     Registry *m_registry;
-    View<TransformComponent, ModelComponent> m_view;
+    View<TransformComponent, ModelComponent> m_modelView;
+    View<TextComponent> m_textView;
     GraphicsManager *m_graphicsManager;
     Camera *m_camera;
     HiddenLineRemoval m_hiddenLineRemoval;

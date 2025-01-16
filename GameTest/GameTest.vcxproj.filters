@@ -81,6 +81,7 @@
     <ClCompile Include="Engine\Core\Semaphore.cpp" />
     <ClCompile Include="Engine\Core\SemaphoreGuard.cpp" />
     <ClCompile Include="Engine\Math\Quaternion.cpp" />
+    <ClCompile Include="Engine\Math\Matrix3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="Engine\Core\SemaphoreGuard.h" />
     <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="Engine\Math\QuaternionTests.h" />
+    <ClInclude Include="Engine\Math\Matrix3.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

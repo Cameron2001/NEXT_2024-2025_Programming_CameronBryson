@@ -37,24 +37,24 @@ void PlayerSystem::Update(float dt)
     view.ParallelForEach([&](Entity entity, PlayerComponent &player, RigidBodyComponent &rigidbody) {
         // Movement
         if (UP)
-            rigidbody.accumulatedForce += FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
+            rigidbody.force += FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
         if (DOWN)
-            rigidbody.accumulatedForce -= FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
+            rigidbody.force -= FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
         if (LEFT)
-            rigidbody.accumulatedForce -= FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed;
+            rigidbody.force -= FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed;
         if (RIGHT)
-            rigidbody.accumulatedForce += FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed;
+            rigidbody.force += FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed;
         if (FORWARD)
-            rigidbody.accumulatedForce -= FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed;
+            rigidbody.force -= FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed;
         if (BACKWARD)
-            rigidbody.accumulatedForce += FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed;
+            rigidbody.force += FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed;
 
         // Rotation
         if (R)
-            rigidbody.accumulatedTorque += FVector3{0.0f, 0.0f, 1.0f} * rotationSpeed;
+            rigidbody.torque += FVector3{0.0f, 0.0f, 1.0f} * rotationSpeed;
         if (F)
-            rigidbody.accumulatedTorque += FVector3{0.0f, 1.0f, 0.0f} * rotationSpeed;
+            rigidbody.torque += FVector3{0.0f, 1.0f, 0.0f} * rotationSpeed;
         if (V)
-            rigidbody.accumulatedTorque += FVector3{1.0f, 0.0f, 0.0f} * rotationSpeed;
+            rigidbody.torque += FVector3{1.0f, 0.0f, 0.0f} * rotationSpeed;
     });
 }

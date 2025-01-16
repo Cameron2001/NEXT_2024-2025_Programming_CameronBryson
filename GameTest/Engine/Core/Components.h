@@ -2,6 +2,7 @@
 #include "Engine/Math/Vector3.h"
 #include <Engine/Math/Quaternion.h>
 #include <Engine/Math/Vector2.h>
+#include <Engine/Math/Matrix3.h>
 #include <string>
 constexpr unsigned int LAYER_DEFAULT = 1 << 0;
 enum class ColliderType : unsigned int
@@ -60,25 +61,27 @@ struct RigidBodyComponent
     }
     RigidBodyComponent(const float linearDrag, const float angularDrag, const FVector3 &initialLinearAcceleration,
                        const FVector3 &initialAngularAcceleration)
-        : linearDrag(linearDrag), accumulatedForce(initialLinearAcceleration), angularDrag(angularDrag),
-          accumulatedTorque(initialAngularAcceleration)
+        : linearDrag(linearDrag), force(initialLinearAcceleration), angularDrag(angularDrag),
+          torque(initialAngularAcceleration)
     {
     }
+    Matrix3 localInverseInertiaTensor;
     FVector3 linearVelocity = {0, 0, 0};
     FVector3 angularVelocity = {0, 0, 0};
-    FVector3 accumulatedForce = {0, 0, 0};
-    FVector3 accumulatedTorque = {0, 0, 0};
+    FVector3 force = {0, 0, 0};
+    FVector3 torque = {0, 0, 0};
     float linearDrag = 0;
     float angularDrag = 0;
     float inverseMass = 1.0f;
-    float restitution = 0.0f;
+    float elasticity = 1.0f;
+    bool isInitialized = false;
 };
 
 struct TextComponent
 {
     std::string text;
+    FVector2 position;
 };
-
 struct ModelComponent
 {
     explicit ModelComponent(std::string modelName) : modelName(std::move(modelName))
