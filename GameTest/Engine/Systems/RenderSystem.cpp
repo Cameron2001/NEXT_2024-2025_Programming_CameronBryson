@@ -6,7 +6,7 @@
 #include <Engine/Core/Components.h>
 #include <Engine/Graphics/Edge.h>
 #include <Engine/Graphics/Model.h>
-#include <Engine/Graphics/Renderer2D.h>
+#include <Engine/Graphics/Renderer.h>
 #include <Engine/Graphics/Triangle.h>
 #include <Engine/Managers/GraphicsManager.h>
 #include <Engine/Math/Matrix4.h>
@@ -18,10 +18,10 @@
 #include <cmath>
 
 RenderSystem::RenderSystem(Registry *registry, GraphicsManager *graphicsManager, Camera *camera)
-    : m_registry(registry), m_modelView(registry), m_graphicsManager(graphicsManager), m_camera(camera),
-      m_hiddenLineRemoval(), m_triangles(), m_triangleList(), m_visibleSegments(), m_textView(registry)
+    : m_registry(registry), m_modelView(registry), m_textView(registry), m_graphicsManager(graphicsManager),
+      m_camera(camera), m_hiddenLineRemoval(), m_triangles(), m_triangleList(), m_visibleSegments()
 {
-    m_triangles.reserve(2000);
+    m_triangles.local().reserve(2000);
     m_triangleList.reserve(2000);
     m_visibleSegments.reserve(10000);
 }
@@ -57,15 +57,6 @@ void RenderSystem::Update()
                     continue;
                 }
 
-                // Backface culling
-                /*const float determinant = ((mvpVertex1.X - mvpVertex0.X) * (mvpVertex2.Y - mvpVertex0.Y)) -
-                                          ((mvpVertex1.Y - mvpVertex0.Y) * (mvpVertex2.X - mvpVertex0.X));
-                if (determinant < 0)
-                {
-                    continue;
-                }*/
-
-                // Pre-Compute average depth (Z value)
                 float avgZ = (mvpVertex0.z + mvpVertex1.z + mvpVertex2.z) / 3.0f;
 
                 // Create 2D vertices
@@ -74,14 +65,15 @@ void RenderSystem::Update()
                 FVector2 v2(mvpVertex2.x, mvpVertex2.y);
 
                 // Add triangle to the concurrent vector
-                m_triangles.push_back(Triangle2D(v0, v1, v2, avgZ));
+                m_triangles.local().emplace_back(v0, v1, v2, avgZ);
             }
         }
     });
 
-    m_triangleList.reserve(m_triangles.size());
-    m_triangleList.insert(m_triangleList.end(), std::make_move_iterator(m_triangles.begin()),
-                          std::make_move_iterator(m_triangles.end()));
+    m_triangles.combine_each([&](std::vector<Triangle2D> &triangles) {
+        m_triangleList.insert(m_triangleList.end(), std::make_move_iterator(triangles.begin()),
+                              std::make_move_iterator(triangles.end()));
+    });
     m_visibleSegments = m_hiddenLineRemoval.RemoveHiddenLines(m_triangleList);
 }
 void RenderSystem::Render()
@@ -92,7 +84,7 @@ void RenderSystem::Render()
         {
             continue; // Skip invalid edges
         }
-        Renderer2D::DrawLine(edge, {1.0f, 1.0f, 1.0f});
+        Renderer::DrawLine(edge, {1.0f, 1.0f, 1.0f});
     }
     m_triangles.clear();
     m_triangleList.clear();
@@ -103,9 +95,8 @@ void RenderSystem::LateRender()
 {
     //  UI Rendering
     m_textView.Update();
-    m_textView.ForEach([&](Entity entity, TextComponent &text) {
-        Renderer2D::PrintText(text.text, text.position, {1.0f, 1.0f, 1.0f});
-    });
+    m_textView.ForEach(
+        [&](Entity entity, TextComponent &text) { Renderer::PrintText(text.text, text.position, {1.0f, 1.0f, 1.0f}); });
 }
 
 void RenderSystem::Shutdown()

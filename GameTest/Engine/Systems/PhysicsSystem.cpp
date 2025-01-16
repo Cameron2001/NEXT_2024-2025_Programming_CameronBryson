@@ -44,7 +44,7 @@ void PhysicsSystem::Update(const float dt)
             ComputeSphereInverseInertiaTensor(transform, sphereBounds, rigidBody);
         }
     });
-    m_view.ParallelForEach([this, dt](Entity entity, TransformComponent &transform, RigidBodyComponent &rigidBody) {
+    m_view.ParallelForEach([dt](Entity entity, TransformComponent &transform, RigidBodyComponent &rigidBody) {
         // Update velocities
 
         FVector3 linearAcceleration = rigidBody.force * rigidBody.inverseMass;

@@ -4,7 +4,7 @@
 #include "Engine/Storage/ComponentArray.h"
 #include "View.h"
 #include "IComponentArray.h"
-
+#include "Engine/Core/Entity.h"
 class Registry
 {
   public:

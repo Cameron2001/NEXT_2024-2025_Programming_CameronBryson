@@ -31,7 +31,7 @@ void PlayerSystem::Update(float dt)
     bool F = App::IsKeyPressed('F');
     bool V = App::IsKeyPressed('V');
 
-    constexpr float rotationSpeed = 10.0f;
+    constexpr float rotationSpeed = 1.0f;
 
     // Process entities in parallel with updated lambda signature
     view.ParallelForEach([&](Entity entity, PlayerComponent &player, RigidBodyComponent &rigidbody) {

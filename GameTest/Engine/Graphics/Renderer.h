@@ -6,7 +6,7 @@
 #include "Edge.h"
 #include <utility>
 
-class Renderer2D
+class Renderer
 {
   public:
     static void DrawLine(const FVector2 &start, const FVector2 &end, const FVector3 &color);

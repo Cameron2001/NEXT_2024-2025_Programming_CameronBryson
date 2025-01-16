@@ -57,7 +57,7 @@
     <ClCompile Include="Engine\Math\Vector4.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Renderer2D.cpp">
+    <ClCompile Include="Engine\Graphics\Renderer.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Systems\CollisionSystem.cpp">
@@ -82,6 +82,9 @@
     <ClCompile Include="Engine\Core\SemaphoreGuard.cpp" />
     <ClCompile Include="Engine\Math\Quaternion.cpp" />
     <ClCompile Include="Engine\Math\Matrix3.cpp" />
+    <ClCompile Include="Engine\Core\EntityFactory.cpp" />
+    <ClCompile Include="Game\MainMenuScene.cpp" />
+    <ClCompile Include="Engine\Systems\CameraSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -172,7 +175,7 @@
     <ClInclude Include="Engine\Math\MathUtil.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Renderer2D.h">
+    <ClInclude Include="Engine\Graphics\Renderer.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Systems\CollisionSystem.h">
@@ -186,9 +189,6 @@
     </ClInclude>
     <ClInclude Include="Game\PlayerSystem.h">
       <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Core\Threadpool.h">
-      <Filter>Engine\Core</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Graphics\Triangle.h" />
     <ClInclude Include="Engine\Storage\View.h" />
@@ -216,6 +216,11 @@
     <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="Engine\Math\QuaternionTests.h" />
     <ClInclude Include="Engine\Math\Matrix3.h" />
+    <ClInclude Include="Engine\Math\Matrix3Tests.h" />
+    <ClInclude Include="Engine\Core\EntityFactory.h" />
+    <ClInclude Include="Engine\Core\Entity.h" />
+    <ClInclude Include="Game\MainMenuScene.h" />
+    <ClInclude Include="Engine\Systems\CameraSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

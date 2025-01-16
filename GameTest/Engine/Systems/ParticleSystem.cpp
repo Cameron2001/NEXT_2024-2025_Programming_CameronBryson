@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Engine/Core/Components.h"
 #include "ParticleSystem.h"
-#include "Engine/Graphics/Renderer2D.h"
+#include "Engine/Graphics/Renderer.h"
 #include "App/AppSettings.h"
 #include <concurrent_vector.h>
 #include <tuple>
@@ -19,6 +19,8 @@ void ParticleSystem::Update(float deltaTime)
 {
     m_view.Update();
 
+    // We dont want to make new one every frame, store this in class
+    // We should also figure out what is better, combinable vector or concurrent vector
     Concurrency::concurrent_vector<Entity> entitiesToDestroy;
 
     m_view.ParallelForEach([&](Entity entity, ParticleComponent &particle) {
@@ -39,14 +41,12 @@ void ParticleSystem::Update(float deltaTime)
     }
 }
 
-void ParticleSystem::Render() const
+void ParticleSystem::Render()
 {
-    auto view = m_registry->CreateView<ParticleComponent>();
-    for (auto &&entity : view)
-    {
-        auto &particle = std::get<1>(entity);
-        Renderer2D::DrawParticle(particle.position, 0.02f, particle.rotation, FVector3(1.0f, 0.0f, 0.0f));
-    }
+    m_view.Update();
+    m_view.ForEach([&](Entity entity, ParticleComponent &particle) {
+        Renderer::DrawParticle(particle.position, 0.02f, particle.rotation, FVector3(1.0f, 0.0f, 0.0f));
+    });
 }
 
 void ParticleSystem::EmitParticles(const FVector2 &position, const int count)
@@ -57,10 +57,6 @@ void ParticleSystem::EmitParticles(const FVector2 &position, const int count)
         m_registry->AddComponent<ParticleComponent>(entity, position, 0, GenerateRandomAcceleration(),
                                                     FRAND_RANGE(1.0f, 25.0f), GenerateRandomLifeTime());
     }
-    // particles need transform rigidbody and particle components
-    // Also have to figure out how we are rendering it. Do we treat it as a model?
-    // I think i should probably just draw lines. since we dont need triangles or proper winding order
-    // Dont need to interact with other objects
 }
 
 float ParticleSystem::GenerateRandomLifeTime()

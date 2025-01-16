@@ -55,6 +55,7 @@ class HiddenLineRemoval
 
     void ClipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle, std::vector<Edge2D> &clippedEdges);
 
+    //No std optional in c++14 so instead of we return value via intersectionPoint param
     static bool GetEdgeIntersection(const Edge2D &edgeA, const Edge2D &edgeB, FVector2 &intersectionPoint);
     static bool IsPointInsideTriangle(const FVector2 &point, const Triangle2D &triangle);
     static void CreateTriangleEdges(const Triangle2D &triangle, Edge2D edges[3]);

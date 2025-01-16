@@ -1,34 +1,33 @@
 #pragma once
 #include "Engine/Math/Matrix4.h"
 #include "Engine/Math/Vector3.h"
+#include "Engine/Math/Quaternion.h"
 #include "App/SimpleSprite.h"
 #include <memory>
 
 class Camera
 {
-public:
+  public:
     Camera(const Camera &other) = default;
     Camera(Camera &&other) noexcept = default;
-    Camera & operator=(const Camera &other) = default;
-    Camera & operator=(Camera &&other) noexcept = default;
+    Camera &operator=(const Camera &other) = default;
+    Camera &operator=(Camera &&other) noexcept = default;
 
-    Camera(const FVector3 &position, const FVector3 &worldUp, float yaw, float pitch, float FOV);
+    Camera(const FVector3 &position, const FVector3 &worldUp, const Quaternion &orientation, float FOV);
     ~Camera() = default;
-    
-
 
     void SetPosition(const FVector3 &position);
-    void SetYaw(float yaw);
-    void SetPitch(float pitch);
+    void SetOrientation(const Quaternion &orientation);
+    void Rotate(const Quaternion &delta);
     void SetFOV(float fov);
 
     const FVector3 &GetPosition() const;
-    float GetYaw() const;
-    float GetPitch() const;
+    Quaternion GetOrientation() const;
+    float GetFOV() const;
     const Matrix4 &GetViewMatrix() const;
     const Matrix4 &GetProjectionMatrix() const;
 
-private:
+  private:
     void UpdateViewMatrix();
     void UpdateProjectionMatrix();
     void UpdateAxes();
@@ -40,8 +39,7 @@ private:
     FVector3 m_up;
     FVector3 m_right;
     FVector3 m_worldUp;
-    float m_yaw;
-    float m_pitch;
+    Quaternion m_orientation;
     float m_FOV;
     float m_zNear;
     float m_zFar;

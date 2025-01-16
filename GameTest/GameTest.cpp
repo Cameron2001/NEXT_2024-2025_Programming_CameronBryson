@@ -8,7 +8,7 @@
 #include <math.h>
 #include <windows.h>
 //------------------------------------------------------------------------
-#include "app\app.h"
+#include "App\app.h"
 //------------------------------------------------------------------------
 #include "Engine/Managers/SceneManager.h"
 #include "Game/PlayScene.h"

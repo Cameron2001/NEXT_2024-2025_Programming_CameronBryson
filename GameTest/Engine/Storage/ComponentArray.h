@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <vector>
 #include <iterator>
-using Entity = unsigned int;
+#include "Engine/Core/Entity.h"
 constexpr size_t MAX_ENTITIES = 10000;
 
 template <typename T> class ComponentArray final : public IComponentArray

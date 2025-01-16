@@ -33,7 +33,8 @@ class RenderSystem
 
     // Pre-allocated buffers
     // Should probably change concurrent vecctor to combinable vector
-    concurrency::concurrent_vector<Triangle2D> m_triangles;
+    concurrency::combinable<std::vector<Triangle2D>> m_triangles;
+    // concurrency::concurrent_vector<Triangle2D> m_triangles;
     std::vector<Triangle2D> m_triangleList;
     std::vector<Edge2D> m_visibleSegments;
 };

@@ -4,54 +4,61 @@
 #include "App/SimpleSprite.h"
 #include "App/AppSettings.h"
 
-Camera::Camera(const FVector3 &position, const FVector3 &worldUp, const float yaw, const float pitch, const float FOV) :
-    m_position(position), m_worldUp(worldUp), m_yaw(yaw), m_pitch(pitch), m_FOV(FOV), m_zNear(0.1f), m_zFar(100.0f)
+// Updated Constructor
+Camera::Camera(const FVector3 &position, const FVector3 &worldUp, const Quaternion &orientation, float FOV)
+    : m_position(position), m_worldUp(worldUp),
+      m_orientation(orientation.Normalize()), // Ensure the quaternion is normalized
+      m_FOV(FOV), m_zNear(0.1f), m_zFar(100.0f)
 {
-
-    m_forward = FVector3(0.0f, 0.0f, -1.0f);
-    m_up = FVector3(0.0f, 1.0f, 0.0f);
-    m_right = FVector3(1.0f, 0.0f, 0.0f);
     UpdateAxes();
+    UpdateViewMatrix();
     UpdateProjectionMatrix();
 }
 
+// Set Position
 void Camera::SetPosition(const FVector3 &position)
 {
     m_position = position;
     UpdateViewMatrix();
 }
 
-void Camera::SetYaw(const float yaw)
+// Set Orientation using Quaternion
+void Camera::SetOrientation(const Quaternion &orientation)
 {
-    m_yaw = yaw;
+    m_orientation = orientation.Normalize();
     UpdateAxes();
+    UpdateViewMatrix();
 }
 
-void Camera::SetPitch(const float pitch)
+// Rotate Camera using Quaternion
+void Camera::Rotate(const Quaternion &delta)
 {
-    m_pitch = pitch;
+    m_orientation = (delta * m_orientation).Normalize();
     UpdateAxes();
+    UpdateViewMatrix();
 }
 
-void Camera::SetFOV(const float fov)
+// Set Field of View
+void Camera::SetFOV(float fov)
 {
     m_FOV = fov;
     UpdateProjectionMatrix();
 }
 
+// Getters
 const FVector3 &Camera::GetPosition() const
 {
     return m_position;
 }
 
-float Camera::GetYaw() const
+Quaternion Camera::GetOrientation() const
 {
-    return m_yaw;
+    return m_orientation;
 }
 
-float Camera::GetPitch() const
+float Camera::GetFOV() const
 {
-    return m_pitch;
+    return m_FOV;
 }
 
 const Matrix4 &Camera::GetViewMatrix() const
@@ -61,32 +68,29 @@ const Matrix4 &Camera::GetViewMatrix() const
 
 const Matrix4 &Camera::GetProjectionMatrix() const
 {
-    
     return m_projectionMatrix;
 }
 
+// Update the View Matrix using the current orientation and position
 void Camera::UpdateViewMatrix()
 {
-    m_viewMatrix = Matrix4::CreateViewMatrix(m_position, m_position + m_forward, m_up);
+    // The target is position + forward direction
+    FVector3 target = m_position + m_forward;
+    m_viewMatrix = Matrix4::CreateViewMatrix(m_position, target, m_up);
 }
 
+// Update the Projection Matrix based on FOV and aspect ratio
 void Camera::UpdateProjectionMatrix()
 {
-    m_projectionMatrix = Matrix4::CreatePerspectiveMatrix(m_FOV, static_cast<float>(APP_VIRTUAL_WIDTH) / static_cast<float>(APP_INIT_WINDOW_HEIGHT),
-                                                          m_zNear, m_zFar);
+    m_projectionMatrix = Matrix4::CreatePerspectiveMatrix(
+        m_FOV, static_cast<float>(APP_VIRTUAL_WIDTH) / static_cast<float>(APP_INIT_WINDOW_HEIGHT), m_zNear, m_zFar);
 }
 
+// Update the Camera's Axes based on the current orientation
 void Camera::UpdateAxes()
 {
-    const float radYaw = MathUtil::DegreesToRadians(m_yaw);
-    const float radPitch = MathUtil::DegreesToRadians(m_pitch);
-
-    m_forward.x = cosf(radYaw) * cosf(radPitch);
-    m_forward.y = sinf(radPitch);
-    m_forward.z = sinf(radYaw) * cosf(radPitch);
-    m_forward = m_forward.Normalize();
-
-    m_right = m_forward.Cross(m_worldUp).Normalize();
-    m_up = m_right.Cross(m_forward).Normalize();
-    UpdateViewMatrix();
+    // Rotate the default forward, up, and right vectors by the orientation quaternion
+    m_forward = m_orientation * FVector3(0.0f, 0.0f, -1.0f); // Forward
+    m_up = m_orientation * FVector3(0.0f, 1.0f, 0.0f);       // Up
+    m_right = m_orientation * FVector3(1.0f, 0.0f, 0.0f);    // Right
 }

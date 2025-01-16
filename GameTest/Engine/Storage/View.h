@@ -6,9 +6,8 @@
 #include <iterator>
 #include "ComponentArray.h"
 #include <ppl.h>
-
+#include "Engine/Core/Entity.h"
 class Registry;
-using Entity = unsigned int;
 
 template <typename... Components> class View
 {

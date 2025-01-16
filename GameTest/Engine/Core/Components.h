@@ -13,12 +13,12 @@ enum class ColliderType : unsigned int
 struct TransformComponent
 {
     TransformComponent()
-        : Position(FVector3(0.0f, 0.0f, 0.0f)), Rotation(Quaternion()), Scale(FVector3(1.0f, 1.0f, 1.0f))
+        : Rotation(Quaternion()), Position(FVector3(0.0f, 0.0f, 0.0f)), Scale(FVector3(1.0f, 1.0f, 1.0f))
     {
     }
 
     TransformComponent(const FVector3 &position, const FVector3 &rotation, const FVector3 &scale)
-        : Position(position), Rotation(Quaternion(rotation)), Scale(scale)
+        : Rotation(Quaternion(rotation)), Position(position), Scale(scale)
     {
     }
 
@@ -61,8 +61,8 @@ struct RigidBodyComponent
     }
     RigidBodyComponent(const float linearDrag, const float angularDrag, const FVector3 &initialLinearAcceleration,
                        const FVector3 &initialAngularAcceleration)
-        : linearDrag(linearDrag), force(initialLinearAcceleration), angularDrag(angularDrag),
-          torque(initialAngularAcceleration)
+        : force(initialLinearAcceleration), torque(initialAngularAcceleration), linearDrag(linearDrag),
+          angularDrag(angularDrag)
     {
     }
     Matrix3 localInverseInertiaTensor;
@@ -94,7 +94,7 @@ struct ParticleComponent
 {
     ParticleComponent(const FVector2 &position, const float rotation, const FVector2 &linearVelocity,
                       const float angularVelocity, const float lifetime)
-        : position(position), rotation(rotation), linearVelocity(linearVelocity), angularVelocity(angularVelocity),
+        : position(position), linearVelocity(linearVelocity), rotation(rotation), angularVelocity(angularVelocity),
           lifetime(lifetime)
     {
     }
@@ -115,5 +115,13 @@ struct ColliderComponent
     unsigned int layer;
     unsigned int mask;
     bool isDynamic;
-    bool isTrigger; // Used during collision resolution
+    bool isTrigger;
+};
+struct CameraFollowComponent
+{
+    CameraFollowComponent(const FVector3 &offset, float smoothSpeed) : offset(offset), smoothSpeed(smoothSpeed)
+    {
+    }
+    FVector3 offset;
+    float smoothSpeed;
 };

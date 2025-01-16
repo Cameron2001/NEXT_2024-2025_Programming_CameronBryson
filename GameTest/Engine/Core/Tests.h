@@ -10,12 +10,13 @@
 #include <Engine/Math/Vector4Tests.h>
 #include <Engine/Math/BoundingSphereTests.h>
 #include <Engine/Math/QuaternionTests.h>
+#include <Engine/Math/Matrix3Tests.h>
 
 inline std::vector<TestResult> RunTests()
 {
     std::vector<TestResult> results;
 
-     std::vector<TestResult> vector2Results = Vector2Tests::RunAllTests();
+    std::vector<TestResult> vector2Results = Vector2Tests::RunAllTests();
     results.insert(results.end(), vector2Results.begin(), vector2Results.end());
 
     std::vector<TestResult> vector3Results = Vector3Tests::RunAllTests();
@@ -27,6 +28,9 @@ inline std::vector<TestResult> RunTests()
     std::vector<TestResult> quaternionResults = QuaternionTests::RunAllTests();
     results.insert(results.end(), quaternionResults.begin(), quaternionResults.end());
 
+    std::vector<TestResult> matrix3Results = Matrix3Tests::RunAllTests();
+    results.insert(results.end(), matrix3Results.begin(), matrix3Results.end());
+
     std::vector<TestResult> matrix4Results = Matrix4Tests::RunAllTests();
     results.insert(results.end(), matrix4Results.begin(), matrix4Results.end());
 
@@ -35,7 +39,7 @@ inline std::vector<TestResult> RunTests()
 
     std::vector<TestResult> boundingSphereResults = BoundingSphereTests::RunAllTests();
     results.insert(results.end(), boundingSphereResults.begin(), boundingSphereResults.end());
-    
+
     std::vector<TestResult> quadTreeResults = QuadtreeTests::RunAllTests();
     results.insert(results.end(), quadTreeResults.begin(), quadTreeResults.end());
 

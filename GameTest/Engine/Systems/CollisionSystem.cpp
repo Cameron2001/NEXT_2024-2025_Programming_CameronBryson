@@ -429,12 +429,12 @@ void CollisionSystem::ResolveCollisions()
         if (rb1)
         {
             rb1->linearVelocity -= impulse * inverseMass1;
-            rb1->angularVelocity += inverseInertiaTensor1 * r1.Cross(impulse);
+            rb1->angularVelocity += inverseInertiaTensor1 * r1.Cross(impulse) * 0.1f;
         }
         if (rb2)
         {
             rb2->linearVelocity += impulse * inverseMass2;
-            rb2->angularVelocity -= inverseInertiaTensor2 * r2.Cross(impulse);
+            rb2->angularVelocity -= inverseInertiaTensor2 * r2.Cross(impulse) * 0.1f;
         }
     }
 }

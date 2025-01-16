@@ -2,7 +2,6 @@
 #include "PlayScene.h"
 #include "Game/GameComponents.h"
 #include "Engine/Core/Events.h"
-#include "Engine/Core/Threadpool.h"
 #include "App/app.h"
 #include <Engine/Core/Event.h>
 
@@ -19,25 +18,19 @@ void PlayScene::Init()
     auto self = shared_from_this();
     TestEvent.AddListener(self, &PlayScene::Test);
     TestEvent2.AddListener(self, &PlayScene::Test);
-    auto player = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(player, FVector3(1.5f, 0.8f, -20.0f), FVector3(0.0f, 0.0f, 0.0f),
-                                                 FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<PlayerComponent>(player, 2.0f);
-    m_registry->AddComponent<ModelComponent>(player, "CubeOBJ");
-    m_registry->AddComponent<RigidBodyComponent>(player, 0.5, 0.5);
-    m_registry->AddComponent<ColliderComponent>(player, ColliderType::Box, true);
-    m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    // m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);
-    //   m_event.Notify(10);
+    m_entityFactory.CreatePlayer(FVector3(1.5f, 0.0f, -20.0f));
 
     auto cube = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(cube, FVector3(-1.5f, -0.8f, -20.0f), FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<ModelComponent>(cube, "CubeOBJ");
+    m_registry->AddComponent<ModelComponent>(cube, "SphereOBJ");
     m_registry->AddComponent<RigidBodyComponent>(cube, 0.5, 0.5);
-    m_registry->AddComponent<ColliderComponent>(cube, ColliderType::Box, true);
-    m_registry->AddComponent<BoxBoundsComponent>(cube, FVector3(1.0f, 1.0f, 1.0f));
-    // m_registry->AddComponent<SphereBoundsComponent>(cube, 1.0f);
+    m_registry->AddComponent<ColliderComponent>(cube, ColliderType::Sphere, true);
+    // m_registry->AddComponent<BoxBoundsComponent>(cube, FVector3(1.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<SphereBoundsComponent>(cube, 1.0f);
+
+    m_entityFactory.CreateDynamicBox(FVector3(-1.5f, 1.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f));
+    m_entityFactory.CreateDynamicSphere(FVector3(1.5f, 0.0f, -20.0f), 1.0f);
 
     /*auto cube2 = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(cube2, FVector3(-0.1f, -0.1f, -3.0f), FVector3(20.0f, 15.0f, 10.0f),

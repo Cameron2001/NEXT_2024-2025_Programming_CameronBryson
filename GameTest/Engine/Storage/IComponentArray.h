@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-using Entity = unsigned int;
+#include "Engine/Core/Entity.h"
 
 class IComponentArray
 {

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "App/app.h"
-#include "Renderer2D.h"
+#include "Renderer.h"
 #include <cmath>
 #include <string>
 #include <vector>
@@ -15,20 +15,20 @@ constexpr float xNDCMax = NDC;
 constexpr float xNDCMin = -NDC;
 constexpr float yNDCMax = NDC;
 constexpr float yNDCMin = -NDC;
-void Renderer2D::DrawLine(const FVector2 &start, const FVector2 &end, const FVector3 &color)
+void Renderer::DrawLine(const FVector2 &start, const FVector2 &end, const FVector3 &color)
 {
     const FVector2 startScreen = ndcToScreen(start);
     const FVector2 endScreen = ndcToScreen(end);
     App::DrawLine(startScreen.x, startScreen.y, endScreen.x, endScreen.y, color.x, color.y, color.z);
 }
 
-void Renderer2D::DrawLine(const FVector3 &start, const FVector3 &end, const FVector3 &color)
+void Renderer::DrawLine(const FVector3 &start, const FVector3 &end, const FVector3 &color)
 {
     const FVector3 startScreen = ndcToScreen(start);
     const FVector3 endScreen = ndcToScreen(end);
     App::DrawLine(startScreen.x, startScreen.y, endScreen.x, endScreen.y, color.x, color.y, color.z);
 }
-void Renderer2D::DrawLine(const Edge2D &edge, const FVector3 &color)
+void Renderer::DrawLine(const Edge2D &edge, const FVector3 &color)
 {
     auto clippedEdge = LiangBarsky(edge);
     if (clippedEdge.start != clippedEdge.end)
@@ -36,7 +36,7 @@ void Renderer2D::DrawLine(const Edge2D &edge, const FVector3 &color)
         DrawLine(clippedEdge.start, clippedEdge.end, color);
     }
 }
-void Renderer2D::DrawPolygon(const std::vector<FVector2> &vertices, const FVector3 &color)
+void Renderer::DrawPolygon(const std::vector<FVector2> &vertices, const FVector3 &color)
 {
     for (size_t i = 0; i < vertices.size(); ++i)
     {
@@ -44,7 +44,7 @@ void Renderer2D::DrawPolygon(const std::vector<FVector2> &vertices, const FVecto
     }
 }
 
-void Renderer2D::DrawPolygon(const std::vector<FVector3> &vertices, const FVector3 &color)
+void Renderer::DrawPolygon(const std::vector<FVector3> &vertices, const FVector3 &color)
 {
     for (size_t i = 0; i < vertices.size(); ++i)
     {
@@ -52,12 +52,12 @@ void Renderer2D::DrawPolygon(const std::vector<FVector3> &vertices, const FVecto
     }
 }
 
-void Renderer2D::PrintText(const std::string &text, const FVector2 &position, const FVector3 &color)
+void Renderer::PrintText(const std::string &text, const FVector2 &position, const FVector3 &color)
 {
     App::Print(position.x, position.y, text.c_str(), color.x, color.y, color.z);
 }
 
-void Renderer2D::DrawCross(const FVector2 &center, const float radius, const FVector3 &color)
+void Renderer::DrawCross(const FVector2 &center, const float radius, const FVector3 &color)
 {
     DrawLine(center, FVector2(center.x + radius, center.y), color);
     DrawLine(center, FVector2(center.x, center.y + radius), color);
@@ -65,7 +65,7 @@ void Renderer2D::DrawCross(const FVector2 &center, const float radius, const FVe
     DrawLine(center, FVector2(center.x, center.y - radius), color);
 }
 
-void Renderer2D::DrawCross(const FVector3 &center, const float radius, const FVector3 &color)
+void Renderer::DrawCross(const FVector3 &center, const float radius, const FVector3 &color)
 {
     DrawLine(center, FVector3(center.x + radius, center.y, center.z), color);
     DrawLine(center, FVector3(center.x, center.y + radius, center.z), color);
@@ -73,7 +73,7 @@ void Renderer2D::DrawCross(const FVector3 &center, const float radius, const FVe
     DrawLine(center, FVector3(center.x, center.y - radius, center.z), color);
 }
 
-void Renderer2D::DrawParticle(const FVector2 &center, const float length, const float rotation, const FVector3 &color)
+void Renderer::DrawParticle(const FVector2 &center, const float length, const float rotation, const FVector3 &color)
 {
     // works for now but should be changed later
     const float halfLength = length / 2.0f;
@@ -85,7 +85,7 @@ void Renderer2D::DrawParticle(const FVector2 &center, const float length, const 
     DrawLine(start, end, color);
 }
 
-FVector3 Renderer2D::ndcToScreen(const FVector3 &ndc)
+FVector3 Renderer::ndcToScreen(const FVector3 &ndc)
 {
     FVector3 screen;
     screen.x = (ndc.x + 1) * 0.5f * screenWidth;
@@ -94,7 +94,7 @@ FVector3 Renderer2D::ndcToScreen(const FVector3 &ndc)
     return screen;
 }
 
-FVector2 Renderer2D::ndcToScreen(const FVector2 &ndc)
+FVector2 Renderer::ndcToScreen(const FVector2 &ndc)
 {
     FVector2 screen;
     screen.x = (ndc.x + 1) * 0.5f * screenWidth;
@@ -102,7 +102,7 @@ FVector2 Renderer2D::ndcToScreen(const FVector2 &ndc)
     return screen;
 }
 
-Edge2D Renderer2D::LiangBarsky(const Edge2D &edge)
+Edge2D Renderer::LiangBarsky(const Edge2D &edge)
 {
     constexpr float xMin = xNDCMin;
     constexpr float xMax = xNDCMax;
