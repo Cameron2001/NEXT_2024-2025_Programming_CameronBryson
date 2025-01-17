@@ -43,6 +43,11 @@ FVector3 FVector3::operator/(const float obj) const
     return FVector3(x / obj, y / obj, z / obj);
 }
 
+FVector3 FVector3::operator-() const
+{
+    return {-x, -y, -z};
+}
+
 FVector3 &FVector3::operator+=(const FVector3 &obj)
 {
     x += obj.x;

@@ -6,7 +6,8 @@
 #include <Game/Storage/IComponentArray.h>
 #include <Game/Storage/Registry.h>
 #include <Game/Storage/View.h>
-const FVector3 GRAVITY(0.0f, -9.81f, 0.0f);
+// const FVector3 GRAVITY(0.0f, -9.81f, 0.0f);
+const FVector3 GRAVITY(0.0f, 0.0f, 0.0f);
 PhysicsSystem::PhysicsSystem(Registry *registry)
     : m_registry(registry), m_view(registry), m_boxView(registry), m_sphereView(registry)
 {

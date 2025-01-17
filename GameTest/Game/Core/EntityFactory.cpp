@@ -15,7 +15,7 @@ Entity EntityFactory::CreatePlayer(const FVector3 &position)
     m_registry->AddComponent<PlayerComponent>(player, 2.0f);
     m_registry->AddComponent<ModelComponent>(player, "SphereOBJ");
     m_registry->AddComponent<RigidBodyComponent>(player, 0.9, 0.9);
-    m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true);
+    m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true, false, 0.1, 0.1f, 0.1f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 0.0f, 20.0f), 0.9);
     m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);

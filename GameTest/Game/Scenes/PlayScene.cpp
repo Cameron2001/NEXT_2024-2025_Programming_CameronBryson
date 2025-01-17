@@ -30,7 +30,9 @@ void PlayScene::Init()
     //// m_registry->AddComponent<BoxBoundsComponent>(cube, FVector3(1.0f, 1.0f, 1.0f));
     // m_registry->AddComponent<SphereBoundsComponent>(cube, 1.0f);
 
-    // m_entityFactory.CreateDynamicBox(FVector3(-1.5f, 1.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f));
+    m_entityFactory.CreateDynamicBox(FVector3(-1.0f, 3.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f));
+    m_entityFactory.CreateDynamicBox(FVector3(-3.5f, 3.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f));
+
     // m_entityFactory.CreateDynamicSphere(FVector3(1.5f, 0.0f, -20.0f), 1.0f);
 
     auto cube2 = m_registry->CreateEntity();

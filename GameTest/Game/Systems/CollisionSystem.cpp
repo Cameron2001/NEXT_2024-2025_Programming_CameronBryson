@@ -369,6 +369,9 @@ void CollisionSystem::ResolveCollisions()
         RigidBodyComponent *rb1 = hasRigidBody1 ? &m_registry->GetComponent<RigidBodyComponent>(entityID1) : nullptr;
         RigidBodyComponent *rb2 = hasRigidBody2 ? &m_registry->GetComponent<RigidBodyComponent>(entityID2) : nullptr;
 
+        ColliderComponent &collider1 = m_registry->GetComponent<ColliderComponent>(entityID1);
+        ColliderComponent &collider2 = m_registry->GetComponent<ColliderComponent>(entityID2);
+
         FVector3 velocity1 = hasRigidBody1 ? rb1->linearVelocity : FVector3(0.0f, 0.0f, 0.0f);
         FVector3 velocity2 = hasRigidBody2 ? rb2->linearVelocity : FVector3(0.0f, 0.0f, 0.0f);
 
@@ -406,11 +409,11 @@ void CollisionSystem::ResolveCollisions()
 
         float restitution = 1.0f;
         if (rb1 && rb2)
-            restitution = rb1->elasticity * rb2->elasticity;
+            restitution = collider1.elasticity * collider2.elasticity;
         else if (rb1)
-            restitution = rb1->elasticity;
+            restitution = collider1.elasticity;
         else if (rb2)
-            restitution = rb2->elasticity;
+            restitution = collider2.elasticity;
 
         float inverseMass1 = hasRigidBody1 ? rb1->inverseMass : 0.0f;
         float inverseMass2 = hasRigidBody2 ? rb2->inverseMass : 0.0f;
@@ -432,12 +435,12 @@ void CollisionSystem::ResolveCollisions()
         if (rb1)
         {
             rb1->linearVelocity -= impulse * inverseMass1;
-            rb1->angularVelocity += worldInverseInertiaTensor1 * r1CrossN * -impulseScalar;
+            rb1->angularVelocity += worldInverseInertiaTensor1 * r1CrossN * impulseScalar;
         }
         if (rb2)
         {
             rb2->linearVelocity += impulse * inverseMass2;
-            rb2->angularVelocity += worldInverseInertiaTensor2 * r2CrossN * impulseScalar;
+            rb2->angularVelocity += worldInverseInertiaTensor2 * r2CrossN * -impulseScalar;
         }
 
         // **Friction Impulse Calculation**
@@ -466,11 +469,11 @@ void CollisionSystem::ResolveCollisions()
         // Coulomb's law for friction
         float frictionCoefficient = 0.0f;
         if (rb1 && rb2)
-            frictionCoefficient = sqrt(rb1->dynamicFriction * rb2->dynamicFriction);
+            frictionCoefficient = sqrt(collider1.dynamicFriction * collider2.dynamicFriction);
         else if (rb1)
-            frictionCoefficient = rb1->dynamicFriction;
+            frictionCoefficient = collider1.dynamicFriction;
         else if (rb2)
-            frictionCoefficient = rb2->dynamicFriction;
+            frictionCoefficient = collider2.dynamicFriction;
 
         float maxFriction = frictionCoefficient * fabs(impulseScalar);
 

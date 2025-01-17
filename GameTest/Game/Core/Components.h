@@ -73,9 +73,7 @@ struct RigidBodyComponent
     float linearDrag = 0;
     float angularDrag = 0;
     float inverseMass = 1.0f;
-    float elasticity = 1.0f;
-    float staticFriction = 0.5f;
-    float dynamicFriction = 0.3f;
+
     bool isInitialized = false;
 };
 
@@ -113,9 +111,18 @@ struct ColliderComponent
         : type(type), layer(LAYER_DEFAULT), mask(0xFFFFFFFF), isDynamic(isDynamic), isTrigger(false)
     {
     }
+    ColliderComponent(const ColliderType type, bool isDynamic, bool isTrigger, float elasticity, float staticFriction,
+                      float dynamicFriction)
+        : type(type), layer(LAYER_DEFAULT), mask(0xFFFFFFFF), elasticity(elasticity), staticFriction(staticFriction),
+          dynamicFriction(dynamicFriction), isDynamic(isDynamic), isTrigger(isTrigger)
+    {
+    }
     ColliderType type;
     unsigned int layer;
     unsigned int mask;
+    float elasticity = 1.0f;
+    float staticFriction = 0.5f;
+    float dynamicFriction = 0.3f;
     bool isDynamic;
     bool isTrigger;
 };

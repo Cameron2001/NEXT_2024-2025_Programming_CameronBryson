@@ -21,6 +21,7 @@ class FVector3
     FVector3 operator/(const FVector3 &obj) const;
     FVector3 operator*(float obj) const;
     FVector3 operator/(float obj) const;
+    FVector3 operator-() const;
 
     FVector3 &operator+=(const FVector3 &obj);
     FVector3 &operator-=(const FVector3 &obj);
