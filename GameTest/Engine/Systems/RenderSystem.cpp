@@ -32,10 +32,8 @@ void RenderSystem::Init()
 void RenderSystem::Update()
 {
     m_modelView.Update();
-    //auto viewProjectionMatrix = m_camera->GetViewMatrix() * m_camera->GetProjectionMatrix();
     auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
 
-    // Process entities in parallel with updated lambda signature
     m_modelView.ParallelForEach([&](Entity entity, TransformComponent &transform, ModelComponent &modelComponent) {
         auto &model = m_graphicsManager->GetModel(modelComponent.modelName);
 
@@ -59,7 +57,6 @@ void RenderSystem::Update()
                 {
                     continue;
                 }
-                //float avgZ = std::max({mvpVertex0.z, mvpVertex1.z, mvpVertex2.z});
                 float avgZ = (mvpVertex0.z + mvpVertex1.z + mvpVertex2.z) / 3.0f;
 
                 // Create 2D vertices

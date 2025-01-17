@@ -7,6 +7,8 @@
 class GraphicsManager
 {
 public:
+    GraphicsManager();
+    ~GraphicsManager();
     void LoadResources();
     void UnloadResources();
     void AddModel(const std::string &modelName, const Model &model);

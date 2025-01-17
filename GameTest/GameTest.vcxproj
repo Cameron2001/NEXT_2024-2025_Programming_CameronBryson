@@ -225,6 +225,7 @@
     <ClInclude Include="Engine\Graphics\Mesh.h" />
     <ClInclude Include="Engine\Managers\GraphicsManager.h" />
     <ClInclude Include="Engine\Core\EntityFactory.h" />
+    <ClInclude Include="Engine\Managers\EventManager.h" />
     <ClInclude Include="Game\GameComponents.h" />
     <ClInclude Include="Game\PlayerSystem.h" />
     <ClInclude Include="Engine\Graphics\HiddenLineRemoval.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="Engine\Math\Vector3.cpp" />
     <ClCompile Include="Engine\Math\Vector4.cpp" />
     <ClCompile Include="Engine\Core\EntityFactory.cpp" />
+    <ClCompile Include="Engine\Managers\EventManager.cpp" />
     <ClCompile Include="GameTest.cpp" />
     <ClCompile Include="Engine\Managers\GraphicsManager.cpp" />
     <ClCompile Include="Game\PlayerSystem.cpp" />
@@ -276,7 +278,6 @@
     <ClCompile Include="Game\PlayScene.cpp" />
     <ClCompile Include="Engine\Core\Scene.cpp" />
     <ClCompile Include="Engine\Storage\Registry.cpp" />
-    <ClCompile Include="Engine\Managers\SceneManager.cpp" />
     <ClCompile Include="Engine\Graphics\Renderer.cpp" />
     <ClCompile Include="Engine\Math\Octree.cpp" />
     <ClCompile Include="Engine\Math\Quadtree.cpp" />

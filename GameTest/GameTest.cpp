@@ -23,6 +23,7 @@ int frameCount = 0;
 const int warmUpFrames = 5; // Number of frames to skip for minFps
 int warmUpFrameCount = 0;   // Counter for warm-up frames
 bool testsEnabled = true;
+SceneManager sceneManager;
 void Init()
 {
     if (testsEnabled)
@@ -34,8 +35,8 @@ void Init()
         }
         Logger::GetInstance().LogInfo("All tests completed.");
     }
-    auto &brub = Logger::GetInstance();
-    SceneManager::LoadScene<PlayScene>();
+    sceneManager.LoadScene<PlayScene>();
+
     // SceneManager::GetCurrentScene().Init();
     // SceneManager::GetCurrentScene().LateInit();
 }
@@ -43,8 +44,8 @@ void Init()
 void Update(float deltaTime)
 {
     deltaTime /= 1000.0f;
-    SceneManager::GetCurrentScene().Update(deltaTime);
-    SceneManager::GetCurrentScene().LateUpdate(deltaTime);
+    sceneManager.GetCurrentScene()->Update(deltaTime);
+    sceneManager.GetCurrentScene()->LateUpdate(deltaTime);
     // Calculate FPS
     if (deltaTime > 0.0f)
         fps = 1.0f / deltaTime;
@@ -71,8 +72,8 @@ void Update(float deltaTime)
 
 void Render()
 {
-    SceneManager::GetCurrentScene().Render();
-    SceneManager::GetCurrentScene().LateRender();
+    sceneManager.GetCurrentScene()->Render();
+    sceneManager.GetCurrentScene()->LateRender();
     // Calculate Average FPS
     float averageFps = (frameCount > 0) ? (totalFps / frameCount) : 0.0f;
 
@@ -90,6 +91,6 @@ void Render()
 }
 void Shutdown()
 {
-    SceneManager::GetCurrentScene().Shutdown();
-    SceneManager::GetCurrentScene().LateShutdown();
+    sceneManager.GetCurrentScene()->Shutdown();
+    sceneManager.GetCurrentScene()->LateShutdown();
 }

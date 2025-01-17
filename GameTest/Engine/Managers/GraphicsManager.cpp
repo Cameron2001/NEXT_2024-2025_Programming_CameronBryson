@@ -5,6 +5,16 @@
 #include <string>
 #include <sstream>
 
+GraphicsManager::GraphicsManager()
+{
+    LoadResources();
+}
+
+GraphicsManager::~GraphicsManager()
+{
+    UnloadResources();
+}
+
 void GraphicsManager::LoadResources()
 {
     LoadModel("CubeOBJ", "assets/cube.obj");

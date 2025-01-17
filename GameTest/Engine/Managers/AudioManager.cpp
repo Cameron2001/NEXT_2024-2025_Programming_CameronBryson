@@ -1,6 +1,14 @@
 #include "stdafx.h"
 #include "AudioManager.h"
 
+void AudioManager::LoadResources()
+{
+}
+
+void AudioManager::UnloadResources()
+{
+}
+
 void AudioManager::LoadSimpleSound(const std::string &soundName, const std::string &path)
 {
 }

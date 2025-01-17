@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "MainMenuScene.h"
 
-MainMenuScene::MainMenuScene() : Scene()
+MainMenuScene::MainMenuScene(std::shared_ptr<AudioManager> audioManager,
+                             std::shared_ptr<GraphicsManager> graphicsManager,
+                             std::shared_ptr<EventManager> eventManager)
+    : Scene(audioManager,graphicsManager,eventManager)
 {
 }
 

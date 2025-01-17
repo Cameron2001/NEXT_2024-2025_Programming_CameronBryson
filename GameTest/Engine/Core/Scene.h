@@ -3,6 +3,7 @@
 
 #include "Engine/Managers/AudioManager.h"
 #include "Engine/Managers/GraphicsManager.h"
+#include "Engine/Managers/EventManager.h"
 
 #include "Engine/Systems/CollisionSystem.h"
 #include "Engine/Systems/PhysicsSystem.h"
@@ -13,7 +14,7 @@
 class Scene
 {
   public:
-    Scene();
+    Scene(std::shared_ptr<AudioManager> audioManager, std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager);
     virtual ~Scene() = default;
     Scene(const Scene &) = delete;
     Scene &operator=(const Scene &) = delete;
@@ -35,8 +36,8 @@ class Scene
     // Who should be able to access that interface
 
     // Registry
-    std::shared_ptr<Registry> m_registry;
-    std::shared_ptr<Camera> m_camera;
+    std::unique_ptr<Registry> m_registry;
+    std::unique_ptr<Camera> m_camera;
 
     // Managers
     // Managers are for storing and getting data
@@ -44,6 +45,7 @@ class Scene
     // or make it shared pointers that can be passed to new scene and lifetime will be extended
     std::shared_ptr<AudioManager> m_audioManager;
     std::shared_ptr<GraphicsManager> m_graphicsManager;
+    std::shared_ptr<EventManager> m_eventManager;
 
     // Systems
     // Systems are for processing data and editing data

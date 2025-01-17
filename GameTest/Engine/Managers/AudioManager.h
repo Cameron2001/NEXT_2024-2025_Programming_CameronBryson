@@ -7,6 +7,8 @@
 class AudioManager
 {
   public:
+    void LoadResources();
+    void UnloadResources();
     void LoadSimpleSound(const std::string &soundName, const std::string &path);
     CSimpleSound &GetSimpleSound(const std::string &soundName);
     void Shutdown();

@@ -7,11 +7,13 @@
 #include <Engine/Math/Vector3.h>
 #include <Engine/Storage/Registry.h>
 #include <memory>
+#include <Engine/Managers/EventManager.h>
 
-Scene::Scene()
-    : m_registry(std::make_shared<Registry>()),
-      m_camera(std::make_shared<Camera>(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 1.0f, 0.0f), Quaternion(), 90.0f)),
-      m_audioManager(std::make_shared<AudioManager>()), m_graphicsManager(std::make_shared<GraphicsManager>()),
+Scene::Scene(std::shared_ptr<AudioManager> audioManager,
+             std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager)
+    : m_registry(std::make_unique<Registry>()),
+      m_camera(std::make_unique<Camera>(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 1.0f, 0.0f), Quaternion(), 90.0f)),
+      m_audioManager(audioManager), m_graphicsManager(graphicsManager),
       m_renderSystem(m_registry.get(), m_graphicsManager.get(), m_camera.get()), m_collisionSystem(m_registry.get()),
       m_physicsSystem(m_registry.get()), m_particleSystem(m_registry.get()), m_entityFactory(m_registry.get()),
       m_cameraSystem(m_registry.get(), m_camera.get())
@@ -20,7 +22,7 @@ Scene::Scene()
 
 void Scene::Init()
 {
-    m_graphicsManager->LoadResources();
+    //m_graphicsManager->LoadResources();
     m_renderSystem.Init();
     m_collisionSystem.Init();
     m_physicsSystem.Init();

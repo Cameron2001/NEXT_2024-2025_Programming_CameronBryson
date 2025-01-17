@@ -6,7 +6,8 @@
 class PlayScene : public Scene, public std::enable_shared_from_this<PlayScene>
 {
   public:
-    PlayScene();
+    PlayScene(std::shared_ptr<AudioManager> audioManager, std::shared_ptr<GraphicsManager> graphicsManager,
+              std::shared_ptr<EventManager> eventManager);
     ~PlayScene() override = default;
     void Init() override;
     void LateInit() override;

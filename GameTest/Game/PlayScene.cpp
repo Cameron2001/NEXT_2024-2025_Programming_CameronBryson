@@ -7,7 +7,10 @@
 
 // Threadpool m_threadpool(4);
 
-PlayScene::PlayScene() : Scene(), m_playerSystem(m_registry.get())
+PlayScene::PlayScene(std::shared_ptr<AudioManager> audioManager, std::shared_ptr<GraphicsManager> graphicsManager,
+                     std::shared_ptr<EventManager> eventManager)
+    : Scene(audioManager, graphicsManager,eventManager),
+      m_playerSystem(m_registry.get())
 {
 }
 
