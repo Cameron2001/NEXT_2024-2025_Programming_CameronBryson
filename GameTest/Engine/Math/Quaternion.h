@@ -14,6 +14,7 @@ class Quaternion
     // Constructors
     Quaternion();
     explicit Quaternion(const FVector3 &eulerAnglesXYZ); // Euler angles in radians
+    Quaternion(float x, float y, float z);
     Quaternion(float w, float x, float y, float z);
     Quaternion(const Quaternion &copy);
 

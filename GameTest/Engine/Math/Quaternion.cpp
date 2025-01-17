@@ -29,6 +29,12 @@ Quaternion::Quaternion(const FVector3 &eulerAnglesXYZ)
     z = cosX * cosY * sinZ - sinX * sinY * cosZ;
 }
 
+Quaternion::Quaternion(float x, float y, float z)
+{
+    FVector3 eulerAnglesXYZ(x, y, z);
+    *this = Quaternion(eulerAnglesXYZ);
+}
+
 Quaternion::Quaternion(float w_, float x_, float y_, float z_) : w(w_), x(x_), y(y_), z(z_)
 {
 }

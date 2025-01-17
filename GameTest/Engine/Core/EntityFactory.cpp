@@ -18,6 +18,7 @@ Entity EntityFactory::CreatePlayer(const FVector3 &position)
     m_registry->AddComponent<RigidBodyComponent>(player, 0.5, 0.5);
     m_registry->AddComponent<ColliderComponent>(player, ColliderType::Box, true);
     m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f,0.0f, 20.0f),0.3);
     // m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);
     return Entity();
 }

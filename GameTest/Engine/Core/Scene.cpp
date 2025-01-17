@@ -13,7 +13,8 @@ Scene::Scene()
       m_camera(std::make_shared<Camera>(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 1.0f, 0.0f), Quaternion(), 90.0f)),
       m_audioManager(std::make_shared<AudioManager>()), m_graphicsManager(std::make_shared<GraphicsManager>()),
       m_renderSystem(m_registry.get(), m_graphicsManager.get(), m_camera.get()), m_collisionSystem(m_registry.get()),
-      m_physicsSystem(m_registry.get()), m_particleSystem(m_registry.get()), m_entityFactory(m_registry.get())
+      m_physicsSystem(m_registry.get()), m_particleSystem(m_registry.get()), m_entityFactory(m_registry.get()),
+      m_cameraSystem(m_registry.get(), m_camera.get())
 {
 }
 
@@ -35,6 +36,7 @@ void Scene::Update(const float dt)
     m_physicsSystem.Update(dt);
     m_collisionSystem.Update(dt);
     m_particleSystem.Update(dt);
+    m_cameraSystem.Update(dt);
     m_renderSystem.Update();
 }
 

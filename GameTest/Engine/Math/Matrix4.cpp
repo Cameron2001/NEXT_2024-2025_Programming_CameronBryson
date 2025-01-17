@@ -60,7 +60,6 @@ Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRati
 
 Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &target, const FVector3 &up)
 {
-    // Right handed
     const FVector3 forward = (target - origin).Normalize(); // zAxis
     const FVector3 right = forward.Cross(up).Normalize();   // xAxis
     const FVector3 newUp = right.Cross(forward);            // yAxis
@@ -79,12 +78,18 @@ Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &target
     viewMatrix.Set(1, 2, -forward.y);
     viewMatrix.Set(2, 2, -forward.z);
 
-    viewMatrix.Set(3, 0, -right.Dot(origin));
-    viewMatrix.Set(3, 1, -newUp.Dot(origin));
-    viewMatrix.Set(3, 2, forward.Dot(origin));
+    viewMatrix.Set(0, 3, -right.Dot(origin));
+    viewMatrix.Set(1, 3, -newUp.Dot(origin));
+    viewMatrix.Set(2, 3, forward.Dot(origin));
+
+    viewMatrix.Set(3, 0, 0.0f);
+    viewMatrix.Set(3, 1, 0.0f);
+    viewMatrix.Set(3, 2, 0.0f);
+    viewMatrix.Set(3, 3, 1.0f);
 
     return viewMatrix;
 }
+
 
 Matrix4 Matrix4::CreateTranslationMatrix(const FVector3 &translation)
 {

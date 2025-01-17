@@ -8,6 +8,7 @@
 #include "Engine/Systems/PhysicsSystem.h"
 #include "Engine/Systems/RenderSystem.h"
 #include "Engine/Systems/ParticleSystem.h"
+#include "Engine/Systems/CameraSystem.h"
 #include "Engine/Core/EntityFactory.h"
 class Scene
 {
@@ -57,7 +58,8 @@ class Scene
     CollisionSystem m_collisionSystem;
     PhysicsSystem m_physicsSystem;
     ParticleSystem m_particleSystem;
-
+    CameraSystem m_cameraSystem;
+    
     EntityFactory m_entityFactory;
     // Rendersystem only reads data
     // Physics system reads and edits data
