@@ -74,6 +74,8 @@ struct RigidBodyComponent
     float angularDrag = 0;
     float inverseMass = 1.0f;
     float elasticity = 1.0f;
+    float staticFriction = 0.5f;
+    float dynamicFriction = 0.3f;
     bool isInitialized = false;
 };
 

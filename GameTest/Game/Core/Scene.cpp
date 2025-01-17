@@ -15,8 +15,8 @@ Scene::Scene(std::shared_ptr<AudioManager> audioManager,
       m_camera(std::make_unique<Camera>(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 1.0f, 0.0f), Quaternion(), 90.0f)),
       m_audioManager(audioManager), m_graphicsManager(graphicsManager),
       m_renderSystem(m_registry.get(), m_graphicsManager.get(), m_camera.get()), m_collisionSystem(m_registry.get()),
-      m_physicsSystem(m_registry.get()), m_particleSystem(m_registry.get()), m_entityFactory(m_registry.get()),
-      m_cameraSystem(m_registry.get(), m_camera.get())
+      m_physicsSystem(m_registry.get()), m_particleSystem(m_registry.get()), m_cameraSystem(m_registry.get(), m_camera.get()),
+      m_entityFactory(m_registry.get())
 {
 }
 

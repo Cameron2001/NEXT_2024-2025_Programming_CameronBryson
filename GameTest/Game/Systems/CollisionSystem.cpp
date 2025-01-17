@@ -349,6 +349,9 @@ void CollisionSystem::DetectCollisions()
 
 void CollisionSystem::ResolveCollisions()
 {
+    const float percent = 0.8f; // Penetration percentage to correct
+    const float slop = 0.001f;  // Penetration allowance
+
     for (const auto &collision : m_collisions)
     {
         unsigned int entityID1 = collision.ID1;
@@ -375,10 +378,29 @@ void CollisionSystem::ResolveCollisions()
         FVector3 r1 = collision.contactPoint - transform1.Position;
         FVector3 r2 = collision.contactPoint - transform2.Position;
 
+        // Compute rotation matrices
+        Matrix3 rotationMatrix1 = transform1.Rotation.GetRotationMatrix3();
+        Matrix3 rotationMatrix2 = transform2.Rotation.GetRotationMatrix3();
+
+        // Compute world inverse inertia tensors
+        Matrix3 worldInverseInertiaTensor1;
+        if (rb1)
+            worldInverseInertiaTensor1 = rotationMatrix1 * rb1->localInverseInertiaTensor * rotationMatrix1.Transpose();
+        else
+            worldInverseInertiaTensor1.SetZero();
+
+        Matrix3 worldInverseInertiaTensor2;
+        if (rb2)
+            worldInverseInertiaTensor2 = rotationMatrix2 * rb2->localInverseInertiaTensor * rotationMatrix2.Transpose();
+        else
+            worldInverseInertiaTensor2.SetZero();
+
+        // Calculate relative velocity at contact point
         FVector3 relativeVelocity = (velocity2 + angularVelocity2.Cross(r2)) - (velocity1 + angularVelocity1.Cross(r1));
 
         float velocityAlongNormal = relativeVelocity.Dot(collision.normal);
 
+        // Proceed only if objects are moving towards each other
         if (velocityAlongNormal > 0)
             continue;
 
@@ -393,35 +415,93 @@ void CollisionSystem::ResolveCollisions()
         float inverseMass1 = hasRigidBody1 ? rb1->inverseMass : 0.0f;
         float inverseMass2 = hasRigidBody2 ? rb2->inverseMass : 0.0f;
 
-        Matrix3 inverseInertiaTensor1 = hasRigidBody1 ? rb1->localInverseInertiaTensor : Matrix3();
-        if (!hasRigidBody1)
-            inverseInertiaTensor1.SetZero();
-        Matrix3 inverseInertiaTensor2 = hasRigidBody2 ? rb2->localInverseInertiaTensor : Matrix3();
-        if (!hasRigidBody2)
-            inverseInertiaTensor2.SetZero();
-
+        // Calculate angular components using world inverse inertia tensors
         FVector3 r1CrossN = r1.Cross(collision.normal);
         FVector3 r2CrossN = r2.Cross(collision.normal);
 
-        float angularComponent1 =
-            hasRigidBody1 ? (inverseInertiaTensor1 * r1CrossN).Cross(r1).Dot(collision.normal) : 0.0f;
-        float angularComponent2 =
-            hasRigidBody2 ? (inverseInertiaTensor2 * r2CrossN).Cross(r2).Dot(collision.normal) : 0.0f;
+        float angularComponent1 = hasRigidBody1 ? r1CrossN.Dot(worldInverseInertiaTensor1 * r1CrossN) : 0.0f;
+        float angularComponent2 = hasRigidBody2 ? r2CrossN.Dot(worldInverseInertiaTensor2 * r2CrossN) : 0.0f;
 
+        // Calculate impulse scalar
         float impulseScalar = -(1.0f + restitution) * velocityAlongNormal;
         impulseScalar /= (inverseMass1 + inverseMass2 + angularComponent1 + angularComponent2);
 
         FVector3 impulse = collision.normal * impulseScalar;
 
+        // Apply impulse to linear and angular velocities
         if (rb1)
         {
             rb1->linearVelocity -= impulse * inverseMass1;
-            rb1->angularVelocity += inverseInertiaTensor1 * r1.Cross(impulse) * 0.1f;
+            rb1->angularVelocity += worldInverseInertiaTensor1 * r1CrossN * -impulseScalar;
         }
         if (rb2)
         {
             rb2->linearVelocity += impulse * inverseMass2;
-            rb2->angularVelocity -= inverseInertiaTensor2 * r2.Cross(impulse) * 0.1f;
+            rb2->angularVelocity += worldInverseInertiaTensor2 * r2CrossN * impulseScalar;
+        }
+
+        // **Friction Impulse Calculation**
+        // Recalculate relative velocity at contact point
+        relativeVelocity = (velocity2 + angularVelocity2.Cross(r2)) - (velocity1 + angularVelocity1.Cross(r1));
+
+        FVector3 tangent = relativeVelocity - collision.normal * relativeVelocity.Dot(collision.normal);
+        if (tangent.LengthSquared() > 0.0001f)
+            tangent = tangent.Normalize();
+        else
+            tangent = FVector3(0.0f, 0.0f, 0.0f);
+
+        // Calculate friction angular components
+        FVector3 r1CrossT = r1.Cross(tangent);
+        FVector3 r2CrossT = r2.Cross(tangent);
+
+        float frictionAngularComponent1 = hasRigidBody1 ? r1CrossT.Dot(worldInverseInertiaTensor1 * r1CrossT) : 0.0f;
+        float frictionAngularComponent2 = hasRigidBody2 ? r2CrossT.Dot(worldInverseInertiaTensor2 * r2CrossT) : 0.0f;
+
+        float frictionDenominator = inverseMass1 + inverseMass2 + frictionAngularComponent1 + frictionAngularComponent2;
+
+        // Calculate friction magnitude
+        float frictionMagnitude = relativeVelocity.Dot(tangent);
+        frictionMagnitude /= frictionDenominator;
+
+        // Coulomb's law for friction
+        float frictionCoefficient = 0.0f;
+        if (rb1 && rb2)
+            frictionCoefficient = sqrt(rb1->dynamicFriction * rb2->dynamicFriction);
+        else if (rb1)
+            frictionCoefficient = rb1->dynamicFriction;
+        else if (rb2)
+            frictionCoefficient = rb2->dynamicFriction;
+
+        float maxFriction = frictionCoefficient * fabs(impulseScalar);
+
+        // Clamp friction impulse
+        if (fabs(frictionMagnitude) > maxFriction)
+            frictionMagnitude = frictionMagnitude < 0 ? -maxFriction : maxFriction;
+
+        FVector3 frictionImpulse = tangent * frictionMagnitude;
+
+        // Apply friction impulse
+        if (rb1)
+        {
+            rb1->linearVelocity -= frictionImpulse * inverseMass1;
+            rb1->angularVelocity += worldInverseInertiaTensor1 * r1.Cross(frictionImpulse * -1.0f);
+        }
+        if (rb2)
+        {
+            rb2->linearVelocity += frictionImpulse * inverseMass2;
+            rb2->angularVelocity += worldInverseInertiaTensor2 * r2.Cross(frictionImpulse);
+        }
+
+        // **Positional Correction to Prevent Sinking**
+        float totalInverseMass = inverseMass1 + inverseMass2;
+        if (totalInverseMass > 0.0f)
+        {
+            FVector3 correction =
+                collision.normal * percent * std::max(collision.penetration - slop, 0.0f) / totalInverseMass;
+            if (rb1)
+                transform1.Position -= correction * inverseMass1;
+            if (rb2)
+                transform2.Position += correction * inverseMass2;
         }
     }
 }

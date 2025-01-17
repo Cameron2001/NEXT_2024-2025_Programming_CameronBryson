@@ -11,6 +11,7 @@ class EntityFactory
     Entity CreateStaticSphere(const FVector3 &position, float radius);
     Entity CreateDynamicBox(const FVector3 &position, const FVector3 &extents);
     Entity CreateStaticBox(const FVector3 &position, const FVector3 &extents);
+    Entity CreateGolfBall(const FVector3 &position);
 
   private:
     Registry *m_registry;

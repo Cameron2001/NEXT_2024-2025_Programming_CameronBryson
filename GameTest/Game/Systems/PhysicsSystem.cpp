@@ -6,7 +6,7 @@
 #include <Game/Storage/IComponentArray.h>
 #include <Game/Storage/Registry.h>
 #include <Game/Storage/View.h>
-
+const FVector3 GRAVITY(0.0f, -9.81f, 0.0f);
 PhysicsSystem::PhysicsSystem(Registry *registry)
     : m_registry(registry), m_view(registry), m_boxView(registry), m_sphereView(registry)
 {
@@ -29,7 +29,14 @@ void PhysicsSystem::Update(const float dt)
     m_view.Update();
     m_boxView.Update();
     m_sphereView.Update();
-
+    m_view.ParallelForEach([this, dt](Entity entity, TransformComponent &transform, RigidBodyComponent &rigidBody) {
+        // Check if the entity is dynamic (inverseMass > 0)
+        if (rigidBody.inverseMass > 0.0f)
+        {
+            // Apply gravity force: F = m * g => since inverseMass = 1/m, F = g / inverseMass
+            rigidBody.force += GRAVITY * (1.0f / rigidBody.inverseMass);
+        }
+    });
     m_boxView.ParallelForEach([this](Entity entity, TransformComponent &transform, BoxBoundsComponent &boxBounds,
                                      RigidBodyComponent &rigidBody) {
         if (!rigidBody.isInitialized)
