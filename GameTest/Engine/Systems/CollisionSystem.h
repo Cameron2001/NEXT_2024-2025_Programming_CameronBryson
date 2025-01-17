@@ -7,6 +7,7 @@
 #include <vector>
 #include <Engine/Storage/IComponentArray.h>
 #include <Engine/Math/Matrix4.h>
+#include <ppl.h>
 class CollisionSystem
 {
   public:
@@ -33,7 +34,11 @@ class CollisionSystem
     Registry *m_registry;
     std::unique_ptr<Octree> m_octree;
     // We should decide if we want to defer collision resolution. Or resolve as they are found.
+    std::vector<std::pair<unsigned int, unsigned int>> m_potentialCollisions;
+    concurrency::combinable<std::vector<Collision>> m_threadCollisions;
     std::vector<Collision> m_collisions;
+    View<TransformComponent, BoxBoundsComponent, ColliderComponent> m_boxView;
+    View<TransformComponent, SphereBoundsComponent, ColliderComponent> m_sphereView;
 };
 
 // Read

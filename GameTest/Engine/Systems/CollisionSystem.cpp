@@ -1,22 +1,24 @@
 #include "stdafx.h"
 #include "CollisionSystem.h"
 #include <cmath>
+#include <cstdlib>
 #include <Engine/Core/Collision.h>
 #include <Engine/Core/Components.h>
+#include <Engine/Core/Entity.h>
 #include <Engine/Math/BoundingBox.h>
 #include <Engine/Math/Matrix3.h>
 #include <Engine/Math/Matrix4.h>
 #include <Engine/Math/Octree.h>
 #include <Engine/Math/Vector3.h>
-#include <Engine/Storage/IComponentArray.h>
 #include <Engine/Storage/Registry.h>
 #include <limits>
 #include <memory>
+#include <ppl.h>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-CollisionSystem::CollisionSystem(Registry *registry) : m_registry(registry)
+CollisionSystem::CollisionSystem(Registry *registry) : m_registry(registry), m_boxView(registry), m_sphereView(registry)
 {
 }
 
@@ -29,8 +31,6 @@ void CollisionSystem::Update(const float dt)
     BuildOctree();
     DetectCollisions();
     ResolveCollisions();
-
-    // we should prefetch potential collisions
 }
 
 void CollisionSystem::LateUpdate(float dt)
@@ -48,22 +48,14 @@ void CollisionSystem::BuildOctree()
     const FVector3 maxPoint(100.0f, 100.0f, 100.0f);
     const BoundingBox3D sceneBounds(minPoint, maxPoint);
     m_octree = std::make_unique<Octree>(sceneBounds);
-    auto boxView = m_registry->CreateView<TransformComponent, BoxBoundsComponent>();
-    auto sphereView = m_registry->CreateView<TransformComponent, SphereBoundsComponent>();
-    for (const auto &box : boxView)
-    {
-        auto entityID = std::get<0>(box);
-        auto &transform = std::get<1>(box);
-        auto &boxBounds = std::get<2>(box);
-        m_octree->Insert(boxBounds, transform, entityID);
-    }
-    for (const auto &sphere : sphereView)
-    {
-        auto entityID = std::get<0>(sphere);
-        auto &transform = std::get<1>(sphere);
-        auto &sphereBounds = std::get<2>(sphere);
-        m_octree->Insert(sphereBounds, transform, entityID);
-    }
+    m_boxView.Update();
+    m_sphereView.Update();
+    m_boxView.ForEach([this](Entity entity, TransformComponent &transform, BoxBoundsComponent &boxBounds,
+                             ColliderComponent &) { m_octree->Insert(boxBounds, transform, entity); });
+
+    // Insert sphere colliders into the octree
+    m_sphereView.ForEach([this](Entity entity, TransformComponent &transform, SphereBoundsComponent &sphereBounds,
+                                ColliderComponent &) { m_octree->Insert(sphereBounds, transform, entity); });
 }
 
 bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const FVector3 &scale1,
@@ -153,7 +145,8 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
     if (collision.normal.Dot(direction) < 0)
         collision.normal = collision.normal * -1.0f;
 
-    m_collisions.emplace_back(collision);
+    m_threadCollisions.local().emplace_back(collision);
+    // m_collisions.emplace_back(collision);
 
     return true;
 }
@@ -180,7 +173,7 @@ bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
 
         const FVector3 collisionNormal = (distance != 0.0f) ? (delta / distance) : FVector3(1.0f, 0.0f, 0.0f);
         FVector3 contactPoint = transform1.Position + collisionNormal * radius1;
-        m_collisions.emplace_back(ID1, ID2, contactPoint, collisionNormal, penetration);
+        m_threadCollisions.local().emplace_back(ID1, ID2, contactPoint, collisionNormal, penetration);
         return true;
     }
 
@@ -195,14 +188,11 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
     auto &sphereBounds = m_registry->GetComponent<SphereBoundsComponent>(ID1);
     auto &boxBounds = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
-    // Compute sphere radius including scaling
     const float radius =
         sphereBounds.radius * (sphereTransform.Scale.x + sphereTransform.Scale.y + sphereTransform.Scale.z) / 3.0f;
 
-    // Compute box extents including scaling
     const FVector3 scaledBoxExtents = boxBounds.extents * boxTransform.Scale;
 
-    // Get OBB's orientation axes
     const Matrix4 boxRotationMatrix = boxTransform.Rotation.GetRotationMatrix4();
     const FVector3 boxRight = boxRotationMatrix.GetRight().Normalize();
     const FVector3 boxUp = boxRotationMatrix.GetUp().Normalize();
@@ -236,7 +226,6 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
         return false;
     }
 
-    // Collision detected
     FVector3 collisionNormal;
     float penetration;
     FVector3 contactPoint;
@@ -297,8 +286,7 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
         return false;
     }
 
-    // Record the collision
-    m_collisions.emplace_back(ID1, ID2, contactPoint, collisionNormal, penetration);
+    m_threadCollisions.local().emplace_back(ID1, ID2, contactPoint, collisionNormal, penetration);
 
     return true;
 }
@@ -316,48 +304,47 @@ bool CollisionSystem::CanCollide(const ColliderComponent &collider1, const Colli
 
 void CollisionSystem::DetectCollisions()
 {
-    m_collisions.clear(); // Clear previous collisions
+    m_collisions.clear();
+    m_potentialCollisions.clear();
+    m_threadCollisions.clear();
 
-    // Retrieve potential collisions from the octree
-    std::vector<std::pair<unsigned int, unsigned int>> potentialCollisions;
-    m_octree->GetPotentialCollisions(potentialCollisions);
+    m_octree->GetPotentialCollisions(m_potentialCollisions);
 
     auto &colliders = m_registry->GetComponentArray<ColliderComponent>();
 
     // Iterate over potential collision pairs
-    for (const auto &collisionPair : potentialCollisions)
-    {
-        unsigned int entityID1 = collisionPair.first;
-        unsigned int entityID2 = collisionPair.second;
+    concurrency::parallel_for_each(
+        m_potentialCollisions.begin(), m_potentialCollisions.end(),
+        [&](const std::pair<unsigned int, unsigned int> &collisionPair) {
+            unsigned int entityID1 = collisionPair.first;
+            unsigned int entityID2 = collisionPair.second;
 
-        const auto &collider1 = colliders.GetComponent(entityID1);
-        const auto &collider2 = colliders.GetComponent(entityID2);
+            const auto &collider1 = colliders.GetComponent(entityID1);
+            const auto &collider2 = colliders.GetComponent(entityID2);
 
-        // Check if the colliders can collide based on their properties
-        if (!CanCollide(collider1, collider2))
-            continue;
+            if (!CanCollide(collider1, collider2))
+                return;
 
-        bool collisionDetected = false;
-
-        // Determine collider types and call the appropriate collision detection function
-        if (collider1.type == ColliderType::Sphere && collider2.type == ColliderType::Sphere)
-        {
-            collisionDetected = SpherevsSphere(entityID1, entityID2);
-        }
-        else if (collider1.type == ColliderType::Box && collider2.type == ColliderType::Box)
-        {
-            collisionDetected = OOBvsOOB(entityID1, entityID2);
-        }
-        else if (collider1.type == ColliderType::Sphere && collider2.type == ColliderType::Box)
-        {
-            collisionDetected = SpherevsOOB(entityID1, entityID2);
-        }
-        else if (collider1.type == ColliderType::Box && collider2.type == ColliderType::Sphere)
-        {
-            // Swap entities to match SpherevsOOB parameter expectations
-            collisionDetected = SpherevsOOB(entityID2, entityID1);
-        }
-    }
+            if (collider1.type == ColliderType::Sphere && collider2.type == ColliderType::Sphere)
+            {
+                SpherevsSphere(entityID1, entityID2);
+            }
+            else if (collider1.type == ColliderType::Box && collider2.type == ColliderType::Box)
+            {
+                OOBvsOOB(entityID1, entityID2);
+            }
+            else if (collider1.type == ColliderType::Sphere && collider2.type == ColliderType::Box)
+            {
+                SpherevsOOB(entityID1, entityID2);
+            }
+            else if (collider1.type == ColliderType::Box && collider2.type == ColliderType::Sphere)
+            {
+                SpherevsOOB(entityID2, entityID1);
+            }
+        });
+    m_threadCollisions.combine_each([&](const std::vector<Collision> &threadCollisions) {
+        m_collisions.insert(m_collisions.end(), threadCollisions.begin(), threadCollisions.end());
+    });
 }
 
 void CollisionSystem::ResolveCollisions()
