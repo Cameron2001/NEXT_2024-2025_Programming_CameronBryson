@@ -24,65 +24,65 @@
     <ClCompile Include="miniaudio\miniaudio.cpp">
       <Filter>API\third_party\miniaudio</Filter>
     </ClCompile>
-    <ClCompile Include="Game\PlayScene.cpp">
+    <ClCompile Include="Game\Scenes\PlayScene.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Core\Scene.cpp">
+    <ClCompile Include="Game\Core\Scene.cpp">
       <Filter>Engine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Storage\Registry.cpp">
+    <ClCompile Include="Game\Storage\Registry.cpp">
       <Filter>Engine\Storage</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\AudioManager.cpp">
+    <ClCompile Include="Game\Managers\AudioManager.cpp">
       <Filter>Engine\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Camera.cpp">
+    <ClCompile Include="Game\Graphics\Camera.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Managers\GraphicsManager.cpp">
+    <ClCompile Include="Game\Managers\GraphicsManager.cpp">
       <Filter>Engine\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Matrix4.cpp">
+    <ClCompile Include="Game\Math\Matrix4.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector2.cpp">
+    <ClCompile Include="Game\Math\Vector2.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector3.cpp">
+    <ClCompile Include="Game\Math\Vector3.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Math\Vector4.cpp">
+    <ClCompile Include="Game\Math\Vector4.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\Renderer.cpp">
+    <ClCompile Include="Game\Graphics\Renderer.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\CollisionSystem.cpp">
+    <ClCompile Include="Game\Systems\CollisionSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\PhysicsSystem.cpp">
+    <ClCompile Include="Game\Systems\PhysicsSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Systems\RenderSystem.cpp">
+    <ClCompile Include="Game\Systems\RenderSystem.cpp">
       <Filter>Engine\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\PlayerSystem.cpp">
+    <ClCompile Include="Game\Systems\PlayerSystem.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Graphics\HiddenLineRemoval.cpp" />
-    <ClCompile Include="Engine\Math\Octree.cpp" />
-    <ClCompile Include="Engine\Math\Quadtree.cpp" />
-    <ClCompile Include="Engine\Systems\ParticleSystem.cpp" />
-    <ClCompile Include="Engine\Core\Events.cpp" />
-    <ClCompile Include="Engine\Core\Logger.cpp" />
-    <ClCompile Include="Engine\Core\Semaphore.cpp" />
-    <ClCompile Include="Engine\Core\SemaphoreGuard.cpp" />
-    <ClCompile Include="Engine\Math\Quaternion.cpp" />
-    <ClCompile Include="Engine\Math\Matrix3.cpp" />
-    <ClCompile Include="Engine\Core\EntityFactory.cpp" />
-    <ClCompile Include="Game\MainMenuScene.cpp" />
-    <ClCompile Include="Engine\Systems\CameraSystem.cpp" />
-    <ClCompile Include="Engine\Managers\EventManager.cpp" />
+    <ClCompile Include="Game\Graphics\HiddenLineRemoval.cpp" />
+    <ClCompile Include="Game\Math\Octree.cpp" />
+    <ClCompile Include="Game\Math\Quadtree.cpp" />
+    <ClCompile Include="Game\Systems\ParticleSystem.cpp" />
+    <ClCompile Include="Game\Core\Events.cpp" />
+    <ClCompile Include="Game\Core\Logger.cpp" />
+    <ClCompile Include="Game\Core\Semaphore.cpp" />
+    <ClCompile Include="Game\Core\SemaphoreGuard.cpp" />
+    <ClCompile Include="Game\Math\Quaternion.cpp" />
+    <ClCompile Include="Game\Math\Matrix3.cpp" />
+    <ClCompile Include="Game\Core\EntityFactory.cpp" />
+    <ClCompile Include="Game\Scenes\MainMenuScene.cpp" />
+    <ClCompile Include="Game\Systems\CameraSystem.cpp" />
+    <ClCompile Include="Game\Managers\EventManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -113,113 +113,110 @@
     <ClInclude Include="miniaudio\miniaudio.h">
       <Filter>API\third_party\miniaudio</Filter>
     </ClInclude>
-    <ClInclude Include="Game\PlayScene.h">
+    <ClInclude Include="Game\Scenes\PlayScene.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Scene.h">
+    <ClInclude Include="Game\Core\Scene.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Storage\ComponentArray.h">
+    <ClInclude Include="Game\Storage\ComponentArray.h">
       <Filter>Engine\Storage</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Storage\IComponentArray.h">
+    <ClInclude Include="Game\Storage\IComponentArray.h">
       <Filter>Engine\Storage</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Storage\Registry.h">
+    <ClInclude Include="Game\Storage\Registry.h">
       <Filter>Engine\Storage</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Event.h">
+    <ClInclude Include="Game\Core\Event.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\AudioManager.h">
+    <ClInclude Include="Game\Managers\AudioManager.h">
       <Filter>Engine\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Camera.h">
+    <ClInclude Include="Game\Graphics\Camera.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Collision.h">
+    <ClInclude Include="Game\Core\Collision.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Core\Components.h">
+    <ClInclude Include="Game\Core\Components.h">
       <Filter>Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\GraphicsManager.h">
+    <ClInclude Include="Game\Managers\GraphicsManager.h">
       <Filter>Engine\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Matrix4.h">
+    <ClInclude Include="Game\Math\Matrix4.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Mesh.h">
+    <ClInclude Include="Game\Graphics\Mesh.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Graphics\Model.h">
+    <ClInclude Include="Game\Graphics\Model.h">
       <Filter>Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Managers\SceneManager.h">
+    <ClInclude Include="Game\Managers\SceneManager.h">
       <Filter>Engine\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector2.h">
+    <ClInclude Include="Game\Math\Vector2.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector3.h">
+    <ClInclude Include="Game\Math\Vector3.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\Vector4.h">
+    <ClInclude Include="Game\Math\Vector4.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Game\GameComponents.h">
+    <ClInclude Include="Game\Math\MathUtil.h">
+      <Filter>Engine\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Graphics\Renderer.h">
+      <Filter>Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\CollisionSystem.h">
+      <Filter>Engine\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\PhysicsSystem.h">
+      <Filter>Engine\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\RenderSystem.h">
+      <Filter>Engine\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\PlayerSystem.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Math\MathUtil.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Renderer.h">
-      <Filter>Engine\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\CollisionSystem.h">
-      <Filter>Engine\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\PhysicsSystem.h">
-      <Filter>Engine\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Systems\RenderSystem.h">
-      <Filter>Engine\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\PlayerSystem.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Graphics\Triangle.h" />
-    <ClInclude Include="Engine\Storage\View.h" />
-    <ClInclude Include="Engine\Graphics\Edge.h" />
-    <ClInclude Include="Engine\Graphics\HiddenLineRemoval.h" />
-    <ClInclude Include="Engine\Math\Octree.h" />
-    <ClInclude Include="Engine\Math\Quadtree.h" />
-    <ClInclude Include="Engine\Math\BoundingBox.h" />
-    <ClInclude Include="Engine\Systems\ParticleSystem.h" />
-    <ClInclude Include="Engine\Core\Events.h" />
-    <ClInclude Include="Engine\Core\TestResult.h" />
-    <ClInclude Include="Engine\Math\OctreeTests.h" />
-    <ClInclude Include="Engine\Core\Tests.h" />
-    <ClInclude Include="Engine\Core\Logger.h" />
-    <ClInclude Include="Engine\Math\BoundingBoxTests.h" />
-    <ClInclude Include="Engine\Math\Matrix4Tests.h" />
-    <ClInclude Include="Engine\Math\QuadtreeTests.h" />
-    <ClInclude Include="Engine\Math\Vector2Tests.h" />
-    <ClInclude Include="Engine\Math\Vector3Tests.h" />
-    <ClInclude Include="Engine\Math\Vector4Tests.h" />
-    <ClInclude Include="Engine\Math\BoundingSphere.h" />
-    <ClInclude Include="Engine\Math\BoundingSphereTests.h" />
-    <ClInclude Include="Engine\Core\Semaphore.h" />
-    <ClInclude Include="Engine\Core\SemaphoreGuard.h" />
-    <ClInclude Include="Engine\Math\Quaternion.h" />
-    <ClInclude Include="Engine\Math\QuaternionTests.h" />
-    <ClInclude Include="Engine\Math\Matrix3.h" />
-    <ClInclude Include="Engine\Math\Matrix3Tests.h" />
-    <ClInclude Include="Engine\Core\EntityFactory.h" />
-    <ClInclude Include="Engine\Core\Entity.h" />
-    <ClInclude Include="Game\MainMenuScene.h" />
-    <ClInclude Include="Engine\Systems\CameraSystem.h" />
-    <ClInclude Include="Engine\Managers\EventManager.h" />
+    <ClInclude Include="Game\Graphics\Triangle.h" />
+    <ClInclude Include="Game\Storage\View.h" />
+    <ClInclude Include="Game\Graphics\Edge.h" />
+    <ClInclude Include="Game\Graphics\HiddenLineRemoval.h" />
+    <ClInclude Include="Game\Math\Octree.h" />
+    <ClInclude Include="Game\Math\Quadtree.h" />
+    <ClInclude Include="Game\Math\BoundingBox.h" />
+    <ClInclude Include="Game\Systems\ParticleSystem.h" />
+    <ClInclude Include="Game\Core\Events.h" />
+    <ClInclude Include="Game\Core\TestResult.h" />
+    <ClInclude Include="Game\Math\OctreeTests.h" />
+    <ClInclude Include="Game\Core\Tests.h" />
+    <ClInclude Include="Game\Core\Logger.h" />
+    <ClInclude Include="Game\Math\BoundingBoxTests.h" />
+    <ClInclude Include="Game\Math\Matrix4Tests.h" />
+    <ClInclude Include="Game\Math\QuadtreeTests.h" />
+    <ClInclude Include="Game\Math\Vector2Tests.h" />
+    <ClInclude Include="Game\Math\Vector3Tests.h" />
+    <ClInclude Include="Game\Math\Vector4Tests.h" />
+    <ClInclude Include="Game\Math\BoundingSphere.h" />
+    <ClInclude Include="Game\Math\BoundingSphereTests.h" />
+    <ClInclude Include="Game\Core\Semaphore.h" />
+    <ClInclude Include="Game\Core\SemaphoreGuard.h" />
+    <ClInclude Include="Game\Math\Quaternion.h" />
+    <ClInclude Include="Game\Math\QuaternionTests.h" />
+    <ClInclude Include="Game\Math\Matrix3.h" />
+    <ClInclude Include="Game\Math\Matrix3Tests.h" />
+    <ClInclude Include="Game\Core\EntityFactory.h" />
+    <ClInclude Include="Game\Core\Entity.h" />
+    <ClInclude Include="Game\Scenes\MainMenuScene.h" />
+    <ClInclude Include="Game\Systems\CameraSystem.h" />
+    <ClInclude Include="Game\Managers\EventManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

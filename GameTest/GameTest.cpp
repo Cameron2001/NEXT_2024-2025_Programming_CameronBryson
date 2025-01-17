@@ -10,10 +10,10 @@
 //------------------------------------------------------------------------
 #include "App\app.h"
 //------------------------------------------------------------------------
-#include "Engine/Managers/SceneManager.h"
-#include "Game/PlayScene.h"
-#include "Engine/Core/Tests.h"
-#include "Engine/Core/Logger.h"
+#include "Game/Managers/SceneManager.h"
+#include "Game/Scenes/PlayScene.h"
+#include "Game/Core/Tests.h"
+#include "Game/Core/Logger.h"
 float fps = 0.0f;
 float minFps = 999999.0f;
 float maxFps = 0.0f;
