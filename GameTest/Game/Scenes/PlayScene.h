@@ -3,7 +3,7 @@
 #include "Game/Systems/PlayerSystem.h"
 #include <memory>
 
-class PlayScene : public Scene, public std::enable_shared_from_this<PlayScene>
+class PlayScene : public Scene
 {
   public:
     PlayScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
@@ -19,6 +19,7 @@ class PlayScene : public Scene, public std::enable_shared_from_this<PlayScene>
     void LateShutdown() override;
     void Test(int value);
     void CollisionEvent(unsigned int ID1, unsigned int ID2);
+    void BuildLevelOne();
 
   private:
     std::shared_ptr<PlayerSystem> m_playerSystem;

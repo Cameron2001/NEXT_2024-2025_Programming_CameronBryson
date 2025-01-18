@@ -13,35 +13,10 @@ void PlayScene::Init()
 {
     Scene::Init();
     m_playerSystem->Init();
-    auto self = shared_from_this();
-    m_eventManager->AddListener<int>("TestEvent", self, &PlayScene::Test);
-    m_eventManager->Notify("TestEvent",5);
-    m_eventManager->AddListener<unsigned int, unsigned int>("CollisionEvent", self, &PlayScene::CollisionEvent);
     m_eventManager->AddListener<unsigned int, unsigned int>("CollisionEvent", m_playerSystem, &PlayerSystem::OnCollision);
     m_eventManager->AddListener<FVector2, int>("EmitParticles", m_particleSystem, &ParticleSystem::EmitParticles);
-
-    //m_eventManager->Notify("CollisionEvent", 1, 2);
-    //m_eventManager->AddListener("CollisionEvent", self, &PlayScene::CollisionEvent);
-    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(5.0f, 4.5f, -30.0f));
-    auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, -40.0f));
-    auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, -40.0f), FVector3(1.0f, 1.0f, 1.0f));
-    m_entityFactory->CreateArrow(player1);
-    m_entityFactory->CreateArrow(player2);
-    m_playerManager->SetPlayer1(player1);
-    m_playerManager->SetPlayer2(player2);
-    m_playerManager->SetHole(hole);
-    m_entityFactory->CreateFlag(FVector3(1.5f, 2.5f, -40.0f));
-    auto player1ScoreText = m_registry->CreateEntity();
-    m_registry->AddComponent<TextComponent>(player1ScoreText, "Player1 Score:", FVector2(20.0f, 15.9f));
-
-    auto player2ScoreText = m_registry->CreateEntity();
-    m_registry->AddComponent<TextComponent>(player2ScoreText, "Player2 Score:", FVector2(20.0f, 60.9f));
-
-    m_uiSystem->SetScoreTextEntities(player1ScoreText, player2ScoreText);
-
-    auto powerScaleText = m_registry->CreateEntity();
-    m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
-    m_arrowSystem->SetScaleTextEntity(powerScaleText);
+    BuildLevelOne();
+   
     // auto cube = m_registry->CreateEntity();
     // m_registry->AddComponent<TransformComponent>(cube, FVector3(-1.5f, -0.8f, -20.0f), FVector3(0.0f, 0.0f, 0.0f),
     //                                              FVector3(1.0f, 1.0f, 1.0f));
@@ -251,4 +226,28 @@ void PlayScene::Test(int value)
 void PlayScene::CollisionEvent(unsigned int ID1, unsigned int ID2)
 {
     printf("Collision between %d and %d\n", ID1, ID2);
+}
+
+void PlayScene::BuildLevelOne()
+{
+    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(5.0f, 4.5f, -30.0f));
+    auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, -40.0f));
+    auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, -40.0f), FVector3(1.0f, 1.0f, 1.0f));
+    m_entityFactory->CreateArrow(player1);
+    m_entityFactory->CreateArrow(player2);
+    m_playerManager->SetPlayer1(player1);
+    m_playerManager->SetPlayer2(player2);
+    m_playerManager->SetHole(hole);
+    m_entityFactory->CreateFlag(FVector3(1.5f, 2.5f, -40.0f));
+    auto player1ScoreText = m_registry->CreateEntity();
+    m_registry->AddComponent<TextComponent>(player1ScoreText, "Player1 Score:", FVector2(20.0f, 15.9f));
+
+    auto player2ScoreText = m_registry->CreateEntity();
+    m_registry->AddComponent<TextComponent>(player2ScoreText, "Player2 Score:", FVector2(20.0f, 60.9f));
+
+    m_uiSystem->SetScoreTextEntities(player1ScoreText, player2ScoreText);
+
+    auto powerScaleText = m_registry->CreateEntity();
+    m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
+    m_arrowSystem->SetScaleTextEntity(powerScaleText);
 }
