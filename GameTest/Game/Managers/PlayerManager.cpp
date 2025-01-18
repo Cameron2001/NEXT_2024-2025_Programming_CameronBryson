@@ -1,3 +1,4 @@
+// File: GameTest/Game/Managers/PlayerManager.cpp
 #include "stdafx.h"
 #include "PlayerManager.h"
 
@@ -107,12 +108,31 @@ void PlayerManager::ResetScores()
 
 void PlayerManager::ResetTotalScores()
 {
-    m_player1Score = 0;
-    m_player2Score = 0;
+    m_player1TotalScore = 0;
+    m_player2TotalScore = 0;
 }
 
 void PlayerManager::SwapTurn()
 {
+    if (m_player1Complete && m_player2Complete)
+    {
+        // Both players have completed the course; no further turns.
+        return;
+    }
+
+    if (m_player1Complete && !m_player2Complete)
+    {
+        m_player1Turn = false; // Only Player 2 remains active.
+        return;
+    }
+
+    if (m_player2Complete && !m_player1Complete)
+    {
+        m_player1Turn = true; // Only Player 1 remains active.
+        return;
+    }
+
+    // Both players are still active; swap turns normally.
     m_player1Turn = !m_player1Turn;
 }
 
@@ -129,4 +149,14 @@ bool PlayerManager::IsPlayer1Complete() const
 bool PlayerManager::IsPlayer2Complete() const
 {
     return m_player2Complete;
+}
+
+void PlayerManager::SetPlayer1Complete(bool complete)
+{
+    m_player1Complete = complete;
+}
+
+void PlayerManager::SetPlayer2Complete(bool complete)
+{
+    m_player2Complete = complete;
 }

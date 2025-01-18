@@ -117,7 +117,6 @@ void ArrowSystem::Update(float dt)
 
             transform.Position = playerTransform.Position + relativeOffset;
 
-            // Modify the direction to point away from the rotation center
             FVector3 direction = relativeOffset.Normalize();
             transform.Rotation =
                 Quaternion::Slerp(transform.Rotation, Quaternion::LookAtPlusZ(direction, FVector3{0, 1, 0}), 0.1f);
@@ -130,9 +129,8 @@ void ArrowSystem::Update(float dt)
             {
                 rigidbody.force += arrowDirection * 2.0f * forceScale;
                 App::PlaySoundW("assets/GolfHit.wav");
-                shotFired = true; // Indicate that a shot has been fired
-                // Remove the following lines to prevent immediate turn swapping
-                // m_playerManager->IncrementCurrentPlayerScore();
+                shotFired = true; 
+                //m_playerManager->IncrementCurrentPlayerScore();
                 // m_playerManager->SwapTurn();
             }
         });

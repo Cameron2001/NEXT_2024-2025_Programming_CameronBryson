@@ -12,7 +12,7 @@ Entity EntityFactory::CreateGolfBallOne(const FVector3 &position)
     Entity player = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player, position, FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<PlayerComponent>(player, 2.0f);
+    m_registry->AddComponent<PlayerComponent>(player, position);
     m_registry->AddComponent<ModelComponent>(player, "SphereOBJ", FVector3(0.5f, 0.0f, 1.0f),1);
     m_registry->AddComponent<RigidBodyComponent>(player, 0.3, 0.3);
     m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
@@ -27,7 +27,7 @@ Entity EntityFactory::CreateGolfBallTwo(const FVector3 &position)
     Entity player2 = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player2, position, FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<PlayerComponent>(player2, 20.0f);
+    m_registry->AddComponent<PlayerComponent>(player2, position);
     m_registry->AddComponent<ModelComponent>(player2, "SphereOBJ", FVector3(1.0f, 0.0f, 0.5f), 1);
     m_registry->AddComponent<RigidBodyComponent>(player2, 0.3, 0.3);
     m_registry->AddComponent<ColliderComponent>(player2, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);

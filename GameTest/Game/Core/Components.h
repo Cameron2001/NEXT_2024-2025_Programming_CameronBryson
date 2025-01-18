@@ -149,12 +149,10 @@ struct CameraFollowComponent
 };
 struct PlayerComponent
 {
-    PlayerComponent(float moveSpeed) : moveSpeed(moveSpeed)
+    PlayerComponent(const FVector3 &spawnPoint) : spawnPoint(spawnPoint)
     {
     }
-
-    float moveSpeed = 0.0f;
-    bool isTurn = true;
+    FVector3 spawnPoint;
 };
 struct ArrowComponent
 {

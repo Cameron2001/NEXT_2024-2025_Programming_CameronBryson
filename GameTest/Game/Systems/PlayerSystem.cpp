@@ -33,6 +33,7 @@ void PlayerSystem::Update(float dt)
     bool R = App::IsKeyPressed('R');
     bool F = App::IsKeyPressed('F');
     bool V = App::IsKeyPressed('V');
+    bool B = App::IsKeyPressed('B');
 
 
     constexpr float rotationSpeed = 1.0f;
@@ -43,17 +44,17 @@ void PlayerSystem::Update(float dt)
         FVector3 playerDirection = transform.Rotation.GetRotationMatrix3() * FVector3{0.0f, 0.0f, 1.0f};
         // Movement
         if (UP)
-            rigidbody.force += FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
+            rigidbody.force += FVector3{0.0f, 1.0f, 0.0f};
         if (DOWN)
-            rigidbody.force -= FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
+            rigidbody.force -= FVector3{0.0f, 1.0f, 0.0f};
         if (LEFT)
-            rigidbody.force -= FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed;
+            rigidbody.force -= FVector3{1.0f, 0.0f, 0.0f};
         if (RIGHT)
-            rigidbody.force += FVector3{1.0f, 0.0f, 0.0f} * player.moveSpeed;
+            rigidbody.force += FVector3{1.0f, 0.0f, 0.0f};
         if (FORWARD)
-            rigidbody.force -= FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed;
+            rigidbody.force -= FVector3{0.0f, 0.0f, 1.0f};
         if (BACKWARD)
-            rigidbody.force += FVector3{0.0f, 0.0f, 1.0f} * player.moveSpeed;
+            rigidbody.force += FVector3{0.0f, 0.0f, 1.0f};
 
         // Rotation
         if (R)
@@ -62,6 +63,14 @@ void PlayerSystem::Update(float dt)
             rigidbody.torque += FVector3{0.0f, 1.0f, 0.0f} * rotationSpeed;
         if (V)
             rigidbody.torque += FVector3{1.0f, 0.0f, 0.0f} * rotationSpeed;
+        if (B)
+        {
+            rigidbody.torque = FVector3{0.0f, 0.0f, 0.0f};
+            rigidbody.angularVelocity = FVector3{0.0f, 0.0f, 0.0f};
+            rigidbody.force = FVector3{0.0f, 0.0f, 0.0f};
+            rigidbody.linearVelocity = FVector3{0.0f, 0.0f, 0.0f};
+            transform.Position = player.spawnPoint;
+        }
         
     });
 }
@@ -77,12 +86,24 @@ void PlayerSystem::OnCollision(unsigned int ID1, unsigned int ID2)
         printf("Player1 Scored");
         App::PlaySoundW("assets/GolfHole.wav");
         m_eventManager->Notify("EmitParticles", FVector2(0.5f, 0.5f), 100);
+
+        m_playerManager->SetPlayer1Complete(true);
+        m_registry->GetComponent<ModelComponent>(player1ID).layer = -1;
+        m_registry->RemoveComponent<ColliderComponent>(player1ID);
+
+        m_playerManager->SwapTurn();
     }
     else if ((ID1 == player2ID && ID2 == holeID) || (ID1 == holeID && ID2 == player2ID))
     {
         printf("Player2 Scored");
         App::PlaySoundW("assets/GolfHole.wav");
         m_eventManager->Notify("EmitParticles", FVector2(0.5f, 0.5f), 100);
+
+        m_playerManager->SetPlayer2Complete(true);
+        m_registry->GetComponent<ModelComponent>(player2ID).layer = -1;
+        m_registry->RemoveComponent<ColliderComponent>(player2ID);
+
+        m_playerManager->SwapTurn();
     }
 
     printf("Collision between %d and %d\n", ID1, ID2);
