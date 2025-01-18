@@ -1,16 +1,16 @@
 // SceneManager.h
 #pragma once
 #include <memory>
-#include "Game/Managers/AudioManager.h"
 #include "Game/Managers/GraphicsManager.h"
 #include "Game/Managers/EventManager.h"
+#include "Game/Managers/PlayerManager.h"
 #include "Game/Core/Scene.h"
 class SceneManager
 {
   public:
     SceneManager()
-        : m_audioManager(std::make_shared<AudioManager>()), m_graphicsManager(std::make_shared<GraphicsManager>()),
-          m_eventManager(std::make_shared<EventManager>())
+        : m_graphicsManager(std::make_shared<GraphicsManager>()), m_eventManager(std::make_shared<EventManager>()),
+          m_scoreManager(std::make_shared<PlayerManager>())
     {
     }
     template <typename T> void LoadScene()
@@ -19,7 +19,7 @@ class SceneManager
         {
             m_currentScene->Shutdown();
         }
-        m_currentScene = std::make_shared<T>(m_audioManager, m_graphicsManager,m_eventManager);
+        m_currentScene = std::make_shared<T>(m_graphicsManager, m_eventManager, m_scoreManager);
         m_currentScene->Init();
         m_currentScene->LateInit();
     }
@@ -31,7 +31,7 @@ class SceneManager
 
   private:
     std::shared_ptr<Scene> m_currentScene;
-    std::shared_ptr<AudioManager> m_audioManager;
     std::shared_ptr<GraphicsManager> m_graphicsManager;
     std::shared_ptr<EventManager> m_eventManager;
+    std::shared_ptr<PlayerManager> m_scoreManager;
 };

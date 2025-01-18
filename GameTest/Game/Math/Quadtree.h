@@ -23,14 +23,13 @@ class Quadtree
 
     void QueryArea(const BoundingBox2D &range, std::vector<Triangle2D> &found) const;
     void QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found) const;
-    void QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D> &found, float maxAvgZ) const;
     void QueryEdge(const Edge2D &edge, std::vector<Triangle2D> &found) const;
 
   private:
     void Subdivide();
 
     void Query(const BoundingBox2D &range, std::vector<Triangle2D> &found) const;
-    void Query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ) const;
+    void Query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ, int layer) const;
 
     BoundingBox2D ComputeBox(const BoundingBox2D &box, int quadrant) const;
 

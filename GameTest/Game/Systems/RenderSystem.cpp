@@ -35,6 +35,10 @@ void RenderSystem::Update()
     auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
 
     m_modelView.ParallelForEach([&](Entity entity, TransformComponent &transform, ModelComponent &modelComponent) {
+        if (modelComponent.layer < 0)
+        {
+            return;
+        }
         auto &model = m_graphicsManager->GetModel(modelComponent.modelName);
 
         auto modelMatrix = Matrix4::CreateTranslationMatrix(transform.Position) *
@@ -65,7 +69,7 @@ void RenderSystem::Update()
                 FVector2 v2(mvpVertex2.x, mvpVertex2.y);
 
                 // Add triangle to the concurrent vector
-                m_triangles.local().emplace_back(v0, v1, v2, avgZ);
+                m_triangles.local().emplace_back(v0, v1, v2, avgZ, modelComponent.color, modelComponent.layer);
             }
         }
     });
@@ -80,11 +84,12 @@ void RenderSystem::Render()
 {
     for (const auto &edge : m_visibleSegments)
     {
+
         if (std::isnan(edge.start.x) || std::isnan(edge.start.y) || std::isnan(edge.end.x) || std::isnan(edge.end.y))
         {
             continue; // Skip invalid edges
         }
-        Renderer::DrawLine(edge, {1.0f, 1.0f, 1.0f});
+        Renderer::DrawLine(edge, edge.color);
     }
     m_triangles.clear();
     m_triangleList.clear();

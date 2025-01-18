@@ -6,12 +6,16 @@ class EntityFactory
   public:
     EntityFactory(Registry *registry);
 
-    Entity CreatePlayer(const FVector3 &position);
+    Entity CreateGolfBallOne(const FVector3 &position);
+    Entity CreateGolfBallTwo(const FVector3 &position);
     Entity CreateDynamicSphere(const FVector3 &position, float radius);
     Entity CreateStaticSphere(const FVector3 &position, float radius);
     Entity CreateDynamicBox(const FVector3 &position, const FVector3 &extents);
     Entity CreateStaticBox(const FVector3 &position, const FVector3 &extents);
-    Entity CreateGolfBall(const FVector3 &position);
+    Entity CreateGrassBox(const FVector3 &position, const FVector3 &extents);
+    Entity CreateFlag(const FVector3 &position);
+    Entity CreateArrow(Entity followTarget);
+
 
   private:
     Registry *m_registry;

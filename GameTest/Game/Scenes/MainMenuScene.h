@@ -3,8 +3,8 @@
 class MainMenuScene : public Scene
 {
   public:
-    MainMenuScene(std::shared_ptr<AudioManager> audioManager, std::shared_ptr<GraphicsManager> graphicsManager,
-                  std::shared_ptr<EventManager> eventManager);
+    MainMenuScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
+                  std::shared_ptr<PlayerManager> scoreManager);
     ~MainMenuScene() override = default;
     void Init() override;
     void LateInit() override;

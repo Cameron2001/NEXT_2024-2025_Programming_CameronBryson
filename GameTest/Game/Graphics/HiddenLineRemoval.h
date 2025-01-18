@@ -41,8 +41,8 @@ class HiddenLineRemoval
 
     HiddenLineRemoval(const HiddenLineRemoval &) = delete;
     HiddenLineRemoval &operator=(const HiddenLineRemoval &) = delete;
-    HiddenLineRemoval(HiddenLineRemoval &&) = default;
-    HiddenLineRemoval &operator=(HiddenLineRemoval &&) = default;
+    HiddenLineRemoval(HiddenLineRemoval &&) = delete;
+    HiddenLineRemoval &operator=(HiddenLineRemoval &&) = delete;
 
     std::vector<Edge2D> RemoveHiddenLines(std::vector<Triangle2D> &triangles);
 
@@ -72,9 +72,9 @@ class HiddenLineRemoval
 
 inline void HiddenLineRemoval::CreateTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])
 {
-    edges[0] = Edge2D(triangle.v0, triangle.v1);
-    edges[1] = Edge2D(triangle.v1, triangle.v2);
-    edges[2] = Edge2D(triangle.v2, triangle.v0);
+    edges[0] = Edge2D(triangle.v0, triangle.v1, triangle.color, triangle.layer);
+    edges[1] = Edge2D(triangle.v1, triangle.v2, triangle.color, triangle.layer);
+    edges[2] = Edge2D(triangle.v2, triangle.v0, triangle.color, triangle.layer);
 }
 
 inline bool HiddenLineRemoval::SharesVertex(const Triangle2D &triangleA, const Triangle2D &triangleB)

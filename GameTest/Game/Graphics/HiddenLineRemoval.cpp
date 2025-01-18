@@ -212,7 +212,8 @@ void HiddenLineRemoval::ClipEdgeAgainstTriangle(const Edge2D &edge, const Triang
             if (delta.LengthSquared() >= 1e-5f)
             {
                 // m_visibleEdges.local().emplace_back(sortedPoints[i], sortedPoints[i + 1]);
-                segments.emplace_back(sortedPoints[i], sortedPoints[i + 1]);
+
+                segments.emplace_back(sortedPoints[i], sortedPoints[i + 1],edge.color,edge.layer);
             }
         }
     }

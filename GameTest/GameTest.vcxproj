@@ -186,6 +186,7 @@
     <ClInclude Include="App\SimpleController.h" />
     <ClInclude Include="App\SimpleSound.h" />
     <ClInclude Include="App\SimpleSprite.h" />
+    <ClInclude Include="Game\Systems\ArrowSystem.h" />
     <ClInclude Include="Game\Systems\CameraSystem.h" />
     <ClInclude Include="Game\Core\Collision.h" />
     <ClInclude Include="Game\Core\Entity.h" />
@@ -211,7 +212,6 @@
     <ClInclude Include="Game\Systems\CollisionSystem.h" />
     <ClInclude Include="Game\Systems\PhysicsSystem.h" />
     <ClInclude Include="Game\Systems\RenderSystem.h" />
-    <ClInclude Include="Game\Managers\AudioManager.h" />
     <ClInclude Include="Game\Graphics\Camera.h" />
     <ClInclude Include="Game\Core\Components.h" />
     <ClInclude Include="Game\Graphics\Model.h" />
@@ -243,9 +243,11 @@
     <ClInclude Include="Game\Core\Semaphore.h" />
     <ClInclude Include="Game\Core\SemaphoreGuard.h" />
     <ClInclude Include="Game\Math\Quaternion.h" />
+    <ClInclude Include="Game\Managers\PlayerManager.h" />
     <ClInclude Include="stb_image\stb_image.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Game\Systems\UISystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App\app.cpp" />
@@ -253,12 +255,12 @@
     <ClCompile Include="App\SimpleController.cpp" />
     <ClCompile Include="App\SimpleSound.cpp" />
     <ClCompile Include="App\SimpleSprite.cpp" />
+    <ClCompile Include="Game\Systems\ArrowSystem.cpp" />
     <ClCompile Include="Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="Game\Core\Events.cpp" />
     <ClCompile Include="Game\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Game\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Game\Systems\RenderSystem.cpp" />
-    <ClCompile Include="Game\Managers\AudioManager.cpp" />
     <ClCompile Include="Game\Graphics\Camera.cpp" />
     <ClCompile Include="Game\Math\Matrix4.cpp" />
     <ClCompile Include="Game\Math\Vector2.cpp" />
@@ -284,6 +286,7 @@
     <ClCompile Include="Game\Core\Semaphore.cpp" />
     <ClCompile Include="Game\Core\SemaphoreGuard.cpp" />
     <ClCompile Include="Game\Math\Quaternion.cpp" />
+    <ClCompile Include="Game\Managers\PlayerManager.cpp" />
     <ClCompile Include="stb_image\stb_image.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -291,6 +294,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Game\Systems\UISystem.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

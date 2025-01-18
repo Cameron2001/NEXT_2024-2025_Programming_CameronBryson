@@ -33,9 +33,6 @@
     <ClCompile Include="Game\Storage\Registry.cpp">
       <Filter>Engine\Storage</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Managers\AudioManager.cpp">
-      <Filter>Engine\Managers</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Graphics\Camera.cpp">
       <Filter>Engine\Graphics</Filter>
     </ClCompile>
@@ -83,6 +80,9 @@
     <ClCompile Include="Game\Scenes\MainMenuScene.cpp" />
     <ClCompile Include="Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="Game\Managers\EventManager.cpp" />
+    <ClCompile Include="Game\Managers\PlayerManager.cpp" />
+    <ClCompile Include="Game\Systems\UISystem.cpp" />
+    <ClCompile Include="Game\Systems\ArrowSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -130,9 +130,6 @@
     </ClInclude>
     <ClInclude Include="Game\Core\Event.h">
       <Filter>Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Managers\AudioManager.h">
-      <Filter>Engine\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Game\Graphics\Camera.h">
       <Filter>Engine\Graphics</Filter>
@@ -217,6 +214,9 @@
     <ClInclude Include="Game\Scenes\MainMenuScene.h" />
     <ClInclude Include="Game\Systems\CameraSystem.h" />
     <ClInclude Include="Game\Managers\EventManager.h" />
+    <ClInclude Include="Game\Managers\PlayerManager.h" />
+    <ClInclude Include="Game\Systems\UISystem.h" />
+    <ClInclude Include="Game\Systems\ArrowSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

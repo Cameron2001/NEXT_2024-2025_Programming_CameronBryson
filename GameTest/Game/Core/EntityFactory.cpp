@@ -7,19 +7,34 @@ EntityFactory::EntityFactory(Registry *registry) : m_registry(registry)
 {
 }
 
-Entity EntityFactory::CreatePlayer(const FVector3 &position)
+Entity EntityFactory::CreateGolfBallOne(const FVector3 &position)
 {
     Entity player = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player, position, FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<PlayerComponent>(player, 2.0f);
-    m_registry->AddComponent<ModelComponent>(player, "SphereOBJ");
-    m_registry->AddComponent<RigidBodyComponent>(player, 0.9, 0.9);
-    m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true, false, 0.1, 0.1f, 0.1f);
+    m_registry->AddComponent<PlayerComponent>(player, 200.0f);
+    m_registry->AddComponent<ModelComponent>(player, "SphereOBJ", FVector3(0.5f, 0.0f, 1.0f),1);
+    m_registry->AddComponent<RigidBodyComponent>(player, 0.3, 0.3);
+    m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.3f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 0.0f, 20.0f), 0.9);
+    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 5.0f, 100.0f), 1.0);
     m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);
-    return Entity();
+    return player;
+}
+
+Entity EntityFactory::CreateGolfBallTwo(const FVector3 &position)
+{
+    Entity player2 = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(player2, position, FVector3(0.0f, 0.0f, 0.0f),
+                                                 FVector3(1.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<PlayerComponent>(player2, 200.0f);
+    m_registry->AddComponent<ModelComponent>(player2, "SphereOBJ", FVector3(1.0f, 0.0f, 0.5f), 1);
+    m_registry->AddComponent<RigidBodyComponent>(player2, 0.3, 0.3);
+    m_registry->AddComponent<ColliderComponent>(player2, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.3f);
+    // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<CameraFollowComponent>(player2, FVector3(0.0f, 5.0f, 100.0f), 1.0);
+    m_registry->AddComponent<SphereBoundsComponent>(player2, 1.0f);
+    return player2;
 }
 
 Entity EntityFactory::CreateDynamicSphere(const FVector3 &position, float radius)
@@ -115,14 +130,34 @@ Entity EntityFactory::CreateStaticBox(const FVector3 &position, const FVector3 &
     return box;
 }
 
-Entity EntityFactory::CreateGolfBall(const FVector3 &position)
+Entity EntityFactory::CreateGrassBox(const FVector3 &position, const FVector3 &extents)
 {
-    Entity golfBall = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(golfBall, position, FVector3(0.0f, 0.0f, 0.0f),
+    Entity box = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(box, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
+                                                 FVector3(30.0f, 1.0f, 30.0f)               // Scale
+    );
+    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ",FVector3(0,1,0), 0);
+    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false);
+    m_registry->AddComponent<BoxBoundsComponent>(box, extents);
+    return box;
+}
+
+Entity EntityFactory::CreateFlag(const FVector3 &position)
+{
+    Entity flag = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(flag, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
+                                                 FVector3(1.0f, 1.0f, 1.0f)                  // Scale
+    );
+    m_registry->AddComponent<ModelComponent>(flag, "FlagOBJ");
+    return flag;
+}
+
+Entity EntityFactory::CreateArrow(Entity followTarget)
+{
+    Entity arrow = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(arrow, FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<ModelComponent>(golfBall, "SphereOBJ");
-    m_registry->AddComponent<RigidBodyComponent>(golfBall, 0.5, 0.5);
-    m_registry->AddComponent<ColliderComponent>(golfBall, ColliderType::Sphere, true);
-    m_registry->AddComponent<SphereBoundsComponent>(golfBall, 1.0f);
-    return golfBall;
+    m_registry->AddComponent<ModelComponent>(arrow, "ArrowOBJ");
+    m_registry->AddComponent<ArrowComponent>(arrow, followTarget);
+    return arrow;
 }

@@ -6,8 +6,8 @@
 #include <Game/Storage/IComponentArray.h>
 #include <Game/Storage/Registry.h>
 #include <Game/Storage/View.h>
-// const FVector3 GRAVITY(0.0f, -9.81f, 0.0f);
-const FVector3 GRAVITY(0.0f, 0.0f, 0.0f);
+const FVector3 GRAVITY(0.0f, -9.81f, 0.0f);
+//const FVector3 GRAVITY(0.0f, 0.0f, 0.0f);
 PhysicsSystem::PhysicsSystem(Registry *registry)
     : m_registry(registry), m_view(registry), m_boxView(registry), m_sphereView(registry)
 {
@@ -87,18 +87,21 @@ void PhysicsSystem::ComputeBoxInverseInertiaTensor(const TransformComponent &tra
                                                    const BoxBoundsComponent &boxBounds, RigidBodyComponent &rigidBody)
 {
     float mass = 1.0f / rigidBody.inverseMass;
-    FVector3 scaledBoxExtents = boxBounds.extents * transform.Scale;
+
+    FVector3 fullBoxDimensions = boxBounds.extents * 2.0f * transform.Scale;
+
+    float Ixx =
+        (mass / 12.0f) * (fullBoxDimensions.y * fullBoxDimensions.y + fullBoxDimensions.z * fullBoxDimensions.z);
+    float Iyy =
+        (mass / 12.0f) * (fullBoxDimensions.x * fullBoxDimensions.x + fullBoxDimensions.z * fullBoxDimensions.z);
+    float Izz =
+        (mass / 12.0f) * (fullBoxDimensions.x * fullBoxDimensions.x + fullBoxDimensions.y * fullBoxDimensions.y);
 
     Matrix3 inertiaTensor;
     inertiaTensor.SetZero();
-    float factor = mass / 12.0f;
-
-    inertiaTensor.Set(0, 0,
-                      factor * (scaledBoxExtents.y * scaledBoxExtents.y + scaledBoxExtents.z * scaledBoxExtents.z));
-    inertiaTensor.Set(1, 1,
-                      factor * (scaledBoxExtents.x * scaledBoxExtents.x + scaledBoxExtents.z * scaledBoxExtents.z));
-    inertiaTensor.Set(2, 2,
-                      factor * (scaledBoxExtents.x * scaledBoxExtents.x + scaledBoxExtents.y * scaledBoxExtents.y));
+    inertiaTensor.Set(0, 0, Ixx);
+    inertiaTensor.Set(1, 1, Iyy);
+    inertiaTensor.Set(2, 2, Izz);
 
     rigidBody.localInverseInertiaTensor = inertiaTensor.Inverse();
     rigidBody.isInitialized = true;

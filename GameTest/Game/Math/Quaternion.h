@@ -21,6 +21,8 @@ class Quaternion
     ~Quaternion() = default;
 
     static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
+    static Quaternion LookAt(const FVector3 &direction, const FVector3 &up = {0.0f, 1.0f, 0.0f});
+    static Quaternion FromAxisAngle(const FVector3 &axis, float angle);
 
     FVector3 GetEulerAnglesXYZ() const;
     Matrix3 GetRotationMatrix3() const;

@@ -1,7 +1,6 @@
 #pragma once
 #include "Game/Storage/Registry.h"
 
-#include "Game/Managers/AudioManager.h"
 #include "Game/Managers/GraphicsManager.h"
 #include "Game/Managers/EventManager.h"
 
@@ -10,11 +9,14 @@
 #include "Game/Systems/RenderSystem.h"
 #include "Game/Systems/ParticleSystem.h"
 #include "Game/Systems/CameraSystem.h"
+#include "Game/Systems/ArrowSystem.h"
+#include "Game/Systems/UISystem.h"
 #include "Game/Core/EntityFactory.h"
+#include <Game/Managers/PlayerManager.h>
 class Scene
 {
   public:
-    Scene(std::shared_ptr<AudioManager> audioManager, std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager);
+    Scene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager, std::shared_ptr<PlayerManager> scoreManager);
     virtual ~Scene() = default;
     Scene(const Scene &) = delete;
     Scene &operator=(const Scene &) = delete;
@@ -43,9 +45,9 @@ class Scene
     // Managers are for storing and getting data
     // Should move managers that might benefit from being passed to a new scene out
     // or make it shared pointers that can be passed to new scene and lifetime will be extended
-    std::shared_ptr<AudioManager> m_audioManager;
     std::shared_ptr<GraphicsManager> m_graphicsManager;
     std::shared_ptr<EventManager> m_eventManager;
+    std::shared_ptr<PlayerManager> m_playerManager;
 
     // Systems
     // Systems are for processing data and editing data
@@ -61,7 +63,8 @@ class Scene
     PhysicsSystem m_physicsSystem;
     ParticleSystem m_particleSystem;
     CameraSystem m_cameraSystem;
-    
+    ArrowSystem m_arrowSystem;
+    UISystem m_uiSystem;
     EntityFactory m_entityFactory;
     // Rendersystem only reads data
     // Physics system reads and edits data

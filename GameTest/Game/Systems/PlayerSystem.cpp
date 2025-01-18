@@ -17,23 +17,26 @@ void PlayerSystem::Init()
 
 void PlayerSystem::Update(float dt)
 {
-    auto view = m_registry->CreateView<PlayerComponent, RigidBodyComponent>();
+    auto view = m_registry->CreateView<PlayerComponent, RigidBodyComponent, TransformComponent>();
 
     // Get input states
-    bool UP = App::IsKeyPressed('W') || App::GetController().GetLeftThumbStickY() > 0.5f;
-    bool LEFT = App::IsKeyPressed('A') || App::GetController().GetLeftThumbStickX() < -0.5f;
-    bool DOWN = App::IsKeyPressed('S') || App::GetController().GetLeftThumbStickY() < -0.5f;
-    bool RIGHT = App::IsKeyPressed('D') || App::GetController().GetLeftThumbStickX() > 0.5f;
-    bool FORWARD = App::IsKeyPressed('Q');
-    bool BACKWARD = App::IsKeyPressed('E');
+    bool UP = App::IsKeyPressed('Q');
+    bool LEFT = App::IsKeyPressed('A');
+    bool DOWN = App::IsKeyPressed('E');
+    bool RIGHT = App::IsKeyPressed('D');
+    bool FORWARD = App::IsKeyPressed('W');
+    bool BACKWARD = App::IsKeyPressed('S');
     bool R = App::IsKeyPressed('R');
     bool F = App::IsKeyPressed('F');
     bool V = App::IsKeyPressed('V');
 
+
     constexpr float rotationSpeed = 1.0f;
+     
 
     // Process entities in parallel with updated lambda signature
-    view.ParallelForEach([&](Entity entity, PlayerComponent &player, RigidBodyComponent &rigidbody) {
+    view.ForEach([&](Entity entity, PlayerComponent &player, RigidBodyComponent &rigidbody, TransformComponent &transform) {
+        FVector3 playerDirection = transform.Rotation.GetRotationMatrix3() * FVector3{0.0f, 0.0f, 1.0f};
         // Movement
         if (UP)
             rigidbody.force += FVector3{0.0f, 1.0f, 0.0f} * player.moveSpeed;
@@ -55,5 +58,6 @@ void PlayerSystem::Update(float dt)
             rigidbody.torque += FVector3{0.0f, 1.0f, 0.0f} * rotationSpeed;
         if (V)
             rigidbody.torque += FVector3{1.0f, 0.0f, 0.0f} * rotationSpeed;
+        
     });
 }

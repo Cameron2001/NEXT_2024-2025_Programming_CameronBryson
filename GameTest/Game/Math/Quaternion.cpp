@@ -84,6 +84,81 @@ Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &end, flo
                       (q1.z * s0) + (q2.z * s1));
 }
 
+Quaternion Quaternion::LookAt(const FVector3 &direction, const FVector3 &up)
+{
+    FVector3 forward = direction.Normalize();
+    FVector3 upDir = up.Normalize();
+
+    FVector3 right = upDir.Cross(forward).Normalize();
+    FVector3 trueUp = forward.Cross(right);
+
+    Matrix3 rotationMatrix;
+    rotationMatrix.Set(0, 0, right.x);
+    rotationMatrix.Set(1, 0, right.y);
+    rotationMatrix.Set(2, 0, right.z);
+
+    rotationMatrix.Set(0, 1, trueUp.x);
+    rotationMatrix.Set(1, 1, trueUp.y);
+    rotationMatrix.Set(2, 1, trueUp.z);
+
+    rotationMatrix.Set(0, 2, forward.x);
+    rotationMatrix.Set(1, 2, forward.y);
+    rotationMatrix.Set(2, 2, forward.z);
+
+    float trace = rotationMatrix.m[0] + rotationMatrix.m[4] + rotationMatrix.m[8];
+    float w_, x_, y_, z_;
+
+    if (trace > 0.0f)
+    {
+        float s = std::sqrt(trace + 1.0f) * 2.0f;
+        w_ = 0.25f * s;
+        x_ = (rotationMatrix.m[7] - rotationMatrix.m[5]) / s;
+        y_ = (rotationMatrix.m[2] - rotationMatrix.m[6]) / s;
+        z_ = (rotationMatrix.m[3] - rotationMatrix.m[1]) / s;
+    }
+    else if ((rotationMatrix.m[0] > rotationMatrix.m[4]) && (rotationMatrix.m[0] > rotationMatrix.m[8]))
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[0] - rotationMatrix.m[4] - rotationMatrix.m[8]) * 2.0f;
+        w_ = (rotationMatrix.m[7] - rotationMatrix.m[5]) / s;
+        x_ = 0.25f * s;
+        y_ = (rotationMatrix.m[1] + rotationMatrix.m[3]) / s;
+        z_ = (rotationMatrix.m[2] + rotationMatrix.m[6]) / s;
+    }
+    else if (rotationMatrix.m[4] > rotationMatrix.m[8])
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[4] - rotationMatrix.m[0] - rotationMatrix.m[8]) * 2.0f;
+        w_ = (rotationMatrix.m[2] - rotationMatrix.m[6]) / s;
+        x_ = (rotationMatrix.m[1] + rotationMatrix.m[3]) / s;
+        y_ = 0.25f * s;
+        z_ = (rotationMatrix.m[5] + rotationMatrix.m[7]) / s;
+    }
+    else
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[8] - rotationMatrix.m[0] - rotationMatrix.m[4]) * 2.0f;
+        w_ = (rotationMatrix.m[3] - rotationMatrix.m[1]) / s;
+        x_ = (rotationMatrix.m[2] + rotationMatrix.m[6]) / s;
+        y_ = (rotationMatrix.m[5] + rotationMatrix.m[7]) / s;
+        z_ = 0.25f * s;
+    }
+
+    return Quaternion(w_, x_, y_, z_).Normalize();
+}
+
+Quaternion Quaternion::FromAxisAngle(const FVector3 &axis, float angle)
+{
+    FVector3 normAxis = axis.Normalize();
+
+    float halfAngle = angle * 0.5f;
+    float sinHalfAngle = std::sin(halfAngle);
+
+    float w_ = std::cos(halfAngle);
+    float x_ = normAxis.x * sinHalfAngle;
+    float y_ = normAxis.y * sinHalfAngle;
+    float z_ = normAxis.z * sinHalfAngle;
+
+    return Quaternion(w_, x_, y_, z_).Normalize();
+}
+
 // Accessors
 
 FVector3 Quaternion::GetEulerAnglesXYZ() const

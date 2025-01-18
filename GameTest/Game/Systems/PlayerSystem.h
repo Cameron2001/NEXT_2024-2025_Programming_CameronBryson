@@ -11,11 +11,6 @@ public:
 
 private:
     Registry *m_registry;
+    
 
 };
-
-//Read:
-//Player
-
-//Write:
-//rigidbody

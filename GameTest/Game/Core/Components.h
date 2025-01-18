@@ -1,8 +1,9 @@
 #pragma once
+#include "Entity.h"
 #include "Game/Math/Vector3.h"
+#include <Game/Math/Matrix3.h>
 #include <Game/Math/Quaternion.h>
 #include <Game/Math/Vector2.h>
-#include <Game/Math/Matrix3.h>
 #include <string>
 constexpr unsigned int LAYER_DEFAULT = 1 << 0;
 enum class ColliderType : unsigned int
@@ -79,16 +80,28 @@ struct RigidBodyComponent
 
 struct TextComponent
 {
+    TextComponent(std::string text, const FVector2 &position) : text(std::move(text)), position(position)
+    {
+    }
     std::string text;
     FVector2 position;
 };
 struct ModelComponent
 {
-    explicit ModelComponent(std::string modelName) : modelName(std::move(modelName))
+    ModelComponent(std::string modelName) : modelName(std::move(modelName)), color({1.0f, 1.0f, 1.0f})
+    {
+    }
+    ModelComponent(std::string modelName, const FVector3 &color) : modelName(std::move(modelName)), color(color)
+    {
+    }
+    ModelComponent(std::string modelName, const FVector3 &color, int layer)
+        : modelName(std::move(modelName)), color(color), layer(layer)
     {
     }
 
     std::string modelName;
+    FVector3 color = {1.0f, 1.0f, 1.0f};
+    int layer = 0;
 };
 struct ParticleComponent
 {
@@ -141,4 +154,12 @@ struct PlayerComponent
     }
 
     float moveSpeed = 0.0f;
+    bool isTurn = true;
+};
+struct ArrowComponent
+{
+    ArrowComponent(Entity ball) : ball(ball)
+    {
+    }
+    Entity ball = 0;
 };
