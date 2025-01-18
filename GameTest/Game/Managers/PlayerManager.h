@@ -7,8 +7,10 @@ class PlayerManager
     ~PlayerManager() = default;
     void SetPlayer1(Entity player);
     void SetPlayer2(Entity player);
+    void SetHole(Entity hole);
     Entity GetPlayer1();
     Entity GetPlayer2();
+    Entity GetHole();
     int GetPlayer1Score() const;
     int GetPlayer2Score() const;
     int GetPlayer1TotalScore() const;
@@ -28,6 +30,7 @@ class PlayerManager
   private:
     Entity m_player1;
     Entity m_player2;
+    Entity m_hole;
     int m_player1Score = 0;
     int m_player2Score = 0;
     int m_player1TotalScore = 0;

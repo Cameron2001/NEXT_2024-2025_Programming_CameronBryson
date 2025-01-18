@@ -8,10 +8,11 @@
 #include <Game/Storage/IComponentArray.h>
 #include <Game/Math/Matrix4.h>
 #include <ppl.h>
+#include "Game/Managers/EventManager.h"
 class CollisionSystem
 {
   public:
-    CollisionSystem(Registry *registry);
+    CollisionSystem(Registry *registry, EventManager *eventManager);
     ~CollisionSystem() = default;
     void Init();
     void Update(float dt);
@@ -32,6 +33,7 @@ class CollisionSystem
     void DetectCollisions();
     void ResolveCollisions();
     Registry *m_registry;
+    EventManager *m_eventManager;
     std::unique_ptr<Octree> m_octree;
     // We should decide if we want to defer collision resolution. Or resolve as they are found.
     std::vector<std::pair<unsigned int, unsigned int>> m_potentialCollisions;

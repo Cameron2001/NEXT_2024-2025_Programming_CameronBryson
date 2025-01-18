@@ -15,6 +15,11 @@ void PlayerManager::SetPlayer2(Entity player)
     m_player2 = player;
 }
 
+void PlayerManager::SetHole(Entity hole)
+{
+    m_hole = hole;
+}
+
 Entity PlayerManager::GetPlayer1()
 {
     return m_player1;
@@ -23,6 +28,11 @@ Entity PlayerManager::GetPlayer1()
 Entity PlayerManager::GetPlayer2()
 {
     return m_player2;
+}
+
+Entity PlayerManager::GetHole()
+{
+    return m_hole;
 }
 
 int PlayerManager::GetPlayer1Score() const

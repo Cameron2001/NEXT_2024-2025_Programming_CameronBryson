@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Quaternion.h"
 #include "App/AppSettings.h"
+#include "Game/Math/MathUtil.h"
 
 // Constructors
 
@@ -10,7 +11,7 @@ Quaternion::Quaternion() : w(1.0f), x(0.0f), y(0.0f), z(0.0f)
 
 Quaternion::Quaternion(const FVector3 &eulerAnglesXYZ)
 {
-    // Assuming eulerAnglesXYZ contains angles in radians
+    // Assuming eulerAnglesXYZ contains angles in degrees
     float halfX = eulerAnglesXYZ.x * 0.5f;
     float halfY = eulerAnglesXYZ.y * 0.5f;
     float halfZ = eulerAnglesXYZ.z * 0.5f;
@@ -29,11 +30,12 @@ Quaternion::Quaternion(const FVector3 &eulerAnglesXYZ)
     z = cosX * cosY * sinZ - sinX * sinY * cosZ;
 }
 
-Quaternion::Quaternion(float x, float y, float z)
+
+Quaternion::Quaternion(float pitch, float yaw, float roll)
 {
-    FVector3 eulerAnglesXYZ(x, y, z);
-    *this = Quaternion(eulerAnglesXYZ);
+    *this = Quaternion(FVector3(pitch, yaw, roll));
 }
+
 
 Quaternion::Quaternion(float w_, float x_, float y_, float z_) : w(w_), x(x_), y(y_), z(z_)
 {
@@ -84,7 +86,8 @@ Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &end, flo
                       (q1.z * s0) + (q2.z * s1));
 }
 
-Quaternion Quaternion::LookAt(const FVector3 &direction, const FVector3 &up)
+
+Quaternion Quaternion::LookAtPlusZ(const FVector3 &direction, const FVector3 &up)
 {
     FVector3 forward = direction.Normalize();
     FVector3 upDir = up.Normalize();
@@ -144,6 +147,66 @@ Quaternion Quaternion::LookAt(const FVector3 &direction, const FVector3 &up)
     return Quaternion(w_, x_, y_, z_).Normalize();
 }
 
+Quaternion Quaternion::LookAtNegativeZ(const FVector3 &direction, const FVector3 &up)
+{
+    FVector3 forward = direction.Normalize();
+    FVector3 upDir = up.Normalize();
+
+    FVector3 right = upDir.Cross(forward).Normalize();
+    FVector3 trueUp = forward.Cross(right);
+
+    Matrix3 rotationMatrix;
+    rotationMatrix.Set(0, 0, right.x);
+    rotationMatrix.Set(1, 0, right.y);
+    rotationMatrix.Set(2, 0, right.z);
+
+    rotationMatrix.Set(0, 1, trueUp.x);
+    rotationMatrix.Set(1, 1, trueUp.y);
+    rotationMatrix.Set(2, 1, trueUp.z);
+
+    rotationMatrix.Set(0, 2, -forward.x);
+    rotationMatrix.Set(1, 2, -forward.y);
+    rotationMatrix.Set(2, 2, -forward.z);
+
+    float trace = rotationMatrix.m[0] + rotationMatrix.m[4] + rotationMatrix.m[8];
+    float w_, x_, y_, z_;
+
+    if (trace > 0.0f)
+    {
+        float s = std::sqrt(trace + 1.0f) * 2.0f;
+        w_ = 0.25f * s;
+        x_ = (rotationMatrix.m[7] - rotationMatrix.m[5]) / s;
+        y_ = (rotationMatrix.m[2] - rotationMatrix.m[6]) / s;
+        z_ = (rotationMatrix.m[3] - rotationMatrix.m[1]) / s;
+    }
+    else if ((rotationMatrix.m[0] > rotationMatrix.m[4]) && (rotationMatrix.m[0] > rotationMatrix.m[8]))
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[0] - rotationMatrix.m[4] - rotationMatrix.m[8]) * 2.0f;
+        w_ = (rotationMatrix.m[7] - rotationMatrix.m[5]) / s;
+        x_ = 0.25f * s;
+        y_ = (rotationMatrix.m[1] + rotationMatrix.m[3]) / s;
+        z_ = (rotationMatrix.m[2] + rotationMatrix.m[6]) / s;
+    }
+    else if (rotationMatrix.m[4] > rotationMatrix.m[8])
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[4] - rotationMatrix.m[0] - rotationMatrix.m[8]) * 2.0f;
+        w_ = (rotationMatrix.m[2] - rotationMatrix.m[6]) / s;
+        x_ = (rotationMatrix.m[1] + rotationMatrix.m[3]) / s;
+        y_ = 0.25f * s;
+        z_ = (rotationMatrix.m[5] + rotationMatrix.m[7]) / s;
+    }
+    else
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[8] - rotationMatrix.m[0] - rotationMatrix.m[4]) * 2.0f;
+        w_ = (rotationMatrix.m[3] - rotationMatrix.m[1]) / s;
+        x_ = (rotationMatrix.m[2] + rotationMatrix.m[6]) / s;
+        y_ = (rotationMatrix.m[5] + rotationMatrix.m[7]) / s;
+        z_ = 0.25f * s;
+    }
+
+    return Quaternion(w_, x_, y_, z_).Normalize();
+}
+
 Quaternion Quaternion::FromAxisAngle(const FVector3 &axis, float angle)
 {
     FVector3 normAxis = axis.Normalize();
@@ -158,6 +221,7 @@ Quaternion Quaternion::FromAxisAngle(const FVector3 &axis, float angle)
 
     return Quaternion(w_, x_, y_, z_).Normalize();
 }
+
 
 // Accessors
 
@@ -184,6 +248,7 @@ FVector3 Quaternion::GetEulerAnglesXYZ() const
 
     return eulerAnglesXYZ;
 }
+
 
 Matrix3 Quaternion::GetRotationMatrix3() const
 {
@@ -219,7 +284,6 @@ Matrix4 Quaternion::GetRotationMatrix4() const
 {
     Matrix4 rotationMatrix;
 
-    // Normalize the quaternion to ensure the rotation matrix is valid
     Quaternion q = this->Normalize();
 
     float xx = q.x * q.x;
@@ -232,28 +296,29 @@ Matrix4 Quaternion::GetRotationMatrix4() const
     float wy = q.w * q.y;
     float wz = q.w * q.z;
 
-    rotationMatrix.m[0] = 1.0f - 2.0f * (yy + zz);
-    rotationMatrix.m[1] = 2.0f * (xy - wz);
-    rotationMatrix.m[2] = 2.0f * (xz + wy);
-    rotationMatrix.m[3] = 0.0f;
+    rotationMatrix.Set(0, 0, 1.0f - 2.0f * (yy + zz)); // m[0]
+    rotationMatrix.Set(1, 0, 2.0f * (xy - wz));        // m[1]
+    rotationMatrix.Set(2, 0, 2.0f * (xz + wy));        // m[2]
+    rotationMatrix.Set(3, 0, 0.0f);                    // m[3]
 
-    rotationMatrix.m[4] = 2.0f * (xy + wz);
-    rotationMatrix.m[5] = 1.0f - 2.0f * (xx + zz);
-    rotationMatrix.m[6] = 2.0f * (yz - wx);
-    rotationMatrix.m[7] = 0.0f;
+    rotationMatrix.Set(0, 1, 2.0f * (xy + wz));        // m[4]
+    rotationMatrix.Set(1, 1, 1.0f - 2.0f * (xx + zz)); // m[5]
+    rotationMatrix.Set(2, 1, 2.0f * (yz - wx));        // m[6]
+    rotationMatrix.Set(3, 1, 0.0f);                    // m[7]
 
-    rotationMatrix.m[8] = 2.0f * (xz - wy);
-    rotationMatrix.m[9] = 2.0f * (yz + wx);
-    rotationMatrix.m[10] = 1.0f - 2.0f * (xx + yy);
-    rotationMatrix.m[11] = 0.0f;
+    rotationMatrix.Set(0, 2, 2.0f * (xz - wy));        // m[8]
+    rotationMatrix.Set(1, 2, 2.0f * (yz + wx));        // m[9]
+    rotationMatrix.Set(2, 2, 1.0f - 2.0f * (xx + yy)); // m[10]
+    rotationMatrix.Set(3, 2, 0.0f);                    // m[11]
 
-    rotationMatrix.m[12] = 0.0f;
-    rotationMatrix.m[13] = 0.0f;
-    rotationMatrix.m[14] = 0.0f;
-    rotationMatrix.m[15] = 1.0f;
+    rotationMatrix.Set(0, 3, 0.0f); // m[12]
+    rotationMatrix.Set(1, 3, 0.0f); // m[13]
+    rotationMatrix.Set(2, 3, 0.0f); // m[14]
+    rotationMatrix.Set(3, 3, 1.0f); // m[15]
 
     return rotationMatrix;
 }
+
 
 // Quaternion Operations
 
@@ -309,29 +374,14 @@ void Quaternion::ToAxisAngle(FVector3 &axis, float &angle) const
     }
 }
 
-Quaternion Quaternion::operator+(const FVector3 &obj) const
+
+   void Quaternion::ApplyEulerAnglesXYZ(const FVector3 &eulerAnglesXYZ)
 {
-    // Convert Euler angles to a quaternion
-    Quaternion delta(obj);
-
-    // Combine the current quaternion with the delta quaternion
-    return (*this) * delta;
+    Quaternion delta(eulerAnglesXYZ);
+    *this = delta * (*this); // Pre-multiply instead of post-multiply
 }
-// Add euler angles XYZ to quaternion
-Quaternion &Quaternion::operator+=(const FVector3 &obj)
-{
-    // Convert Euler angles to a quaternion
-    Quaternion delta(obj);
+   
 
-    // Update the current quaternion by multiplying it with the delta
-    (*this) *= delta;
-
-    return *this;
-}
-
-// Operator Overloads
-
-// Addition
 Quaternion Quaternion::operator+(const Quaternion &obj) const
 {
     return Quaternion(w + obj.w, x + obj.x, y + obj.y, z + obj.z);
@@ -432,6 +482,7 @@ FVector3 Quaternion::operator*(const FVector3 &v) const
     // Extract the vector part of the resulting quaternion
     return FVector3(q_result.x, q_result.y, q_result.z);
 }
+
 
 // Comparison Operators
 bool Quaternion::operator==(const Quaternion &other) const

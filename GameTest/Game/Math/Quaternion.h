@@ -21,7 +21,8 @@ class Quaternion
     ~Quaternion() = default;
 
     static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
-    static Quaternion LookAt(const FVector3 &direction, const FVector3 &up = {0.0f, 1.0f, 0.0f});
+    static Quaternion LookAtPlusZ(const FVector3 &direction, const FVector3 &up = {0.0f, 1.0f, 0.0f});
+    static Quaternion LookAtNegativeZ(const FVector3 &direction, const FVector3 &up = {0.0f, 1.0f, 0.0f});
     static Quaternion FromAxisAngle(const FVector3 &axis, float angle);
 
     FVector3 GetEulerAnglesXYZ() const;
@@ -35,9 +36,8 @@ class Quaternion
     Quaternion Conjugate() const;
     Quaternion Inverse() const;
     void ToAxisAngle(FVector3 &axis, float &angle) const;
+    void ApplyEulerAnglesXYZ(const FVector3 &eulerAnglesXYZ);
 
-    Quaternion operator+(const FVector3 &obj) const;
-    Quaternion &operator+=(const FVector3 &obj);
 
     Quaternion operator+(const Quaternion &obj) const;
     Quaternion &operator+=(const Quaternion &obj);

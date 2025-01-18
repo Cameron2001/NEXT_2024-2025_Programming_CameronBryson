@@ -18,7 +18,8 @@
 #include <utility>
 #include <vector>
 
-CollisionSystem::CollisionSystem(Registry *registry) : m_registry(registry), m_boxView(registry), m_sphereView(registry)
+CollisionSystem::CollisionSystem(Registry *registry, EventManager *eventManager)
+    : m_registry(registry), m_eventManager(eventManager), m_boxView(registry), m_sphereView(registry)
 {
 }
 
@@ -321,25 +322,32 @@ void CollisionSystem::DetectCollisions()
 
             const auto &collider1 = colliders.GetComponent(entityID1);
             const auto &collider2 = colliders.GetComponent(entityID2);
-
             if (!CanCollide(collider1, collider2))
                 return;
-
+            bool collisionDetected = false;
             if (collider1.type == ColliderType::Sphere && collider2.type == ColliderType::Sphere)
             {
-                SpherevsSphere(entityID1, entityID2);
+                if (SpherevsSphere(entityID1, entityID2))
+                    collisionDetected = true;
             }
             else if (collider1.type == ColliderType::Box && collider2.type == ColliderType::Box)
             {
-                OOBvsOOB(entityID1, entityID2);
+                if (OOBvsOOB(entityID1, entityID2))
+                    collisionDetected = true;
             }
             else if (collider1.type == ColliderType::Sphere && collider2.type == ColliderType::Box)
             {
-                SpherevsOOB(entityID1, entityID2);
+                if (SpherevsOOB(entityID1, entityID2))
+                    collisionDetected = true;
             }
             else if (collider1.type == ColliderType::Box && collider2.type == ColliderType::Sphere)
             {
-                SpherevsOOB(entityID2, entityID1);
+                if (SpherevsOOB(entityID2, entityID1))
+                    collisionDetected = true;
+            }
+            if (collisionDetected)
+            {
+                m_eventManager->Notify("CollisionEvent", entityID1, entityID2);
             }
         });
     m_threadCollisions.combine_each([&](const std::vector<Collision> &threadCollisions) {
@@ -356,6 +364,9 @@ void CollisionSystem::ResolveCollisions()
     {
         unsigned int entityID1 = collision.ID1;
         unsigned int entityID2 = collision.ID2;
+
+        
+
 
         bool hasRigidBody1 = m_registry->HasComponent<RigidBodyComponent>(entityID1);
         bool hasRigidBody2 = m_registry->HasComponent<RigidBodyComponent>(entityID2);

@@ -58,14 +58,14 @@ class Scene
     // Lifetime of systems shouldnt really matter because they are all the same. No data. Just processing
     // Could be made static if changed a bit
     // Currently systems either need access to the registry or only to the specific components it needs
-    RenderSystem m_renderSystem;
-    CollisionSystem m_collisionSystem;
-    PhysicsSystem m_physicsSystem;
-    ParticleSystem m_particleSystem;
-    CameraSystem m_cameraSystem;
-    ArrowSystem m_arrowSystem;
-    UISystem m_uiSystem;
-    EntityFactory m_entityFactory;
+    std::shared_ptr<RenderSystem> m_renderSystem;
+    std::shared_ptr<CollisionSystem> m_collisionSystem;
+    std::shared_ptr<PhysicsSystem> m_physicsSystem;
+    std::shared_ptr<ParticleSystem> m_particleSystem;
+    std::shared_ptr<CameraSystem> m_cameraSystem;
+    std::shared_ptr<ArrowSystem> m_arrowSystem;
+    std::shared_ptr<UISystem> m_uiSystem;
+    std::shared_ptr<EntityFactory> m_entityFactory;
     // Rendersystem only reads data
     // Physics system reads and edits data
     // Collision system reads and edits data

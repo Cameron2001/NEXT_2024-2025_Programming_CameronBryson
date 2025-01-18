@@ -18,7 +18,8 @@ class PlayScene : public Scene, public std::enable_shared_from_this<PlayScene>
     void Shutdown() override;
     void LateShutdown() override;
     void Test(int value);
+    void CollisionEvent(unsigned int ID1, unsigned int ID2);
 
   private:
-    PlayerSystem m_playerSystem;
+    std::shared_ptr<PlayerSystem> m_playerSystem;
 };

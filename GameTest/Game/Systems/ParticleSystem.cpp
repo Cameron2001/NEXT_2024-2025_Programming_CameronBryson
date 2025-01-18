@@ -11,7 +11,7 @@
 #include <Game/Storage/Registry.h>
 #include <Game/Storage/View.h>
 
-ParticleSystem::ParticleSystem(Registry *registry) : m_registry(registry), m_view(registry)
+ParticleSystem::ParticleSystem(Registry *registry, EventManager *eventManager) : m_registry(registry), m_eventManager(eventManager), m_view(registry)
 {
 }
 
@@ -49,8 +49,9 @@ void ParticleSystem::Render()
     });
 }
 
-void ParticleSystem::EmitParticles(const FVector2 &position, const int count)
+void ParticleSystem::EmitParticles(FVector2 position, int count)
 {
+
     for (int i = 0; i < count; ++i)
     {
         const auto entity = m_registry->CreateEntity();

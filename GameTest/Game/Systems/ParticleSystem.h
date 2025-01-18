@@ -1,16 +1,18 @@
 #pragma once
 #include "Game/Storage/Registry.h"
 #include <Game/Math/Vector2.h>
+#include "Game/Managers/EventManager.h"
 class ParticleSystem
 {
   public:
-    explicit ParticleSystem(Registry *registry);
+    explicit ParticleSystem(Registry *registry, EventManager *eventManager);
     void Update(float deltaTime);
     void Render();
-    void EmitParticles(const FVector2 &position, int count);
+    void EmitParticles(FVector2 position, int count);
 
   private:
     Registry *m_registry;
+    EventManager *m_eventManager;
 
   private:
     float GenerateRandomLifeTime();

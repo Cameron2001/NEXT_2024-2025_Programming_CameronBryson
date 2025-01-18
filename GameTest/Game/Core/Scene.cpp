@@ -11,21 +11,22 @@
 Scene::Scene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
              std::shared_ptr<PlayerManager> scoreManager)
     : m_registry(std::make_unique<Registry>()),
-      m_camera(std::make_unique<Camera>(FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 1.0f, 0.0f), Quaternion(), 90.0f)),
-      m_graphicsManager(graphicsManager), m_renderSystem(m_registry.get(), m_graphicsManager.get(), m_camera.get()),
-      m_collisionSystem(m_registry.get()), m_physicsSystem(m_registry.get()), m_particleSystem(m_registry.get()),
-      m_cameraSystem(m_registry.get(),m_playerManager.get(), m_camera.get()), m_entityFactory(m_registry.get()), m_eventManager(eventManager), m_playerManager(scoreManager),
-      m_arrowSystem(m_registry.get(), m_playerManager.get()), m_uiSystem(m_registry.get(),m_playerManager.get())
+      m_camera(std::make_unique<Camera>(FVector3(0.0f, 10.0f, 8.0f), FVector3(0.0f, 1.0f, 0.0f), Quaternion(), 90.0f)),
+      m_graphicsManager(graphicsManager), m_renderSystem(std::make_shared<RenderSystem>(m_registry.get(), m_graphicsManager.get(), m_camera.get())),
+      m_collisionSystem(std::make_shared<CollisionSystem>(m_registry.get(), eventManager.get())), m_physicsSystem(std::make_shared<PhysicsSystem>(m_registry.get())), 
+      m_particleSystem(std::make_shared<ParticleSystem>(m_registry.get(),m_eventManager.get())), m_cameraSystem(std::make_shared<CameraSystem>(m_registry.get(), scoreManager.get(), m_camera.get())), 
+      m_entityFactory(std::make_shared<EntityFactory>(m_registry.get())), m_eventManager(eventManager), m_playerManager(scoreManager),
+      m_arrowSystem(std::make_shared<ArrowSystem>(m_registry.get(), scoreManager.get())), m_uiSystem(std::make_shared<UISystem>(m_registry.get(), scoreManager.get()))
 {
 }
 
 void Scene::Init()
 {
     // m_graphicsManager->LoadResources();
-    m_renderSystem.Init();
-    m_collisionSystem.Init();
-    m_physicsSystem.Init();
-    m_particleSystem.EmitParticles(FVector2(0.50f, 0.5f), 10);
+    m_renderSystem->Init();
+    m_collisionSystem->Init();
+    m_physicsSystem->Init();
+    m_particleSystem->EmitParticles(FVector2(0.50f, 0.5f), 10);
 }
 
 void Scene::LateInit()
@@ -34,13 +35,13 @@ void Scene::LateInit()
 
 void Scene::Update(const float dt)
 {
-    m_physicsSystem.Update(dt);
-    m_collisionSystem.Update(dt);
-    m_particleSystem.Update(dt);
-    m_cameraSystem.Update(dt);
-    m_arrowSystem.Update(dt);
-    m_uiSystem.Update(dt);
-    m_renderSystem.Update();
+    m_physicsSystem->Update(dt);
+    m_collisionSystem->Update(dt);
+    m_particleSystem->Update(dt);
+    m_cameraSystem->Update(dt);
+    m_arrowSystem->Update(dt);
+    m_uiSystem->Update(dt);
+    m_renderSystem->Update();
 }
 
 void Scene::LateUpdate(const float dt)
@@ -48,12 +49,12 @@ void Scene::LateUpdate(const float dt)
 }
 void Scene::Render()
 {
-    m_renderSystem.Render();
+    m_renderSystem->Render();
 }
 void Scene::LateRender()
 {
-    m_renderSystem.LateRender();
-    m_particleSystem.Render();
+    m_renderSystem->LateRender();
+    m_particleSystem->Render();
 }
 
 void Scene::Shutdown()

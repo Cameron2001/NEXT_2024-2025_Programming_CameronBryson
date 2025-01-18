@@ -70,7 +70,6 @@
     <ClCompile Include="Game\Math\Octree.cpp" />
     <ClCompile Include="Game\Math\Quadtree.cpp" />
     <ClCompile Include="Game\Systems\ParticleSystem.cpp" />
-    <ClCompile Include="Game\Core\Events.cpp" />
     <ClCompile Include="Game\Core\Logger.cpp" />
     <ClCompile Include="Game\Core\Semaphore.cpp" />
     <ClCompile Include="Game\Core\SemaphoreGuard.cpp" />
@@ -79,7 +78,6 @@
     <ClCompile Include="Game\Core\EntityFactory.cpp" />
     <ClCompile Include="Game\Scenes\MainMenuScene.cpp" />
     <ClCompile Include="Game\Systems\CameraSystem.cpp" />
-    <ClCompile Include="Game\Managers\EventManager.cpp" />
     <ClCompile Include="Game\Managers\PlayerManager.cpp" />
     <ClCompile Include="Game\Systems\UISystem.cpp" />
     <ClCompile Include="Game\Systems\ArrowSystem.cpp" />
@@ -190,7 +188,6 @@
     <ClInclude Include="Game\Math\Quadtree.h" />
     <ClInclude Include="Game\Math\BoundingBox.h" />
     <ClInclude Include="Game\Systems\ParticleSystem.h" />
-    <ClInclude Include="Game\Core\Events.h" />
     <ClInclude Include="Game\Core\TestResult.h" />
     <ClInclude Include="Game\Math\OctreeTests.h" />
     <ClInclude Include="Game\Core\Tests.h" />

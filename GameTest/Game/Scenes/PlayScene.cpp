@@ -1,42 +1,47 @@
 #include "stdafx.h"
 #include "PlayScene.h"
-#include "Game/Core/Events.h"
 #include "App/app.h"
 #include <Game/Core/Event.h>
 
-// Threadpool m_threadpool(4);
-
 PlayScene::PlayScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
                      std::shared_ptr<PlayerManager> scoreManager)
-    : Scene(graphicsManager, eventManager,scoreManager), m_playerSystem(m_registry.get())
+    : Scene(graphicsManager, eventManager, scoreManager), m_playerSystem(std::make_shared<PlayerSystem>(m_registry.get(), eventManager.get(),m_playerManager.get()))
 {
 }
 
 void PlayScene::Init()
 {
     Scene::Init();
-    m_playerSystem.Init();
+    m_playerSystem->Init();
     auto self = shared_from_this();
-    TestEvent.AddListener(self, &PlayScene::Test);
-    TestEvent2.AddListener(self, &PlayScene::Test);
-    auto player1 = m_entityFactory.CreateGolfBallOne(FVector3(5.0f, 3.5f, -40.0f));
-    auto player2 = m_entityFactory.CreateGolfBallTwo(FVector3(-5.0f, 3.5f, -40.0f));
-    m_entityFactory.CreateArrow(player1);
-    m_entityFactory.CreateArrow(player2);
+    m_eventManager->AddListener<int>("TestEvent", self, &PlayScene::Test);
+    m_eventManager->Notify("TestEvent",5);
+    m_eventManager->AddListener<unsigned int, unsigned int>("CollisionEvent", self, &PlayScene::CollisionEvent);
+    m_eventManager->AddListener<unsigned int, unsigned int>("CollisionEvent", m_playerSystem, &PlayerSystem::OnCollision);
+    m_eventManager->AddListener<FVector2, int>("EmitParticles", m_particleSystem, &ParticleSystem::EmitParticles);
+
+    //m_eventManager->Notify("CollisionEvent", 1, 2);
+    //m_eventManager->AddListener("CollisionEvent", self, &PlayScene::CollisionEvent);
+    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(5.0f, 4.5f, -30.0f));
+    auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, -40.0f));
+    auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, -40.0f), FVector3(1.0f, 1.0f, 1.0f));
+    m_entityFactory->CreateArrow(player1);
+    m_entityFactory->CreateArrow(player2);
     m_playerManager->SetPlayer1(player1);
     m_playerManager->SetPlayer2(player2);
-    m_entityFactory.CreateFlag(FVector3(1.5f, 2.5f, -40.0f));
+    m_playerManager->SetHole(hole);
+    m_entityFactory->CreateFlag(FVector3(1.5f, 2.5f, -40.0f));
     auto player1ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(player1ScoreText, "Player1 Score:", FVector2(20.0f, 15.9f));
 
     auto player2ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(player2ScoreText, "Player2 Score:", FVector2(20.0f, 60.9f));
 
-    m_uiSystem.SetScoreTextEntities(player1ScoreText, player2ScoreText);
+    m_uiSystem->SetScoreTextEntities(player1ScoreText, player2ScoreText);
 
     auto powerScaleText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
-    m_arrowSystem.SetScaleTextEntity(powerScaleText);
+    m_arrowSystem->SetScaleTextEntity(powerScaleText);
     // auto cube = m_registry->CreateEntity();
     // m_registry->AddComponent<TransformComponent>(cube, FVector3(-1.5f, -0.8f, -20.0f), FVector3(0.0f, 0.0f, 0.0f),
     //                                              FVector3(1.0f, 1.0f, 1.0f));
@@ -50,7 +55,35 @@ void PlayScene::Init()
     // m_entityFactory.CreateDynamicBox(FVector3(-3.5f, 3.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f));
 
     // m_entityFactory.CreateDynamicSphere(FVector3(1.5f, 0.0f, -20.0f), 1.0f);
-    m_entityFactory.CreateGrassBox(FVector3(0.0f, 0.0f, -50.0f), FVector3(1.0f, 1.0f, 1.0f));
+    // Parameters for the grass grid
+    // Parameters for the grass grid
+    const int gridRows = 3;      // Number of rows
+    const int gridColumns = 5;   // Number of columns
+    const float spacing = 6.0f; // Distance between blocks
+
+    // Starting position for the grid
+    FVector3 startPosition(-20.0f, 0.0f, -40.0f);
+
+    // Define two colors for alternating
+    FVector3 firstColor(0.0f, 0.7f, 0.0f);
+    FVector3 secondColor(0.7f, 0.7f, 0.7f);
+
+    for (int row = 0; row < gridRows; ++row)
+    {
+        for (int col = 0; col < gridColumns; ++col)
+        {
+            FVector3 position = startPosition;
+            position.x += col * spacing;
+            position.z += row * spacing;
+
+            // Determine the color based on row and column indices
+            FVector3 currentColor = (row + col) % 2 == 0 ? firstColor : secondColor;
+
+            m_entityFactory->CreateGrassBox(position, FVector3(3.0f, 3.0f, 3.0f), currentColor);
+        }
+    }
+
+
 
     /*
 
@@ -182,7 +215,7 @@ void PlayScene::Update(const float dt)
 {
     Scene::Update(dt);
 
-    m_playerSystem.Update(dt);
+    m_playerSystem->Update(dt);
 }
 
 void PlayScene::LateUpdate(const float dt)
@@ -213,4 +246,9 @@ void PlayScene::LateShutdown()
 void PlayScene::Test(int value)
 {
     printf("Value: %d\n", value);
+}
+
+void PlayScene::CollisionEvent(unsigned int ID1, unsigned int ID2)
+{
+    printf("Collision between %d and %d\n", ID1, ID2);
 }

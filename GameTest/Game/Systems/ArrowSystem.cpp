@@ -14,7 +14,6 @@ void ArrowSystem::SetScaleTextEntity(Entity scaleTextEntity)
     m_scaleTextEntity = scaleTextEntity;
 }
 
-
 void ArrowSystem::Update(float dt)
 {
     bool I = App::IsKeyPressed('I'); // Pitch Up
@@ -28,18 +27,60 @@ void ArrowSystem::Update(float dt)
     constexpr float rotationSpeed = 90.0f;
     constexpr float offsetDistance = 5.0f;
     constexpr float maxForceScale = 500000.0f;
+    constexpr float velocityThreshold = 0.1f; // Threshold to consider the ball as stopped
 
-    // Determine the current player
     bool isPlayer1Turn = m_playerManager->IsPlayer1Turn();
     Entity currentPlayer = isPlayer1Turn ? m_playerManager->GetPlayer1() : m_playerManager->GetPlayer2();
+
+    if (!m_registry->HasComponent<RigidBodyComponent>(currentPlayer))
+    {
+        return;
+    }
+
+    RigidBodyComponent &ballRigidbody = m_registry->GetComponent<RigidBodyComponent>(currentPlayer);
+    float ballSpeed = ballRigidbody.linearVelocity.Length();
+
+    if (shotFired)
+    {
+        if (ballSpeed < velocityThreshold)
+        {
+            // Ball has stopped moving
+            shotFired = false;          
+            m_playerManager->SwapTurn(); 
+        }
+        m_arrowView.ForEach(
+            [this](Entity entity, ArrowComponent &arrow, ModelComponent &model, TransformComponent &transform) {
+                model.layer = -1;
+            });
+        return; 
+    }
+
+    if (ballSpeed < velocityThreshold)
+    {
+        m_arrowView.ForEach(
+            [this](Entity entity, ArrowComponent &arrow, ModelComponent &model, TransformComponent &transform) {
+                model.layer = 1;
+            });
+    }
+    else
+    {
+        m_arrowView.ForEach(
+            [this](Entity entity, ArrowComponent &arrow, ModelComponent &model, TransformComponent &transform) {
+                model.layer = -1;
+            });
+    }
 
     m_arrowView.ForEach(
         [this, dt, rotationSpeed, I, K, J, L, SPACE, offsetDistance, maxForceScale,
          currentPlayer](Entity entity, ArrowComponent &arrow, ModelComponent &model, TransformComponent &transform) {
-            // Check if the arrow belongs to the current player
             if (arrow.ball != currentPlayer)
             {
-                // Hide the arrow
+                model.layer = -1;
+                return;
+            }
+
+            if (shotFired)
+            {
                 model.layer = -1;
                 return;
             }
@@ -76,9 +117,11 @@ void ArrowSystem::Update(float dt)
 
             transform.Position = playerTransform.Position + relativeOffset;
 
+            // Modify the direction to point away from the rotation center
             FVector3 direction = relativeOffset.Normalize();
             transform.Rotation =
-                Quaternion::Slerp(transform.Rotation, Quaternion::LookAt(direction, FVector3{0, 1, 0}), 0.1f);
+                Quaternion::Slerp(transform.Rotation, Quaternion::LookAtPlusZ(direction, FVector3{0, 1, 0}), 0.1f);
+
 
             FVector3 arrowDirection = direction;
 
@@ -87,8 +130,10 @@ void ArrowSystem::Update(float dt)
             {
                 rigidbody.force += arrowDirection * 2.0f * forceScale;
                 App::PlaySoundW("assets/GolfHit.wav");
-                m_playerManager->IncrementCurrentPlayerScore();
-                m_playerManager->SwapTurn();
+                shotFired = true; // Indicate that a shot has been fired
+                // Remove the following lines to prevent immediate turn swapping
+                // m_playerManager->IncrementCurrentPlayerScore();
+                // m_playerManager->SwapTurn();
             }
         });
 

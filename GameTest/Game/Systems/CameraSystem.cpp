@@ -15,28 +15,30 @@ void CameraSystem::Update(float dt)
     bool ARROW_UP = App::IsKeyPressed(VK_UP);
     bool ARROW_DOWN = App::IsKeyPressed(VK_DOWN);
 
-    constexpr float rotationSpeed = 1.0f;
+    constexpr float rotationSpeed = 45.0f; // degrees per second
+    float moveSpeed = 5.0f;
 
     if (ARROW_LEFT)
     {
-        Quaternion delta = Quaternion::Slerp(Quaternion(), Quaternion({0.0f, -rotationSpeed, 0.0f}), dt);
-        m_camera->Rotate(delta);
+        // Rotate left by increasing yaw
+        m_camera->AddYaw(rotationSpeed * dt);
     }
     if (ARROW_RIGHT)
     {
-        Quaternion delta = Quaternion::Slerp(Quaternion(), Quaternion({0.0f, rotationSpeed, 0.0f}), dt);
-        m_camera->Rotate(delta);
+        // Rotate right by decreasing yaw
+        m_camera->AddYaw(-rotationSpeed * dt);
     }
     if (ARROW_UP)
     {
-        Quaternion delta = Quaternion::Slerp(Quaternion(), Quaternion({-rotationSpeed, 0.0f, 0.0f}), dt);
-        m_camera->Rotate(delta);
+        // Look up by increasing pitch
+        m_camera->AddPitch(rotationSpeed * dt);
     }
     if (ARROW_DOWN)
     {
-        Quaternion delta = Quaternion::Slerp(Quaternion(), Quaternion({rotationSpeed, 0.0f, 0.0f}), dt);
-        m_camera->Rotate(delta);
+        // Look down by decreasing pitch
+        m_camera->AddPitch(-rotationSpeed * dt);
     }
+
 
     m_view.Update();
 
@@ -49,7 +51,7 @@ void CameraSystem::Update(float dt)
             FVector3 targetPosition = transform.Position + cameraFollow.offset;
             FVector3 smoothedPosition =
                 MathUtil::Lerp(m_camera->GetPosition(), targetPosition, cameraFollow.smoothSpeed * dt);
-            m_camera->SetPosition(smoothedPosition);
+            //m_camera->LookAt(smoothedPosition);
         }
     });
 }

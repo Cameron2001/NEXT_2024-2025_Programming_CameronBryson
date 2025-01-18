@@ -19,7 +19,7 @@ class ArrowSystem
     Registry *m_registry;
     PlayerManager *m_playerManager;
     Entity m_scaleTextEntity;
-
+    bool shotFired = false;
 
     bool previousSpace = false;
     View<ArrowComponent, ModelComponent, TransformComponent> m_arrowView;

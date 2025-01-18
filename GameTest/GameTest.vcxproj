@@ -190,7 +190,6 @@
     <ClInclude Include="Game\Systems\CameraSystem.h" />
     <ClInclude Include="Game\Core\Collision.h" />
     <ClInclude Include="Game\Core\Entity.h" />
-    <ClInclude Include="Game\Core\Events.h" />
     <ClInclude Include="Game\Core\TestResult.h" />
     <ClInclude Include="Game\Core\Tests.h" />
     <ClInclude Include="Game\Graphics\Edge.h" />
@@ -257,7 +256,6 @@
     <ClCompile Include="App\SimpleSprite.cpp" />
     <ClCompile Include="Game\Systems\ArrowSystem.cpp" />
     <ClCompile Include="Game\Systems\CameraSystem.cpp" />
-    <ClCompile Include="Game\Core\Events.cpp" />
     <ClCompile Include="Game\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Game\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Game\Systems\RenderSystem.cpp" />
@@ -267,7 +265,6 @@
     <ClCompile Include="Game\Math\Vector3.cpp" />
     <ClCompile Include="Game\Math\Vector4.cpp" />
     <ClCompile Include="Game\Core\EntityFactory.cpp" />
-    <ClCompile Include="Game\Managers\EventManager.cpp" />
     <ClCompile Include="GameTest.cpp" />
     <ClCompile Include="Game\Managers\GraphicsManager.cpp" />
     <ClCompile Include="Game\Systems\PlayerSystem.cpp" />
