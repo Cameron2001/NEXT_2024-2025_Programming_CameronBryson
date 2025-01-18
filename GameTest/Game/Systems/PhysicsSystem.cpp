@@ -71,7 +71,7 @@ void PhysicsSystem::Update(const float dt)
 
         // Update transform
         transform.Position += rigidBody.linearVelocity * dt;
-        transform.Rotation += rigidBody.angularVelocity * dt;
+        transform.Rotation += rigidBody.angularVelocity * dt * -1.0f;
 
         // Reset accelerations
         rigidBody.force = FVector3{0.0f, 0.0f, 0.0f};

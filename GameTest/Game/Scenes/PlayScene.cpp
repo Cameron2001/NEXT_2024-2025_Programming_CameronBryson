@@ -19,8 +19,8 @@ void PlayScene::Init()
     auto self = shared_from_this();
     TestEvent.AddListener(self, &PlayScene::Test);
     TestEvent2.AddListener(self, &PlayScene::Test);
-    auto player1 = m_entityFactory.CreateGolfBallOne(FVector3(5.0f, 2.5f, -40.0f));
-    auto player2 = m_entityFactory.CreateGolfBallTwo(FVector3(-5.0f, 2.5f, -40.0f));
+    auto player1 = m_entityFactory.CreateGolfBallOne(FVector3(5.0f, 3.5f, -40.0f));
+    auto player2 = m_entityFactory.CreateGolfBallTwo(FVector3(-5.0f, 3.5f, -40.0f));
     m_entityFactory.CreateArrow(player1);
     m_entityFactory.CreateArrow(player2);
     m_playerManager->SetPlayer1(player1);

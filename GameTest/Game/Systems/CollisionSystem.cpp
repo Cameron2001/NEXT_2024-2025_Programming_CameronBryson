@@ -445,8 +445,10 @@ void CollisionSystem::ResolveCollisions()
 
         // **Friction Impulse Calculation**
         // Recalculate relative velocity at contact point
+        // Recalculate relative velocity at contact point after normal impulse
         relativeVelocity = (velocity2 + angularVelocity2.Cross(r2)) - (velocity1 + angularVelocity1.Cross(r1));
 
+        // Compute tangent vector
         FVector3 tangent = relativeVelocity - collision.normal * relativeVelocity.Dot(collision.normal);
         if (tangent.LengthSquared() > 0.0001f)
             tangent = tangent.Normalize();
@@ -462,8 +464,8 @@ void CollisionSystem::ResolveCollisions()
 
         float frictionDenominator = inverseMass1 + inverseMass2 + frictionAngularComponent1 + frictionAngularComponent2;
 
-        // Calculate friction magnitude
-        float frictionMagnitude = relativeVelocity.Dot(tangent);
+        // Corrected friction magnitude calculation with negative sign
+        float frictionMagnitude = -relativeVelocity.Dot(tangent);
         frictionMagnitude /= frictionDenominator;
 
         // Coulomb's law for friction
@@ -483,17 +485,18 @@ void CollisionSystem::ResolveCollisions()
 
         FVector3 frictionImpulse = tangent * frictionMagnitude;
 
-        // Apply friction impulse
+        // Apply friction impulse correctly
         if (rb1)
         {
             rb1->linearVelocity -= frictionImpulse * inverseMass1;
-            rb1->angularVelocity += worldInverseInertiaTensor1 * r1.Cross(frictionImpulse * -1.0f);
+            rb1->angularVelocity -= worldInverseInertiaTensor1 * r1.Cross(frictionImpulse);
         }
         if (rb2)
         {
             rb2->linearVelocity += frictionImpulse * inverseMass2;
             rb2->angularVelocity += worldInverseInertiaTensor2 * r2.Cross(frictionImpulse);
         }
+
 
         // **Positional Correction to Prevent Sinking**
         float totalInverseMass = inverseMass1 + inverseMass2;

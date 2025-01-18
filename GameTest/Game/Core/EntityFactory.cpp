@@ -137,7 +137,7 @@ Entity EntityFactory::CreateGrassBox(const FVector3 &position, const FVector3 &e
                                                  FVector3(30.0f, 1.0f, 30.0f)               // Scale
     );
     m_registry->AddComponent<ModelComponent>(box, "CubeOBJ",FVector3(0,1,0), 0);
-    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false);
+    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false,false,0.2,1.0,1.0);
     m_registry->AddComponent<BoxBoundsComponent>(box, extents);
     return box;
 }
