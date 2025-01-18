@@ -87,6 +87,7 @@ void ArrowSystem::Update(float dt)
             {
                 rigidbody.force += arrowDirection * 2.0f * forceScale;
                 App::PlaySoundW("assets/GolfHit.wav");
+                m_playerManager->IncrementCurrentPlayerScore();
                 m_playerManager->SwapTurn();
             }
         });

@@ -17,17 +17,21 @@ class PlayerManager
     void IncrementPlayer2Score();
     void IncrementPlayer1TotalScore();
     void IncrementPlayer2TotalScore();
+    void IncrementCurrentPlayerScore();
+    void IncrementCurrentPlayerTotalScore();
     void ResetScores();
     void ResetTotalScores();
     void SwapTurn();
     bool IsPlayer1Turn() const;
+    bool IsPlayer1Complete() const;
+    bool IsPlayer2Complete() const;
   private:
     Entity m_player1;
     Entity m_player2;
-    int m_player1Score;
-    int m_player2Score;
-    int m_player1TotalScore;
-    int m_player2TotalScore;
+    int m_player1Score = 0;
+    int m_player2Score = 0;
+    int m_player1TotalScore = 0;
+    int m_player2TotalScore = 0;
     bool m_player1Turn = true;
     bool m_player1Complete = false;
     bool m_player2Complete = false;

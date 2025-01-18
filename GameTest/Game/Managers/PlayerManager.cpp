@@ -65,6 +65,30 @@ void PlayerManager::IncrementPlayer2TotalScore()
     m_player2TotalScore += m_player2Score;
 }
 
+void PlayerManager::IncrementCurrentPlayerScore()
+{
+    if (m_player1Turn)
+    {
+        IncrementPlayer1Score();
+    }
+    else
+    {
+        IncrementPlayer2Score();
+    }
+}
+
+void PlayerManager::IncrementCurrentPlayerTotalScore()
+{
+    if (m_player1Turn)
+    {
+        IncrementPlayer1TotalScore();
+    }
+    else
+    {
+        IncrementPlayer2TotalScore();
+    }
+}
+
 void PlayerManager::ResetScores()
 {
     m_player1Score = 0;
@@ -85,4 +109,14 @@ void PlayerManager::SwapTurn()
 bool PlayerManager::IsPlayer1Turn() const
 {
     return m_player1Turn;
+}
+
+bool PlayerManager::IsPlayer1Complete() const
+{
+    return m_player1Complete;
+}
+
+bool PlayerManager::IsPlayer2Complete() const
+{
+    return m_player2Complete;
 }
