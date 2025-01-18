@@ -71,6 +71,14 @@ void PlayerSystem::Update(float dt)
             rigidbody.linearVelocity = FVector3{0.0f, 0.0f, 0.0f};
             transform.Position = player.spawnPoint;
         }
+        if (transform.Position.y <= -5.0f)
+        {
+            rigidbody.torque = FVector3{0.0f, 0.0f, 0.0f};
+            rigidbody.angularVelocity = FVector3{0.0f, 0.0f, 0.0f};
+            rigidbody.force = FVector3{0.0f, 0.0f, 0.0f};
+            rigidbody.linearVelocity = FVector3{0.0f, 0.0f, 0.0f};
+            transform.Position = player.spawnPoint;
+        }
         
     });
 }
