@@ -1,8 +1,7 @@
 #pragma once
-#include "Vector3.h"
-#include "Matrix4.h"
 #include "Matrix3.h"
-#include <cmath>
+#include "Matrix4.h"
+#include "Vector3.h"
 
 class Quaternion
 {
@@ -11,21 +10,25 @@ class Quaternion
     float x;
     float y;
     float z;
-    // Constructors
     Quaternion();
-    explicit Quaternion(const FVector3 &eulerAnglesXYZ); // Euler angles in radians
     Quaternion(float x, float y, float z);
     Quaternion(float w, float x, float y, float z);
     Quaternion(const Quaternion &copy);
 
     ~Quaternion() = default;
 
-    static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
     static Quaternion LookAtPlusZ(const FVector3 &direction, const FVector3 &up = {0.0f, 1.0f, 0.0f});
     static Quaternion LookAtNegativeZ(const FVector3 &direction, const FVector3 &up = {0.0f, 1.0f, 0.0f});
-    static Quaternion FromAxisAngle(const FVector3 &axis, float angle);
+    static Quaternion FromAxisAngle(const FVector3 &axis, float angleRadians);
+    static Quaternion FromEulerAnglesXYZ(const FVector3 &eulerAngles);
+    static Quaternion FromMatrix3(const Matrix3 &matrix);
 
+
+    float GetPitch() const;
+    float GetYaw() const;
+    float GetRoll() const;
     FVector3 GetEulerAnglesXYZ() const;
+
     Matrix3 GetRotationMatrix3() const;
     Matrix4 GetRotationMatrix4() const;
 
@@ -35,26 +38,13 @@ class Quaternion
     Quaternion Normalize() const;
     Quaternion Conjugate() const;
     Quaternion Inverse() const;
-    void ToAxisAngle(FVector3 &axis, float &angle) const;
-    void ApplyEulerAnglesXYZ(const FVector3 &eulerAnglesXYZ);
 
+    FVector3 RotateVector3(const FVector3 &vector) const;
 
-    Quaternion operator+(const Quaternion &obj) const;
-    Quaternion &operator+=(const Quaternion &obj);
-
-    Quaternion operator-(const Quaternion &obj) const;
-    Quaternion &operator-=(const Quaternion &obj);
-
-    Quaternion operator*(float scalar) const;
-    Quaternion &operator*=(float scalar);
-
-    Quaternion operator/(float scalar) const;
-    Quaternion &operator/=(float scalar);
-
-    Quaternion operator*(const Quaternion &obj) const;
-    Quaternion &operator*=(const Quaternion &obj);
-
-    FVector3 operator*(const FVector3 &v) const;
+    Quaternion operator*(const Quaternion &other) const;
+    Quaternion operator+(const Quaternion &other) const;
+    Quaternion operator*(const float scalar) const;
+    Quaternion operator/(const float scalar) const;
 
     bool operator==(const Quaternion &other) const;
     bool operator!=(const Quaternion &other) const;

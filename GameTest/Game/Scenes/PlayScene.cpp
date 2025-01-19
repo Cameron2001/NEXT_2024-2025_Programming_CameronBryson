@@ -31,6 +31,7 @@ void PlayScene::Init()
 void PlayScene::LateInit()
 {
     Scene::LateInit();
+    m_collisionSystem->LateInit();
 }
 
 void PlayScene::Update(const float dt)

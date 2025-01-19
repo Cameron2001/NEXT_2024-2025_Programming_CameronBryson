@@ -19,7 +19,7 @@ struct TransformComponent
     }
 
     TransformComponent(const FVector3 &position, const FVector3 &rotation, const FVector3 &scale)
-        : Rotation(Quaternion(rotation)), Position(position), Scale(scale)
+        : Rotation(Quaternion::FromEulerAnglesXYZ(rotation)), Position(position), Scale(scale)
     {
     }
 

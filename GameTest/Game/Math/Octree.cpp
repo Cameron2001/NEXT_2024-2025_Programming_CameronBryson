@@ -2,9 +2,8 @@
 #include "Octree.h"
 #include <algorithm>
 #include <set>
-
-ColliderEntry::ColliderEntry(const BoundingSphere3D &bounds_, unsigned int entityID)
-    : EntityID(entityID), sphereBounds(bounds_)
+ColliderEntry::ColliderEntry(const BoundingBox3D &bounds_, unsigned int entityID, bool isDynamic)
+    : EntityID(entityID), boxBounds(bounds_), isDynamic(isDynamic)
 {
 }
 
@@ -17,42 +16,31 @@ Octree::Octree(const BoundingBox3D &bounds, int capacity, int maxDepth, int leve
     }
 }
 
-void Octree::Insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID)
+void Octree::Insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID, bool isDynamic)
 {
-    // Calculate scaled radius considering the maximum scale component
-    float scaledRadius = sphere.radius * std::max({transform.Scale.x, transform.Scale.y, transform.Scale.z});
+    FVector3 minPoint = transform.Position - FVector3(sphere.radius, sphere.radius, sphere.radius);
+    FVector3 maxPoint = transform.Position + FVector3(sphere.radius, sphere.radius, sphere.radius);
+    BoundingBox3D aabb(minPoint, maxPoint);
 
-    BoundingSphere3D colliderSphere(transform.Position, scaledRadius);
-
-    ColliderEntry colliderEntry(colliderSphere, entityID);
-
+    ColliderEntry colliderEntry(aabb, entityID, isDynamic);
     Insert(colliderEntry);
 }
 
-void Octree::Insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID)
+void Octree::Insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID,
+                    bool isDynamic)
 {
-    // Calculate scaled half-extents
-    FVector3 scaledExtents(box.extents.x * transform.Scale.x, box.extents.y * transform.Scale.y,
-                           box.extents.z * transform.Scale.z);
-
-    float radius = scaledExtents.Length();
-
-    BoundingSphere3D colliderSphere(transform.Position, radius);
-
-    ColliderEntry colliderEntry(colliderSphere, entityID);
-
+    BoundingBox3D aabb = BoundingBox3D::CreateTransformedBox(box,transform);
+    ColliderEntry colliderEntry(aabb, entityID, isDynamic);
     Insert(colliderEntry);
 }
 
 void Octree::Insert(const ColliderEntry &entry)
 {
-    // Check if the sphere intersects with this node's bounds (AABB)
-    if (!m_bounds.IntersectsSphere(entry.sphereBounds))
+    if (!m_bounds.Intersects(entry.boxBounds))
     {
         return;
     }
 
-    // Subdivide if necessary
     if (m_children[0] == nullptr && m_level < m_maxDepth)
     {
         if (m_colliders.size() >= static_cast<size_t>(m_capacity))
@@ -66,7 +54,7 @@ void Octree::Insert(const ColliderEntry &entry)
     {
         for (auto &child : m_children)
         {
-            if (child->m_bounds.IntersectsSphere(entry.sphereBounds))
+            if (child->m_bounds.Intersects(entry.boxBounds))
             {
                 child->Insert(entry);
                 insertedIntoChild = true;
@@ -75,7 +63,6 @@ void Octree::Insert(const ColliderEntry &entry)
         }
     }
 
-    // If not inserted into any child, store in this node
     if (!insertedIntoChild)
     {
         m_colliders.push_back(entry);
@@ -118,12 +105,66 @@ void Octree::Subdivide()
     }
 }
 
+void Octree::Merge()
+{
+    bool canMerge = true;
+    size_t totalColliders = m_colliders.size();
+
+    for (const auto &child : m_children)
+    {
+        if (child)
+        {
+            if (child->m_children[0] != nullptr)
+            {
+                canMerge = false;
+                break;
+            }
+            totalColliders += child->m_colliders.size();
+        }
+    }
+
+    const size_t mergeThreshold = m_capacity;
+
+    if (canMerge && totalColliders <= mergeThreshold)
+    {
+        for (auto &child : m_children)
+        {
+            if (child)
+            {
+                m_colliders.insert(m_colliders.end(), child->m_colliders.begin(), child->m_colliders.end());
+                child.reset();
+            }
+        }
+    }
+}
+
 void Octree::GetPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
 {
     std::set<std::pair<unsigned int, unsigned int>> collisionsSet;
     CollectPotentialCollisions(collisionsSet);
     potentialCollisions.assign(collisionsSet.begin(), collisionsSet.end());
 }
+
+// In Octree.cpp
+
+void Octree::ClearDynamicColliders()
+{
+    // Remove dynamic colliders from the current node
+    m_colliders.erase(std::remove_if(m_colliders.begin(), m_colliders.end(),
+                                     [](const ColliderEntry &entry) { return entry.isDynamic; }),
+                      m_colliders.end());
+
+    // Recursively clear dynamic colliders from child nodes
+    for (auto &child : m_children)
+    {
+        if (child)
+        {
+            child->ClearDynamicColliders();
+        }
+    }
+    Merge();
+}
+
 
 void Octree::CollectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
 {
@@ -133,7 +174,7 @@ void Octree::CollectPotentialCollisions(std::set<std::pair<unsigned int, unsigne
         for (size_t j = i + 1; j < m_colliders.size(); ++j)
         {
             // Sphere-Sphere intersection
-            if (m_colliders[i].sphereBounds.Intersects(m_colliders[j].sphereBounds))
+            if (m_colliders[i].boxBounds.Intersects(m_colliders[j].boxBounds))
             {
                 potentialCollisions.emplace(std::minmax(m_colliders[i].EntityID, m_colliders[j].EntityID));
             }
@@ -162,7 +203,7 @@ void Octree::CollectCollisionsWithEntry(const ColliderEntry &entry,
     for (const auto &collider : m_colliders)
     {
         // Sphere-Sphere intersection
-        if (entry.sphereBounds.Intersects(collider.sphereBounds))
+        if (entry.boxBounds.Intersects(collider.boxBounds))
         {
             potentialCollisions.emplace(std::minmax(entry.EntityID, collider.EntityID));
         }

@@ -9,9 +9,11 @@
 struct ColliderEntry
 {
     unsigned int EntityID;
-    BoundingSphere3D sphereBounds;
+    BoundingBox3D boxBounds;
+    bool isDynamic = false;
 
-    ColliderEntry(const BoundingSphere3D &bounds_, unsigned int entityID);
+
+    ColliderEntry(const BoundingBox3D &bounds_, unsigned int entityID, bool isDynamic);
 };
 
 class Octree
@@ -19,15 +21,18 @@ class Octree
   public:
     Octree(const BoundingBox3D &bounds, int capacity = 4, int maxDepth = 10, int level = 0);
 
-    void Insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID);
-    void Insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID);
+    void Insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID, bool isDynamic);
+    void Insert(const BoxBoundsComponent &box, const TransformComponent &transform, unsigned int entityID, bool isDynamic);
 
     void Insert(const ColliderEntry &entry);
 
     void GetPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
 
+    void ClearDynamicColliders();
+
   private:
     void Subdivide();
+    void Merge();
 
     void CollectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
 

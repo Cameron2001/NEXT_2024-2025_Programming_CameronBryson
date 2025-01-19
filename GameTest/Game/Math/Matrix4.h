@@ -18,6 +18,7 @@ public:
     void Set(int row, int column, float value);
     void SetZero();
     void SetIdentity();
+    float Get(int row, int column) const;
     static Matrix4 CreatePerspectiveMatrix(float fov, float aspectRatio, float zNear, float zFar);
     static Matrix4 CreateViewMatrix(const FVector3 &origin, const FVector3 &target, const FVector3 &up); //Look at
     static Matrix4 CreateTranslationMatrix(const FVector3 &translation);

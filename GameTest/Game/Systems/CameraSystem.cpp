@@ -16,27 +16,27 @@ void CameraSystem::Update(float dt)
     bool ARROW_DOWN = App::IsKeyPressed(VK_DOWN);
 
     constexpr float rotationSpeed = 45.0f; // degrees per second
-    float moveSpeed = 5.0f;
+    float moveSpeed = 50.0f;
 
     if (ARROW_LEFT)
     {
         // Rotate left by increasing yaw
-        m_camera->AddYaw(rotationSpeed * dt);
+        m_camera->SetPosition(m_camera->GetPosition() - m_camera->GetRight() * moveSpeed * dt);
     }
     if (ARROW_RIGHT)
     {
         // Rotate right by decreasing yaw
-        m_camera->AddYaw(-rotationSpeed * dt);
+        m_camera->SetPosition(m_camera->GetPosition() + m_camera->GetRight() * moveSpeed * dt);
     }
     if (ARROW_UP)
     {
         // Look up by increasing pitch
-        m_camera->AddPitch(rotationSpeed * dt);
+        m_camera->SetPosition(m_camera->GetPosition() + FVector3(0,1,0) * moveSpeed * dt);
     }
     if (ARROW_DOWN)
     {
         // Look down by decreasing pitch
-        m_camera->AddPitch(-rotationSpeed * dt);
+        m_camera->SetPosition(m_camera->GetPosition() - FVector3(0, 1, 0) * moveSpeed * dt);
     }
 
 
@@ -51,7 +51,8 @@ void CameraSystem::Update(float dt)
             FVector3 targetPosition = transform.Position + cameraFollow.offset;
             FVector3 smoothedPosition =
                 MathUtil::Lerp(m_camera->GetPosition(), targetPosition, cameraFollow.smoothSpeed * dt);
-            m_camera->SetPosition(smoothedPosition);
+            //m_camera->SetPosition(smoothedPosition);
+            //m_camera->LookAt(FVector3(transform.Position.x, transform.Position.y, transform.Position.z));
         }
     });
 }

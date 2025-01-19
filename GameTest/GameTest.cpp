@@ -48,7 +48,7 @@ void Init()
 void Update(float deltaTime)
 {
     deltaTime /= 1000.0f;
-    float clampedDeltaTime = min(deltaTime, MAX_DT);
+    float clampedDeltaTime = (std::min)(deltaTime, MAX_DT);
     sceneManager->GetCurrentScene()->Update(clampedDeltaTime);
     sceneManager->GetCurrentScene()->LateUpdate(clampedDeltaTime);
     // Calculate FPS

@@ -15,12 +15,14 @@ class CollisionSystem
     CollisionSystem(Registry *registry, EventManager *eventManager);
     ~CollisionSystem() = default;
     void Init();
+    void LateInit();
     void Update(float dt);
     void LateUpdate(float dt);
     void Shutdown();
 
   private:
     void BuildOctree();
+    void UpdateOctree();
     bool TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const FVector3 &scale1,
                          const Matrix4 &rotation1, const BoxBoundsComponent &box2, const FVector3 &scale2,
                          const Matrix4 &rotation2, const FVector3 &translation, float &minimalPenetration,
@@ -40,7 +42,9 @@ class CollisionSystem
     concurrency::combinable<std::vector<Collision>> m_threadCollisions;
     std::vector<Collision> m_collisions;
     View<TransformComponent, BoxBoundsComponent, ColliderComponent> m_boxView;
+    View<TransformComponent, BoxBoundsComponent, ColliderComponent, RigidBodyComponent> m_dyanmicBoxView;
     View<TransformComponent, SphereBoundsComponent, ColliderComponent> m_sphereView;
+    View<TransformComponent, SphereBoundsComponent, ColliderComponent, RigidBodyComponent> m_dynamicSphereView;
 };
 
 // Read

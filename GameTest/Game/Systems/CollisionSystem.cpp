@@ -5,33 +5,43 @@
 #include <Game/Core/Collision.h>
 #include <Game/Core/Components.h>
 #include <Game/Core/Entity.h>
+#include <Game/Managers/EventManager.h>
 #include <Game/Math/BoundingBox.h>
 #include <Game/Math/Matrix3.h>
 #include <Game/Math/Matrix4.h>
 #include <Game/Math/Octree.h>
 #include <Game/Math/Vector3.h>
 #include <Game/Storage/Registry.h>
+#include <Game/Storage/View.h>
 #include <limits>
 #include <memory>
 #include <ppl.h>
-#include <tuple>
 #include <utility>
 #include <vector>
 
 CollisionSystem::CollisionSystem(Registry *registry, EventManager *eventManager)
-    : m_registry(registry), m_eventManager(eventManager), m_boxView(registry), m_sphereView(registry)
+    : m_registry(registry), m_eventManager(eventManager), m_boxView(registry), m_sphereView(registry),
+      m_dyanmicBoxView(registry), m_dynamicSphereView(registry), m_potentialCollisions(), m_threadCollisions(),
+      m_collisions()
 {
 }
 
 void CollisionSystem::Init()
 {
+    
+}
+
+void CollisionSystem::LateInit()
+{
+    BuildOctree();
 }
 
 void CollisionSystem::Update(const float dt)
 {
-    BuildOctree();
+    UpdateOctree();
     DetectCollisions();
     ResolveCollisions(dt);
+
 }
 
 void CollisionSystem::LateUpdate(float dt)
@@ -52,11 +62,24 @@ void CollisionSystem::BuildOctree()
     m_boxView.Update();
     m_sphereView.Update();
     m_boxView.ForEach([this](Entity entity, TransformComponent &transform, BoxBoundsComponent &boxBounds,
-                             ColliderComponent &) { m_octree->Insert(boxBounds, transform, entity); });
+                             ColliderComponent &collider) { m_octree->Insert(boxBounds, transform, entity,collider.isDynamic); });
 
     // Insert sphere colliders into the octree
     m_sphereView.ForEach([this](Entity entity, TransformComponent &transform, SphereBoundsComponent &sphereBounds,
-                                ColliderComponent &) { m_octree->Insert(sphereBounds, transform, entity); });
+                                ColliderComponent &collider) { m_octree->Insert(sphereBounds, transform, entity,collider.isDynamic); });
+}
+
+void CollisionSystem::UpdateOctree()
+{
+    m_octree->ClearDynamicColliders();
+    m_dyanmicBoxView.Update();
+    m_dynamicSphereView.Update();
+    m_dyanmicBoxView.ForEach(
+        [this](Entity entity, TransformComponent &transform, BoxBoundsComponent &boxBounds,
+               ColliderComponent &collider, RigidBodyComponent&) { m_octree->Insert(boxBounds, transform, entity, collider.isDynamic); });
+    m_dynamicSphereView.ForEach(
+        [this](Entity entity, TransformComponent &transform, SphereBoundsComponent &sphereBounds,
+               ColliderComponent &collider, RigidBodyComponent &) { m_octree->Insert(sphereBounds, transform, entity, collider.isDynamic); });
 }
 
 bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const FVector3 &scale1,
@@ -107,7 +130,7 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
 
     const FVector3 translation = transform2.Position - transform1.Position;
 
-    float minimalPenetration = std::numeric_limits<float>::max();
+    float minimalPenetration = (std::numeric_limits<float>::max)();
     FVector3 collisionNormal;
 
     std::vector<FVector3> axes;
@@ -208,9 +231,9 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
     float deltaLocalZ = delta.Dot(boxForward);
 
     // Clamp the projected point to the extents of the OBB to find the closest point
-    float closestPointLocalX = std::max(-scaledBoxExtents.x, std::min(deltaLocalX, scaledBoxExtents.x));
-    float closestPointLocalY = std::max(-scaledBoxExtents.y, std::min(deltaLocalY, scaledBoxExtents.y));
-    float closestPointLocalZ = std::max(-scaledBoxExtents.z, std::min(deltaLocalZ, scaledBoxExtents.z));
+    float closestPointLocalX = (std::max)(-scaledBoxExtents.x, (std::min)(deltaLocalX, scaledBoxExtents.x));
+    float closestPointLocalY = (std::max)(-scaledBoxExtents.y, (std::min)(deltaLocalY, scaledBoxExtents.y));
+    float closestPointLocalZ = (std::max)(-scaledBoxExtents.z, (std::min)(deltaLocalZ, scaledBoxExtents.z));
 
     // Transform the closest point back to world space
     FVector3 closestPointWorld = boxTransform.Position + boxRight * closestPointLocalX + boxUp * closestPointLocalY +
@@ -423,7 +446,7 @@ void CollisionSystem::ResolveCollisions(float dt)
             combinedRestitution = 0.0f;
         }
 
-        combinedRestitution = std::max(0.0f, std::min(1.0f, combinedRestitution));
+        combinedRestitution = (std::max)(0.0f, (std::min)(1.0f, combinedRestitution));
 
         float invMass1 = rb1 ? rb1->inverseMass : 0.0f;
         float invMass2 = rb2 ? rb2->inverseMass : 0.0f;
@@ -527,7 +550,7 @@ void CollisionSystem::ResolveCollisions(float dt)
         if (totalInvMass > 0.0f)
         {
             float penetrationDepth = collision.penetration;
-            float penetrationToCorrect = std::max(penetrationDepth - slop, 0.0f);
+            float penetrationToCorrect = (std::max)(penetrationDepth - slop, 0.0f);
 
             FVector3 correction = collision.normal * (percent * penetrationToCorrect / totalInvMass);
 

@@ -12,6 +12,8 @@ class Matrix3
     Matrix3 SetZero();
     void SetIdentity();
 
+    float Get(int row, int column) const;
+
     FVector3 GetRight() const;
     FVector3 GetUp() const;
     FVector3 GetForward() const;

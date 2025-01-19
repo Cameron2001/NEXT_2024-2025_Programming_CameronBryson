@@ -118,13 +118,13 @@ void PlayerSystem::Update(float dt)
             FVector3 localUp = right.Cross(forward).Normalize();                    
 
             // Create rotation quaternions based on local axes
-            Quaternion deltaYawRotation(FVector3{0.0f, 1.0f, 0.0f} * deltaYawRadians); 
-            Quaternion deltaPitchRotation(right * deltaPitchRadians);                  
+            Quaternion deltaYawRotation = Quaternion::FromAxisAngle(FVector3(0.0f,1.0f,0.0f), deltaYawRadians);
+            Quaternion deltaPitchRotation = Quaternion::FromAxisAngle(right, deltaPitchRadians);                
 
             // Update relative offset
             FVector3 relativeOffset = transform.Position - playerTransform.Position;
-            relativeOffset = deltaYawRotation * relativeOffset;
-            relativeOffset = deltaPitchRotation * relativeOffset;
+            relativeOffset = deltaYawRotation.RotateVector3(relativeOffset);
+            relativeOffset = deltaPitchRotation.RotateVector3(relativeOffset);
             relativeOffset = relativeOffset.Normalize() * OFFSET_DISTANCE;
             transform.Position = playerTransform.Position + relativeOffset;
 

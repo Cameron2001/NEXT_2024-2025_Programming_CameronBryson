@@ -1,8 +1,11 @@
 #pragma once
+#include "BoundingSphere.h"
 #include "Game/Math/Vector2.h"
 #include "Game/Math/Vector3.h"
-#include "BoundingSphere.h"
+#include <Game/Core/Components.h>
+#include <vector>
 #include <algorithm>
+#include <cmath>
 
 class BoundingBox2D
 {
@@ -59,6 +62,47 @@ class BoundingBox3D
     BoundingBox3D(const FVector3 &minPoint, const FVector3 &maxPoint)
         : minX(minPoint.x), minY(minPoint.y), minZ(minPoint.z), maxX(maxPoint.x), maxY(maxPoint.y), maxZ(maxPoint.z)
     {
+    }
+    static BoundingBox3D CreateTransformedBox(const BoxBoundsComponent &box, const TransformComponent &transform)
+    {
+        // Define the 8 corners of the local box
+        std::vector<FVector3> localCorners = {FVector3(-box.extents.x, -box.extents.y, -box.extents.z),
+                                              FVector3(box.extents.x, -box.extents.y, -box.extents.z),
+                                              FVector3(-box.extents.x, box.extents.y, -box.extents.z),
+                                              FVector3(box.extents.x, box.extents.y, -box.extents.z),
+                                              FVector3(-box.extents.x, -box.extents.y, box.extents.z),
+                                              FVector3(box.extents.x, -box.extents.y, box.extents.z),
+                                              FVector3(-box.extents.x, box.extents.y, box.extents.z),
+                                              FVector3(box.extents.x, box.extents.y, box.extents.z)};
+
+        // Initialize minimum and maximum points with the first transformed corner
+        FVector3 firstTransformed = transform.Rotation.RotateVector3(FVector3(localCorners[0].x * transform.Scale.x,
+                                                                              localCorners[0].y * transform.Scale.y,
+                                                                              localCorners[0].z * transform.Scale.z)) +
+                                    transform.Position;
+
+        FVector3 minPoint = firstTransformed;
+        FVector3 maxPoint = firstTransformed;
+
+        // Iterate through all corners, apply scale, rotation, and translation
+        for (size_t i = 1; i < localCorners.size(); ++i)
+        {
+            FVector3 scaled = FVector3(localCorners[i].x * transform.Scale.x, localCorners[i].y * transform.Scale.y,
+                                       localCorners[i].z * transform.Scale.z);
+
+            FVector3 rotated = transform.Rotation.RotateVector3(scaled);
+            FVector3 worldPos = rotated + transform.Position;
+
+            minPoint.x = (std::min)(minPoint.x, worldPos.x);
+            minPoint.y = (std::min)(minPoint.y, worldPos.y);
+            minPoint.z = (std::min)(minPoint.z, worldPos.z);
+
+            maxPoint.x = (std::max)(maxPoint.x, worldPos.x);
+            maxPoint.y = (std::max)(maxPoint.y, worldPos.y);
+            maxPoint.z = (std::max)(maxPoint.z, worldPos.z);
+        }
+
+        return BoundingBox3D(minPoint, maxPoint);
     }
 
     bool Intersects(const BoundingBox3D &other) const

@@ -12,7 +12,7 @@ class Camera
     Camera &operator=(const Camera &other) = default;
     Camera &operator=(Camera &&other) noexcept = default;
 
-    Camera(const FVector3 &position, const FVector3 &worldUp, const Quaternion &orientation, float FOV);
+    Camera(const FVector3 &position);
     ~Camera() = default;
 
     void LookAt(const FVector3 &target);
@@ -21,34 +21,32 @@ class Camera
     void AddPitch(float deltaPitch);
     void AddYaw(float deltaYaw);
     const FVector3 &GetPosition() const;
-    Quaternion GetOrientation() const;
     float GetFOV() const;
     const Matrix4 &GetViewMatrix() const;
     const Matrix4 &GetProjectionMatrix() const;
-    FVector3 m_target;
-    bool followTarget = false;
-    FVector3 m_forward;
-    FVector3 m_right;
-    void UpdateViewMatrix();
+    FVector3 GetForward() const;
+    FVector3 GetRight() const;
+   
 
   private:
-    void UpdateOrientation();
+    void UpdateViewMatrix();
     void UpdateProjectionMatrix();
-    void UpdateAxes();
 
 
     Matrix4 m_viewMatrix;
     Matrix4 m_projectionMatrix;
     FVector3 m_position;
-    FVector3 m_up;
-    FVector3 m_worldUp;
-    Quaternion m_orientation;
-    float m_FOV;
+    FVector3 m_forward = {0, 0, -1};
+    FVector3 m_right = {1, 0, 0};
+    FVector3 m_worldUp = {0, 1, 0};
+    FVector3 m_target;
+    float m_FOV = 90;
     float m_zNear;
     float m_zFar;
-    float m_pitch;    
-    float m_yaw;
+    float m_pitch = 0;    
+    float m_yaw = 0;
     float m_minPitch; 
     float m_maxPitch;
+    bool m_followTarget = false;
     
 };

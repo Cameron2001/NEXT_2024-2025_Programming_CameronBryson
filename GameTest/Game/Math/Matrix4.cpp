@@ -43,6 +43,15 @@ void Matrix4::SetIdentity()
     }
 }
 
+float Matrix4::Get(int row, int column) const
+{
+    if (row < 0 || row >= 4 || column < 0 || column >= 4)
+    {
+        return 0.0f; 
+    }
+    return m[column * 4 + row];
+}
+
 Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRatio, const float zNear, const float zFar)
 {
     Matrix4 perspectiveMatrix;
@@ -51,9 +60,9 @@ Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRati
 
     perspectiveMatrix.Set(0, 0, 1.0f / (aspectRatio * tanHalfFOV));
     perspectiveMatrix.Set(1, 1, 1.0f / tanHalfFOV);
-    perspectiveMatrix.Set(2, 2, (zFar + zNear) / (zFar - zNear));
-    perspectiveMatrix.Set(2, 3, (-2.0f * zFar * zNear) / (zFar - zNear)); // Corrected placement
-    perspectiveMatrix.Set(3, 2, -1.0f);                                   // Corrected placement
+    perspectiveMatrix.Set(2, 2, -(zFar + zNear) / (zFar - zNear));
+    perspectiveMatrix.Set(2, 3, -1.0f);                                   
+    perspectiveMatrix.Set(3, 2, -(2.0f * zFar * zNear) / (zFar - zNear)); 
     perspectiveMatrix.Set(3, 3, 0.0f);
 
     return perspectiveMatrix;
@@ -75,9 +84,9 @@ Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &target
     viewMatrix.Set(1, 1, newUp.y);
     viewMatrix.Set(2, 1, newUp.z);
 
-    viewMatrix.Set(0, 2, forward.x);
-    viewMatrix.Set(1, 2, forward.y);
-    viewMatrix.Set(2, 2, forward.z);
+    viewMatrix.Set(0, 2, -forward.x);
+    viewMatrix.Set(1, 2, -forward.y);
+    viewMatrix.Set(2, 2, -forward.z);
 
     viewMatrix.Set(0, 3, -right.Dot(origin));
     viewMatrix.Set(1, 3, -newUp.Dot(origin));

@@ -40,6 +40,14 @@ void Matrix3::SetIdentity()
         }
     }
 }
+float Matrix3::Get(int row, int column) const
+{
+    if (row < 0 || row >= 3 || column < 0 || column >= 3)
+    {
+        return 0.0f;
+    }
+    return m[column * 3 + row];
+}
 FVector3 Matrix3::GetRight() const
 {
     return FVector3{m[0], m[1], m[2]};

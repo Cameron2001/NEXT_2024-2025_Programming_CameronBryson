@@ -116,13 +116,10 @@ bool RenderSystem::RejectTriangle(const FVector3 &v0, const FVector3 &v1, const 
         return true;
     }
 
-    // For +Z forward, the closest point should be the minimum z value
-    auto closestPoint = std::min({v0.z, v1.z, v2.z});
-
-    // Adjust the depth range check for +Z forward
-    if (closestPoint < -1.0f)
-    {
-        return true; // Reject triangles outside the [0, 1] depth range
-    }
+    //auto closestPoint = std::max({v0.z, v1.z, v2.z});
+    //if (closestPoint < 0.0f || closestPoint > 1.0f)
+    //{
+    //    return true;
+    //}
     return false;
 }

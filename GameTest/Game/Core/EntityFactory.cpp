@@ -17,7 +17,7 @@ Entity EntityFactory::CreateGolfBallOne(const FVector3 &position)
     m_registry->AddComponent<RigidBodyComponent>(player, 0.3, 0.3);
     m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 5.0f, -30.0f), 1.0);
+    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 5.0f, 50.0f), 0.2);
     m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);
     return player;
 }
@@ -32,7 +32,7 @@ Entity EntityFactory::CreateGolfBallTwo(const FVector3 &position)
     m_registry->AddComponent<RigidBodyComponent>(player2, 0.3, 0.3);
     m_registry->AddComponent<ColliderComponent>(player2, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<CameraFollowComponent>(player2, FVector3(0.0f, 5.0f, -30.0f), 1.0);
+    m_registry->AddComponent<CameraFollowComponent>(player2, FVector3(0.0f, 5.0f, 50.0f), 0.2);
     m_registry->AddComponent<SphereBoundsComponent>(player2, 1.0f);
     return player2;
 }
@@ -160,4 +160,17 @@ Entity EntityFactory::CreateArrow(Entity followTarget)
     m_registry->AddComponent<ModelComponent>(arrow, "ArrowOBJ");
     m_registry->AddComponent<ArrowComponent>(arrow, followTarget);
     return arrow;
+}
+
+Entity EntityFactory::CreateBorder(const FVector3 &position, const FVector3 &scale, const FVector3 &color)
+{
+    Entity border = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(border, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
+                                                 scale                                         // Scale
+    );
+    m_registry->AddComponent<ModelComponent>(border, "CubeOBJ", color);
+    m_registry->AddComponent<ColliderComponent>(border, ColliderType::Box, false, false, 0.2, 0.8, 0.6);
+    m_registry->AddComponent<BoxBoundsComponent>(border, FVector3(1.0f, 1.0f, 1.0f));
+
+    return border;
 }
