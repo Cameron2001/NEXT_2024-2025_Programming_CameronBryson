@@ -51,7 +51,7 @@ void CameraSystem::Update(float dt)
             FVector3 targetPosition = transform.Position + cameraFollow.offset;
             FVector3 smoothedPosition =
                 MathUtil::Lerp(m_camera->GetPosition(), targetPosition, cameraFollow.smoothSpeed * dt);
-            //m_camera->SetPosition(smoothedPosition);
+            m_camera->SetPosition(smoothedPosition);
             //m_camera->LookAt(FVector3(transform.Position.x, transform.Position.y, transform.Position.z));
         }
     });

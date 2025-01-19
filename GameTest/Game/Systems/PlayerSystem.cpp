@@ -40,6 +40,13 @@ void PlayerSystem::Update(float dt)
     bool YAWRIGHT = App::IsKeyPressed('D'); // Yaw Right
     bool SPACE = App::IsKeyPressed(VK_SPACE);
     bool TEST = App::IsKeyPressed('T');
+    bool MOVEUP = App::IsKeyPressed('I');
+    bool MOVEDOWN = App::IsKeyPressed('K');
+    bool MOVERIGHT = App::IsKeyPressed('L');
+    bool MOVELEFT = App::IsKeyPressed('J');
+    bool MOVEUPWARD = App::IsKeyPressed('U');   // Move Up
+    bool MOVEDOWNWARD = App::IsKeyPressed('O'); // Move Down
+    float moveSpeed = 10.0f;
     std::string message = "MainMenu";
     if (TEST)
     {
@@ -180,7 +187,32 @@ void PlayerSystem::Update(float dt)
         TextComponent &text = m_registry->GetComponent<TextComponent>(m_scaleTextEntity);
         text.text = "Force: " + std::to_string(static_cast<int>(forceScale));
     }
-
+    // Handle player movement with IJKL keys for testing
+    if (MOVEUP)
+    {
+        ballRigidbody.force += FVector3(0.0f, 0.0f, moveSpeed); // Move Forward
+    }
+    if (MOVEDOWN)
+    {
+        ballRigidbody.force += FVector3(0.0f, 0.0f, -moveSpeed); // Move Backward
+    }
+    if (MOVERIGHT)
+    {
+        ballRigidbody.force += FVector3(moveSpeed, 0.0f, 0.0f); // Move Right
+    }
+    if (MOVELEFT)
+    {
+        ballRigidbody.force += FVector3(-moveSpeed, 0.0f, 0.0f); // Move Left
+    }
+    if (MOVEUPWARD)
+    {
+        ballRigidbody.force += FVector3(0.0f, moveSpeed, 0.0f); // Move Up
+    }
+    if (MOVEDOWNWARD)
+    {
+        ballRigidbody.force += FVector3(0.0f, -moveSpeed, 0.0f); // Move Down
+    }
+   
     // Handle player movement and rotation
     playerView.ForEach(
         [&](Entity entity, PlayerComponent &player, RigidBodyComponent &rigidbody, TransformComponent &transform) {

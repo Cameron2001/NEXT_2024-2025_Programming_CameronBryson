@@ -116,10 +116,11 @@ bool RenderSystem::RejectTriangle(const FVector3 &v0, const FVector3 &v1, const 
         return true;
     }
 
-    //auto closestPoint = std::max({v0.z, v1.z, v2.z});
-    //if (closestPoint < 0.0f || closestPoint > 1.0f)
-    //{
-    //    return true;
-    //}
+    auto closestPoint = std::max({v0.z, v1.z, v2.z});
+    //idk why 5 but it works perfectly
+    if (closestPoint > 5.0f)
+    {
+        return true;
+    }
     return false;
 }

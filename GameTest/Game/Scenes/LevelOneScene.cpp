@@ -51,7 +51,7 @@ void LevelOneScene::LateShutdown()
 
 void LevelOneScene::BuildLevelOne()
 {
-    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(5.0f, 4.5f, -20.0f));
+    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(0, 4, 6));
     auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, -20.0f));
     auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f));
     m_entityFactory->CreateArrow(player1);
@@ -72,11 +72,11 @@ void LevelOneScene::BuildLevelOne()
     m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
     m_playerSystem->SetScaleTextEntity(powerScaleText);
 
-    const int gridRows = 12;     // Number of rows
+    const int gridRows = 8;     // Number of rows
     const int gridColumns = 6;   // Number of columns
     const float spacing = 6.05f; // Distance between blocks
 
-    FVector3 startPosition(-10.0f, 0.0f, -50.0f);
+    FVector3 startPosition(-10.0f, 0.0f, -30.0f);
 
     FVector3 firstColor(0.0f, 0.7f, 0.0f);
     FVector3 secondColor(0.7f, 0.7f, 0.7f);
@@ -121,8 +121,34 @@ void LevelOneScene::BuildLevelOne()
                      startPosition.y + borderHeight / 2.0f, startPosition.z + row * spacing);
         m_entityFactory->CreateBorder(rightBorderPos, FVector3(3.0f, borderHeight, 3.0f), borderColor);
     }
+    //this is the ramp
+    //Its angled slightly up
+    m_entityFactory->CreateStaticBox(FVector3(0, 2.0, -42), FVector3(12, 3, 6), FVector3(-0.3, 0.0, 0.0));
+    
+    FVector3 startPosition2(-10.0f, 7.0f, -100.0f);
 
 
+    for (int row = 0; row < gridRows; ++row)
+    {
+        for (int col = 0; col < gridColumns; ++col)
+        {
+            FVector3 position = startPosition2;
+            position.x += col * spacing;
+            position.z += row * spacing;
+
+            FVector3 currentColor = (row + col) % 2 == 0 ? firstColor : secondColor;
+
+            m_entityFactory->CreateGrassBox(position, FVector3(3.0f, 2.0f, 3.0f), currentColor);
+        }
+    }
+    // Create collider for the second grid
+    FVector3 largeColliderPosition2 =
+        FVector3(startPosition2.x + (gridColumns * spacing) / 2.0f - spacing / 2.0f, startPosition2.y,
+                 startPosition2.z + (gridRows * spacing) / 2.0f - spacing / 2.0f);
+
+    FVector3 largeColliderExtents2 = FVector3((gridColumns * spacing) / 2.0f, 2.0f, (gridRows * spacing) / 2.0f);
+
+    m_entityFactory->CreateInvisibleBoxCollider(largeColliderPosition2, largeColliderExtents2);
     
 
     

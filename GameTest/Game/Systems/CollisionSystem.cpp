@@ -466,7 +466,7 @@ void CollisionSystem::ResolveCollisions(float dt)
         }
 
         FVector3 normalImpulse = collision.normal * normalImpulseMag;
-
+        //Need to double check this
         if (rb1)
         {
             rb1->linearVelocity -= normalImpulse * invMass1;
@@ -475,7 +475,7 @@ void CollisionSystem::ResolveCollisions(float dt)
         if (rb2)
         {
             rb2->linearVelocity += normalImpulse * invMass2;
-            rb2->angularVelocity += worldInvInertia2 * r2CrossN * -normalImpulseMag;
+            rb2->angularVelocity -= worldInvInertia2 * r2CrossN * -normalImpulseMag;
         }
 
         FVector3 v1Post = rb1 ? rb1->linearVelocity : FVector3(0.0f, 0.0f, 0.0f);
