@@ -1,12 +1,11 @@
 #pragma once
-#include "Game/Core/Scene.h"
-#include "Game/Systems/MenuSystem.h"
-class MainMenuScene : public Scene
+#include "Game/Scenes/PlayScene.h"
+class LevelOneScene : public PlayScene
 {
   public:
-    MainMenuScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
+    LevelOneScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
                   std::shared_ptr<PlayerManager> scoreManager);
-    ~MainMenuScene() override = default;
+    ~LevelOneScene() override = default;
     void Init() override;
     void LateInit() override;
     void Update(float dt) override;
@@ -15,8 +14,6 @@ class MainMenuScene : public Scene
     void LateRender() override;
     void Shutdown() override;
     void LateShutdown() override;
-
   private:
-    std::shared_ptr<MenuSystem> m_menuSystem;
-
+    void BuildLevelOne();
 };

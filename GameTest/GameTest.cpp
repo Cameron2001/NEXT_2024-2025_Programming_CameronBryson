@@ -12,6 +12,8 @@
 //------------------------------------------------------------------------
 #include "Game/Managers/SceneManager.h"
 #include "Game/Scenes/PlayScene.h"
+#include "Game/Scenes/MainMenuScene.h"
+#include "Game/Scenes/LevelOneScene.h"
 #include "Game/Core/Tests.h"
 #include "Game/Core/Logger.h"
 float fps = 0.0f;
@@ -24,9 +26,10 @@ const float MAX_DT = 0.2f;
 const int warmUpFrames = 5; // Number of frames to skip for minFps
 int warmUpFrameCount = 0;   // Counter for warm-up frames
 bool testsEnabled = true;
-SceneManager sceneManager;
+std::shared_ptr<SceneManager> sceneManager = std::make_shared<SceneManager>();
 void Init()
 {
+    sceneManager->BindSceneChangeEvent();
     if (testsEnabled)
     {
         auto testResults = RunTests();
@@ -36,7 +39,7 @@ void Init()
         }
         Logger::GetInstance().LogInfo("All tests completed.");
     }
-    sceneManager.LoadScene<PlayScene>();
+    sceneManager->LoadScene<LevelOneScene>();
 
     // SceneManager::GetCurrentScene().Init();
     // SceneManager::GetCurrentScene().LateInit();
@@ -46,8 +49,8 @@ void Update(float deltaTime)
 {
     deltaTime /= 1000.0f;
     float clampedDeltaTime = min(deltaTime, MAX_DT);
-    sceneManager.GetCurrentScene()->Update(clampedDeltaTime);
-    sceneManager.GetCurrentScene()->LateUpdate(clampedDeltaTime);
+    sceneManager->GetCurrentScene()->Update(clampedDeltaTime);
+    sceneManager->GetCurrentScene()->LateUpdate(clampedDeltaTime);
     // Calculate FPS
     if (deltaTime > 0.0f)
         fps = 1.0f / deltaTime;
@@ -74,8 +77,8 @@ void Update(float deltaTime)
 
 void Render()
 {
-    sceneManager.GetCurrentScene()->Render();
-    sceneManager.GetCurrentScene()->LateRender();
+    sceneManager->GetCurrentScene()->Render();
+    sceneManager->GetCurrentScene()->LateRender();
     // Calculate Average FPS
     float averageFps = (frameCount > 0) ? (totalFps / frameCount) : 0.0f;
 
@@ -93,6 +96,6 @@ void Render()
 }
 void Shutdown()
 {
-    sceneManager.GetCurrentScene()->Shutdown();
-    sceneManager.GetCurrentScene()->LateShutdown();
+    sceneManager->GetCurrentScene()->Shutdown();
+    sceneManager->GetCurrentScene()->LateShutdown();
 }

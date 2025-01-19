@@ -39,6 +39,12 @@ void PlayerSystem::Update(float dt)
     bool YAWLEFT = App::IsKeyPressed('A'); // Yaw Left
     bool YAWRIGHT = App::IsKeyPressed('D'); // Yaw Right
     bool SPACE = App::IsKeyPressed(VK_SPACE);
+    bool TEST = App::IsKeyPressed('T');
+    std::string message = "MainMenu";
+    if (TEST)
+    {
+        m_eventManager->Notify("SceneChange", "MainMenu");
+    }
 
     // Update arrow view
     m_arrowView.Update();

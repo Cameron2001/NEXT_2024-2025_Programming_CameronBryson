@@ -58,12 +58,7 @@ class Scene
     // Could be made static if changed a bit
     // Currently systems either need access to the registry or only to the specific components it needs
     std::shared_ptr<RenderSystem> m_renderSystem;
-    std::shared_ptr<CollisionSystem> m_collisionSystem;
-    std::shared_ptr<PhysicsSystem> m_physicsSystem;
-    std::shared_ptr<ParticleSystem> m_particleSystem;
-    std::shared_ptr<CameraSystem> m_cameraSystem;
-    std::shared_ptr<UISystem> m_uiSystem;
-    std::shared_ptr<EntityFactory> m_entityFactory;
+    
     // Rendersystem only reads data
     // Physics system reads and edits data
     // Collision system reads and edits data

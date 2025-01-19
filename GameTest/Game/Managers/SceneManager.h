@@ -5,13 +5,23 @@
 #include "Game/Managers/EventManager.h"
 #include "Game/Managers/PlayerManager.h"
 #include "Game/Core/Scene.h"
-class SceneManager
+#include <string>
+#include "Game/Scenes/MainMenuScene.h"
+#include "Game/Scenes/LevelOneScene.h"
+#include "Game/Scenes/LevelTwoScene.h"
+#include "Game/Scenes/LevelThreeScene.h"
+class SceneManager : public std::enable_shared_from_this<SceneManager>
 {
   public:
     SceneManager()
         : m_graphicsManager(std::make_shared<GraphicsManager>()), m_eventManager(std::make_shared<EventManager>()),
           m_scoreManager(std::make_shared<PlayerManager>())
     {
+
+    }
+    void BindSceneChangeEvent()
+    {
+        m_eventManager->AddListener<const char*>("SceneChange", shared_from_this(), &SceneManager::OnSceneChangeEvent);
     }
     template <typename T> void LoadScene()
     {
@@ -28,8 +38,29 @@ class SceneManager
     {
         return m_currentScene;
     }
+    void OnSceneChangeEvent(const char* name)
+    {
+
+        if(name == "MainMenu")
+        {
+            LoadScene<MainMenuScene>();
+        }
+        else if (name == "LevelOne")
+        {
+            LoadScene<LevelOneScene>();
+        }
+        else if (name == "LevelTwo")
+        {
+            LoadScene<LevelTwoScene>();
+        }
+        else if (name == "LevelThree")
+        {
+            LoadScene<LevelThreeScene>();
+        }
+    }
 
   private:
+
     std::shared_ptr<Scene> m_currentScene;
     std::shared_ptr<GraphicsManager> m_graphicsManager;
     std::shared_ptr<EventManager> m_eventManager;

@@ -80,6 +80,10 @@
     <ClCompile Include="Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="Game\Managers\PlayerManager.cpp" />
     <ClCompile Include="Game\Systems\UISystem.cpp" />
+    <ClCompile Include="Game\Systems\MenuSystem.cpp" />
+    <ClCompile Include="Game\Scenes\LevelOneScene.cpp" />
+    <ClCompile Include="Game\Scenes\LevelTwoScene.cpp" />
+    <ClCompile Include="Game\Scenes\LevelThreeScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -212,6 +216,10 @@
     <ClInclude Include="Game\Managers\EventManager.h" />
     <ClInclude Include="Game\Managers\PlayerManager.h" />
     <ClInclude Include="Game\Systems\UISystem.h" />
+    <ClInclude Include="Game\Systems\MenuSystem.h" />
+    <ClInclude Include="Game\Scenes\LevelOneScene.h" />
+    <ClInclude Include="Game\Scenes\LevelTwoScene.h" />
+    <ClInclude Include="Game\Scenes\LevelThreeScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
