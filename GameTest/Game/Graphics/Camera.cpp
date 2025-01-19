@@ -152,7 +152,7 @@ void Camera::UpdateProjectionMatrix()
 void Camera::UpdateAxes()
 {
     // Apply the orientation to the default axes
-    m_forward = (m_orientation * FVector3(0.0f, 0.0f, -1.0f)).Normalize();
+    m_forward = (m_orientation * FVector3(0.0f, 0.0f, 1.0f)).Normalize();
     m_up = (m_orientation * FVector3(0.0f, 1.0f, 0.0f)).Normalize();
     m_right = m_forward.Cross(m_worldUp).Normalize();
 }

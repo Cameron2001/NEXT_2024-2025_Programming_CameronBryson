@@ -51,8 +51,8 @@ Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRati
 
     perspectiveMatrix.Set(0, 0, 1.0f / (aspectRatio * tanHalfFOV));
     perspectiveMatrix.Set(1, 1, 1.0f / tanHalfFOV);
-    perspectiveMatrix.Set(2, 2, -(zFar + zNear) / (zFar - zNear));
-    perspectiveMatrix.Set(2, 3, -(2.0f * zFar * zNear) / (zFar - zNear)); // Corrected placement
+    perspectiveMatrix.Set(2, 2, (zFar + zNear) / (zFar - zNear));
+    perspectiveMatrix.Set(2, 3, (-2.0f * zFar * zNear) / (zFar - zNear)); // Corrected placement
     perspectiveMatrix.Set(3, 2, -1.0f);                                   // Corrected placement
     perspectiveMatrix.Set(3, 3, 0.0f);
 
@@ -75,9 +75,9 @@ Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &target
     viewMatrix.Set(1, 1, newUp.y);
     viewMatrix.Set(2, 1, newUp.z);
 
-    viewMatrix.Set(0, 2, -forward.x);
-    viewMatrix.Set(1, 2, -forward.y);
-    viewMatrix.Set(2, 2, -forward.z);
+    viewMatrix.Set(0, 2, forward.x);
+    viewMatrix.Set(1, 2, forward.y);
+    viewMatrix.Set(2, 2, forward.z);
 
     viewMatrix.Set(0, 3, -right.Dot(origin));
     viewMatrix.Set(1, 3, -newUp.Dot(origin));

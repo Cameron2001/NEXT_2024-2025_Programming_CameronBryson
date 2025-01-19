@@ -17,7 +17,7 @@ Entity EntityFactory::CreateGolfBallOne(const FVector3 &position)
     m_registry->AddComponent<RigidBodyComponent>(player, 0.3, 0.3);
     m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 5.0f, 30.0f), 1.0);
+    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 5.0f, -30.0f), 1.0);
     m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);
     return player;
 }
@@ -32,7 +32,7 @@ Entity EntityFactory::CreateGolfBallTwo(const FVector3 &position)
     m_registry->AddComponent<RigidBodyComponent>(player2, 0.3, 0.3);
     m_registry->AddComponent<ColliderComponent>(player2, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<CameraFollowComponent>(player2, FVector3(0.0f, 5.0f, 30.0f), 1.0);
+    m_registry->AddComponent<CameraFollowComponent>(player2, FVector3(0.0f, 5.0f, -30.0f), 1.0);
     m_registry->AddComponent<SphereBoundsComponent>(player2, 1.0f);
     return player2;
 }

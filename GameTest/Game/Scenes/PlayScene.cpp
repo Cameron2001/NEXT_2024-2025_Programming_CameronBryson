@@ -37,12 +37,13 @@ void PlayScene::Init()
     const float spacing = 6.05f; // Distance between blocks
 
     // Starting position for the grid
-    FVector3 startPosition(-20.0f, 0.0f, -40.0f);
+    FVector3 startPosition(-20.0f, 0.0f, 20.0f);
 
     // Define two colors for alternating
     FVector3 firstColor(0.0f, 0.7f, 0.0f);
     FVector3 secondColor(0.7f, 0.7f, 0.7f);
-
+    /*m_entityFactory->CreateGrassBox(FVector3(-20.0f, -0.5f, 20.0f), FVector3(35.0f, 1.0f, 35.0f),
+                                    FVector3(0.0f, 0.0f, 0.0f));*/
     for (int row = 0; row < gridRows; ++row)
     {
         for (int col = 0; col < gridColumns; ++col)
@@ -230,15 +231,15 @@ void PlayScene::CollisionEvent(unsigned int ID1, unsigned int ID2)
 
 void PlayScene::BuildLevelOne()
 {
-    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(5.0f, 4.5f, -30.0f));
-    auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, -40.0f));
-    auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, -40.0f), FVector3(1.0f, 1.0f, 1.0f));
+    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(5.0f, 4.5f, 20.0f));
+    auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, 20.0f));
+    auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, 20.0f), FVector3(1.0f, 1.0f, 1.0f));
     m_entityFactory->CreateArrow(player1);
     m_entityFactory->CreateArrow(player2);
     m_playerManager->SetPlayer1(player1);
     m_playerManager->SetPlayer2(player2);
     m_playerManager->SetHole(hole);
-    m_entityFactory->CreateFlag(FVector3(1.5f, 2.5f, -40.0f));
+    m_entityFactory->CreateFlag(FVector3(1.5f, 2.5f, 20.0f));
     auto player1ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(player1ScoreText, "Player1 Score:", FVector2(20.0f, 15.9f));
 

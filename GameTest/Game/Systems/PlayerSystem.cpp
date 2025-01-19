@@ -134,13 +134,26 @@ void PlayerSystem::Update(float dt)
                 Quaternion::Slerp(transform.Rotation, Quaternion::LookAtPlusZ(direction, FVector3{0, 1, 0}), 0.1f);
 
             // Handle shooting when SPACE is released
+            // Handle shooting when SPACE is released
             if (!SPACE && previousSpace)
             {
                 m_playerManager->IncrementCurrentPlayerScore();
+
                 rigidbody.force += direction * 2.0f * forceScale;
+
+                const float angularVelocityMagnitude = 5.0f; 
+
+                FVector3 upVector = FVector3{0.0f, 1.0f, 0.0f};
+
+                FVector3 spinAxis = upVector.Cross(direction).Normalize();
+
+                rigidbody.angularVelocity += spinAxis * angularVelocityMagnitude;
+
                 App::PlaySoundW("assets/GolfHit.wav");
                 shotFired = true;
             }
+
+
         });
 
     // Update previousSpace state and forceScale
