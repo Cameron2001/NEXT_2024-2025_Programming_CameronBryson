@@ -193,7 +193,31 @@ Entity EntityFactory::CreateBouncyBox(const FVector3 &position, const FVector3 &
     m_registry->AddComponent<TransformComponent>(box, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
                                                  extents);                                  // Scale
     m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ", FVector3(0.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ", FVector3(0.2f, 1.0f, 0.2f));
     m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false, false, 2.0, 0.1f, 0.1f);
+    return box;
+}
+
+Entity EntityFactory::CreateSandBox(const FVector3 &position, const FVector3 &extents)
+{
+    Entity box = m_registry->CreateEntity();
+
+    m_registry->AddComponent<TransformComponent>(box, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
+                                                 extents);                                  // Scale
+    m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ", FVector3(1.0f, 1.0f, 0.0f));
+    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false, false, 0.2, 0.95f, 0.95f);
+    return box;
+}
+
+Entity EntityFactory::CreateIceBox(const FVector3 &position, const FVector3 &extents)
+{
+    Entity box = m_registry->CreateEntity();
+
+    m_registry->AddComponent<TransformComponent>(box, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
+                                                 extents);                                  // Scale
+    m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ", FVector3(0.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false, false, 0.4, 0.1f, 0.1f);
     return box;
 }

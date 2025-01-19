@@ -18,6 +18,8 @@ class EntityFactory
     Entity CreateBorder(const FVector3 &position, const FVector3 &scale, const FVector3 &color);
     Entity CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents);
     Entity CreateBouncyBox(const FVector3 &position, const FVector3 &extents);
+    Entity CreateSandBox(const FVector3 &position, const FVector3 &extents);
+    Entity CreateIceBox(const FVector3 &position, const FVector3 &extents);
 
 
 

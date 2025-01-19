@@ -151,6 +151,9 @@ void LevelOneScene::BuildLevelOne()
     m_entityFactory->CreateInvisibleBoxCollider(largeColliderPosition2, largeColliderExtents2);
     
     m_entityFactory->CreateBouncyBox(FVector3(0, 2, -10), FVector3(2, 2, 2));
+    m_entityFactory->CreateIceBox(FVector3(5, 2, -10), FVector3(2, 2, 2));
+    m_entityFactory->CreateSandBox(FVector3(-5, 2, -10), FVector3(2, 2, 2));
+   
     
     
 }
