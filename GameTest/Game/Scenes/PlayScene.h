@@ -23,7 +23,7 @@ class PlayScene : public Scene
   protected:
     std::shared_ptr<PlayerSystem> m_playerSystem;
     std::shared_ptr<CollisionSystem> m_collisionSystem;
-    std::shared_ptr<PhysicsSystem> m_physicsSystem;
+    
     std::shared_ptr<ParticleSystem> m_particleSystem;
     std::shared_ptr<CameraSystem> m_cameraSystem;
     std::shared_ptr<UISystem> m_uiSystem;

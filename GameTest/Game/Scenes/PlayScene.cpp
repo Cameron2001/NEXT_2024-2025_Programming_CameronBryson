@@ -8,7 +8,6 @@ PlayScene::PlayScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shar
     : Scene(graphicsManager, eventManager, scoreManager),
       m_playerSystem(std::make_shared<PlayerSystem>(m_registry.get(), eventManager.get(), m_playerManager.get())),
       m_collisionSystem(std::make_shared<CollisionSystem>(m_registry.get(), eventManager.get())),
-      m_physicsSystem(std::make_shared<PhysicsSystem>(m_registry.get())),
       m_particleSystem(std::make_shared<ParticleSystem>(m_registry.get(), eventManager.get())),
       m_cameraSystem(std::make_shared<CameraSystem>(m_registry.get(), m_playerManager.get(), m_camera.get())),
       m_entityFactory(std::make_shared<EntityFactory>(m_registry.get())),

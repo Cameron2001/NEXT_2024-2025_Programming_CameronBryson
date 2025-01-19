@@ -39,7 +39,7 @@ void Init()
         }
         Logger::GetInstance().LogInfo("All tests completed.");
     }
-    sceneManager->LoadScene<LevelOneScene>();
+    sceneManager->LoadScene<MainMenuScene>();
 
     // SceneManager::GetCurrentScene().Init();
     // SceneManager::GetCurrentScene().LateInit();
