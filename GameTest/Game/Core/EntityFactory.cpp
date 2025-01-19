@@ -14,7 +14,7 @@ Entity EntityFactory::CreateGolfBallOne(const FVector3 &position)
                                                  FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<PlayerComponent>(player, position);
     m_registry->AddComponent<ModelComponent>(player, "SphereOBJ", FVector3(0.5f, 0.0f, 1.0f),1);
-    m_registry->AddComponent<RigidBodyComponent>(player, 0.4, 0.6);
+    m_registry->AddComponent<RigidBodyComponent>(player, 0.5,0.4, 0.6);
     m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 3.0f, 50.0f), 1.0);
@@ -29,7 +29,7 @@ Entity EntityFactory::CreateGolfBallTwo(const FVector3 &position)
                                                  FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<PlayerComponent>(player2, position);
     m_registry->AddComponent<ModelComponent>(player2, "SphereOBJ", FVector3(1.0f, 0.0f, 0.5f), 1);
-    m_registry->AddComponent<RigidBodyComponent>(player2, 0.4, 0.6);
+    m_registry->AddComponent<RigidBodyComponent>(player2, 0.5,0.4, 0.6);
     m_registry->AddComponent<ColliderComponent>(player2, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<CameraFollowComponent>(player2, FVector3(0.0f, 3.0f, 50.0f), 1.9);
@@ -50,7 +50,7 @@ Entity EntityFactory::CreateDynamicSphere(const FVector3 &position, float radius
     m_registry->AddComponent<ModelComponent>(sphere, "SphereOBJ");
 
     // Add RigidBodyComponent with linear and angular drag of 0.5f each
-    m_registry->AddComponent<RigidBodyComponent>(sphere, 0.5f, 0.5f);
+    m_registry->AddComponent<RigidBodyComponent>(sphere,1.0f, 0.5f, 0.5f);
 
     // Add ColliderComponent as a dynamic Sphere collider
     m_registry->AddComponent<ColliderComponent>(sphere, ColliderType::Sphere, true);
@@ -96,7 +96,7 @@ Entity EntityFactory::CreateDynamicBox(const FVector3 &position, const FVector3 
     m_registry->AddComponent<ModelComponent>(box, "CubeOBJ");
 
     // Add RigidBodyComponent with linear and angular drag of 0.5f each
-    m_registry->AddComponent<RigidBodyComponent>(box, 0.5f, 0.5f);
+    m_registry->AddComponent<RigidBodyComponent>(box,1.0f, 0.5f, 0.5f);
 
     // Add ColliderComponent as a dynamic Box collider
     m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, true);
@@ -181,7 +181,19 @@ Entity EntityFactory::CreateInvisibleBoxCollider(const FVector3 &position, const
     m_registry->AddComponent<TransformComponent>(collider, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
                                                  FVector3(1.0f, 1.0f, 1.0f)                      // Scale
     );
-    m_registry->AddComponent<ColliderComponent>(collider, ColliderType::Box, false, true, 0.2, 0.8, 0.6);
+    m_registry->AddComponent<ColliderComponent>(collider, ColliderType::Box, false, true, 0.7, 0.8, 0.8);
     m_registry->AddComponent<BoxBoundsComponent>(collider, extents);
     return collider;
+}
+
+Entity EntityFactory::CreateBouncyBox(const FVector3 &position, const FVector3 &extents)
+{
+    Entity box = m_registry->CreateEntity();
+
+    m_registry->AddComponent<TransformComponent>(box, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
+                                                 extents);                                  // Scale
+    m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ", FVector3(0.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false, false, 2.0, 0.1f, 0.1f);
+    return box;
 }

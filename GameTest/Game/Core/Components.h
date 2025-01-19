@@ -56,14 +56,8 @@ struct SphereBoundsComponent
 struct RigidBodyComponent
 {
     RigidBodyComponent() = default;
-    RigidBodyComponent(const float linearDrag, const float angularDrag)
-        : linearDrag(linearDrag), angularDrag(angularDrag)
-    {
-    }
-    RigidBodyComponent(const float linearDrag, const float angularDrag, const FVector3 &initialLinearAcceleration,
-                       const FVector3 &initialAngularAcceleration)
-        : force(initialLinearAcceleration), torque(initialAngularAcceleration), linearDrag(linearDrag),
-          angularDrag(angularDrag)
+    RigidBodyComponent(const float mass, const float linearDrag, const float angularDrag)
+        : inverseMass(1.0f/mass),linearDrag(linearDrag), angularDrag(angularDrag)
     {
     }
     Matrix3 localInverseInertiaTensor;

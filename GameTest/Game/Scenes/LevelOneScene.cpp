@@ -51,7 +51,7 @@ void LevelOneScene::LateShutdown()
 
 void LevelOneScene::BuildLevelOne()
 {
-    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(0, 4, 6));
+    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(0, 10, 6));
     auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, -20.0f));
     auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f));
     m_entityFactory->CreateArrow(player1);
@@ -150,7 +150,7 @@ void LevelOneScene::BuildLevelOne()
 
     m_entityFactory->CreateInvisibleBoxCollider(largeColliderPosition2, largeColliderExtents2);
     
-
+    m_entityFactory->CreateBouncyBox(FVector3(0, 2, -10), FVector3(2, 2, 2));
     
     
 }

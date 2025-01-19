@@ -431,22 +431,9 @@ void CollisionSystem::ResolveCollisions(float dt)
         if (relVelAlongNormal > 0.0f)
             continue;
 
-        float elasticity1 = collider1.elasticity;
-        float elasticity2 = collider2.elasticity;
-        float combinedRestitution = 1.0f;
-        if (rb1 && rb2)
-            combinedRestitution = elasticity1 * elasticity2;
-        else if (rb1)
-            combinedRestitution = elasticity1;
-        else if (rb2)
-            combinedRestitution = elasticity2;
+        float combinedRestitution = collider1.elasticity * collider2.elasticity;
+        combinedRestitution = std::max(0.0f, combinedRestitution);
 
-        if (fabs(relVelAlongNormal) < restitutionVelocityThreshold)
-        {
-            combinedRestitution = 0.0f;
-        }
-
-        combinedRestitution = (std::max)(0.0f, (std::min)(1.0f, combinedRestitution));
 
         float invMass1 = rb1 ? rb1->inverseMass : 0.0f;
         float invMass2 = rb2 ? rb2->inverseMass : 0.0f;
@@ -466,7 +453,7 @@ void CollisionSystem::ResolveCollisions(float dt)
         }
 
         FVector3 normalImpulse = collision.normal * normalImpulseMag;
-        //Need to double check this
+
         if (rb1)
         {
             rb1->linearVelocity -= normalImpulse * invMass1;
@@ -509,10 +496,8 @@ void CollisionSystem::ResolveCollisions(float dt)
                 float muDynamic1 = collider1.dynamicFriction;
                 float muDynamic2 = collider2.dynamicFriction;
 
-                float combinedStaticFriction =
-                    (rb1 && rb2) ? sqrt(muStatic1 * muStatic2) : (rb1 ? muStatic1 : muStatic2);
-                float combinedDynamicFriction =
-                    (rb1 && rb2) ? sqrt(muDynamic1 * muDynamic2) : (rb1 ? muDynamic1 : muDynamic2);
+                float combinedStaticFriction = sqrt(muStatic1 * muStatic2);
+                float combinedDynamicFriction = sqrt(muDynamic1 * muDynamic2);
 
                 float frictionMag = -relVelAlongTangent / frictionDenominator;
 
