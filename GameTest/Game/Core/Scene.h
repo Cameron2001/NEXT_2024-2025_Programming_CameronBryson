@@ -9,7 +9,6 @@
 #include "Game/Systems/RenderSystem.h"
 #include "Game/Systems/ParticleSystem.h"
 #include "Game/Systems/CameraSystem.h"
-#include "Game/Systems/ArrowSystem.h"
 #include "Game/Systems/UISystem.h"
 #include "Game/Core/EntityFactory.h"
 #include <Game/Managers/PlayerManager.h>
@@ -63,7 +62,6 @@ class Scene
     std::shared_ptr<PhysicsSystem> m_physicsSystem;
     std::shared_ptr<ParticleSystem> m_particleSystem;
     std::shared_ptr<CameraSystem> m_cameraSystem;
-    std::shared_ptr<ArrowSystem> m_arrowSystem;
     std::shared_ptr<UISystem> m_uiSystem;
     std::shared_ptr<EntityFactory> m_entityFactory;
     // Rendersystem only reads data

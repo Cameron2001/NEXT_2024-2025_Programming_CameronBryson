@@ -15,8 +15,7 @@ Scene::Scene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<E
       m_graphicsManager(graphicsManager), m_renderSystem(std::make_shared<RenderSystem>(m_registry.get(), m_graphicsManager.get(), m_camera.get())),
       m_collisionSystem(std::make_shared<CollisionSystem>(m_registry.get(), eventManager.get())), m_physicsSystem(std::make_shared<PhysicsSystem>(m_registry.get())), 
       m_particleSystem(std::make_shared<ParticleSystem>(m_registry.get(),m_eventManager.get())), m_cameraSystem(std::make_shared<CameraSystem>(m_registry.get(), scoreManager.get(), m_camera.get())), 
-      m_entityFactory(std::make_shared<EntityFactory>(m_registry.get())), m_eventManager(eventManager), m_playerManager(scoreManager),
-      m_arrowSystem(std::make_shared<ArrowSystem>(m_registry.get(), scoreManager.get())), m_uiSystem(std::make_shared<UISystem>(m_registry.get(), scoreManager.get()))
+      m_entityFactory(std::make_shared<EntityFactory>(m_registry.get())), m_eventManager(eventManager), m_playerManager(scoreManager), m_uiSystem(std::make_shared<UISystem>(m_registry.get(), scoreManager.get()))
 {
 }
 
@@ -39,7 +38,6 @@ void Scene::Update(const float dt)
     m_collisionSystem->Update(dt);
     m_particleSystem->Update(dt);
     m_cameraSystem->Update(dt);
-    m_arrowSystem->Update(dt);
     m_uiSystem->Update(dt);
     m_renderSystem->Update();
 }

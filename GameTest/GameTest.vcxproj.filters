@@ -80,7 +80,6 @@
     <ClCompile Include="Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="Game\Managers\PlayerManager.cpp" />
     <ClCompile Include="Game\Systems\UISystem.cpp" />
-    <ClCompile Include="Game\Systems\ArrowSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -213,7 +212,6 @@
     <ClInclude Include="Game\Managers\EventManager.h" />
     <ClInclude Include="Game\Managers\PlayerManager.h" />
     <ClInclude Include="Game\Systems\UISystem.h" />
-    <ClInclude Include="Game\Systems\ArrowSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">

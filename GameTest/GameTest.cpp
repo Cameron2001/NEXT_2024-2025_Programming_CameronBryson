@@ -19,6 +19,7 @@ float minFps = 999999.0f;
 float maxFps = 0.0f;
 float totalFps = 0.0f;
 int frameCount = 0;
+const float MAX_DT = 0.2f;
 // Warm-Up Configuration
 const int warmUpFrames = 5; // Number of frames to skip for minFps
 int warmUpFrameCount = 0;   // Counter for warm-up frames
@@ -44,8 +45,9 @@ void Init()
 void Update(float deltaTime)
 {
     deltaTime /= 1000.0f;
-    sceneManager.GetCurrentScene()->Update(deltaTime);
-    sceneManager.GetCurrentScene()->LateUpdate(deltaTime);
+    float clampedDeltaTime = min(deltaTime, MAX_DT);
+    sceneManager.GetCurrentScene()->Update(clampedDeltaTime);
+    sceneManager.GetCurrentScene()->LateUpdate(clampedDeltaTime);
     // Calculate FPS
     if (deltaTime > 0.0f)
         fps = 1.0f / deltaTime;

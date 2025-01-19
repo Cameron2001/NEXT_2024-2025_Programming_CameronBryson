@@ -38,6 +38,10 @@ std::vector<Edge2D> HiddenLineRemoval::RemoveHiddenLines(std::vector<Triangle2D>
 
     size_t totalTriangles = triangles.size();
     size_t batchSize = totalTriangles / m_bufferPoolSize;
+    if (batchSize <= 0)
+    {
+        batchSize = 1;
+    }
     size_t numBatches = (totalTriangles + batchSize - 1) / batchSize;
 
     concurrency::parallel_for(size_t(0), numBatches, [&](size_t batchIndex) {

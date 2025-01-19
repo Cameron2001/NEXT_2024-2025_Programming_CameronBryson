@@ -34,7 +34,7 @@ void PlayScene::Init()
     // Parameters for the grass grid
     const int gridRows = 3;      // Number of rows
     const int gridColumns = 5;   // Number of columns
-    const float spacing = 6.0f; // Distance between blocks
+    const float spacing = 6.05f; // Distance between blocks
 
     // Starting position for the grid
     FVector3 startPosition(-20.0f, 0.0f, -40.0f);
@@ -54,7 +54,7 @@ void PlayScene::Init()
             // Determine the color based on row and column indices
             FVector3 currentColor = (row + col) % 2 == 0 ? firstColor : secondColor;
 
-            m_entityFactory->CreateGrassBox(position, FVector3(3.0f, 3.0f, 3.0f), currentColor);
+            m_entityFactory->CreateGrassBox(position, FVector3(3.0f, 2.0f, 3.0f), currentColor);
         }
     }
 
@@ -249,5 +249,5 @@ void PlayScene::BuildLevelOne()
 
     auto powerScaleText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
-    m_arrowSystem->SetScaleTextEntity(powerScaleText);
+    m_playerSystem->SetScaleTextEntity(powerScaleText);
 }
