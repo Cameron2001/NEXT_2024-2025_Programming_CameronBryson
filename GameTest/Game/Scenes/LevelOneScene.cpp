@@ -72,14 +72,12 @@ void LevelOneScene::BuildLevelOne()
     m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
     m_playerSystem->SetScaleTextEntity(powerScaleText);
 
-    const int gridRows = 6;      // Number of rows
+    const int gridRows = 12;     // Number of rows
     const int gridColumns = 6;   // Number of columns
-    const float spacing = 6.02f; // Distance between blocks
+    const float spacing = 6.05f; // Distance between blocks
 
-    // Starting position for the grid
-    FVector3 startPosition(-10.0f, 0.0f, -20.0f);
+    FVector3 startPosition(-10.0f, 0.0f, -50.0f);
 
-    // Define two colors for alternating
     FVector3 firstColor(0.0f, 0.7f, 0.0f);
     FVector3 secondColor(0.7f, 0.7f, 0.7f);
 
@@ -91,20 +89,41 @@ void LevelOneScene::BuildLevelOne()
             position.x += col * spacing;
             position.z += row * spacing;
 
-            // Determine the color based on row and column indices
             FVector3 currentColor = (row + col) % 2 == 0 ? firstColor : secondColor;
 
             m_entityFactory->CreateGrassBox(position, FVector3(3.0f, 2.0f, 3.0f), currentColor);
         }
     }
 
-    // Create red borders around the grid
+
+    FVector3 largeColliderPosition =
+        FVector3(startPosition.x + (gridColumns * spacing) / 2.0f - spacing / 2.0f, startPosition.y,
+                 startPosition.z + (gridRows * spacing) / 2.0f - spacing / 2.0f);
+
+    FVector3 largeColliderExtents = FVector3((gridColumns * spacing) / 2.0f,
+                                             2.0f,
+                                             (gridRows * spacing) / 2.0f);
+
+    m_entityFactory->CreateInvisibleBoxCollider(largeColliderPosition, largeColliderExtents);
+
+
     FVector3 borderColor(1.0f, 0.0f, 0.0f); // Red color
+    float borderHeight = 5.0f;              
 
-    float gridWidth = gridColumns * spacing;
-    float gridDepth = gridRows * spacing;
+    for (int row = 0; row < gridRows; ++row)
+    {
+        FVector3 leftBorderPos = FVector3(startPosition.x - spacing, 
+                                          startPosition.y + borderHeight / 2.0f, startPosition.z + row * spacing);
+        m_entityFactory->CreateBorder(leftBorderPos, FVector3(3.0f, borderHeight, 3.0f), borderColor);
 
-    m_entityFactory->CreateBorder(FVector3(-5.2,5,0),FVector3(1,2,10), borderColor);
+        FVector3 rightBorderPos =
+            FVector3(startPosition.x + gridColumns * spacing, 
+                     startPosition.y + borderHeight / 2.0f, startPosition.z + row * spacing);
+        m_entityFactory->CreateBorder(rightBorderPos, FVector3(3.0f, borderHeight, 3.0f), borderColor);
+    }
+
+
+    
 
     
     

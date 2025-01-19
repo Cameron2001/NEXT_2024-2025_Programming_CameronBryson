@@ -130,7 +130,7 @@ void PlayerSystem::Update(float dt)
 
             // Update rotation to look in the direction of the arrow
             FVector3 direction = relativeOffset.Normalize();
-            transform.Rotation = Quaternion::LookAtPlusZ(direction, FVector3{0.0f, 1.0f, 0.0f});
+            //transform.Rotation = Quaternion::LookAtPlusZ(direction, FVector3{0.0f, .0f, 0.0f});
 
             if (!SPACE && previousSpace)
             {

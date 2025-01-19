@@ -137,8 +137,8 @@ Entity EntityFactory::CreateGrassBox(const FVector3 &position, const FVector3 &s
                                                  scale               // Scale
     );
     m_registry->AddComponent<ModelComponent>(box, "CubeOBJ",color);
-    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false,false,0.2,0.8,0.6);
-    m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0f,1.0f,1.0f));
+    //m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false,false,0.2,0.8,0.6);
+    //m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0f,1.0f,1.0f));
     return box;
 }
 
@@ -173,4 +173,15 @@ Entity EntityFactory::CreateBorder(const FVector3 &position, const FVector3 &sca
     m_registry->AddComponent<BoxBoundsComponent>(border, FVector3(1.0f, 1.0f, 1.0f));
 
     return border;
+}
+
+Entity EntityFactory::CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents)
+{
+    Entity collider = m_registry->CreateEntity();
+    m_registry->AddComponent<TransformComponent>(collider, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
+                                                 FVector3(1.0f, 1.0f, 1.0f)                      // Scale
+    );
+    m_registry->AddComponent<ColliderComponent>(collider, ColliderType::Box, false, true, 0.2, 0.8, 0.6);
+    m_registry->AddComponent<BoxBoundsComponent>(collider, extents);
+    return collider;
 }

@@ -16,6 +16,7 @@ class EntityFactory
     Entity CreateFlag(const FVector3 &position);
     Entity CreateArrow(Entity followTarget);
     Entity CreateBorder(const FVector3 &position, const FVector3 &scale, const FVector3 &color);
+    Entity CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents);
 
 
   private:
