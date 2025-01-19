@@ -34,19 +34,10 @@ void PlayerSystem::Update(float dt)
     auto playerView = m_registry->CreateView<PlayerComponent, RigidBodyComponent, TransformComponent>();
 
     // Retrieve input states
-    bool UP = App::IsKeyPressed('Q');
-    bool LEFT = App::IsKeyPressed('A');
-    bool DOWN = App::IsKeyPressed('E');
-    bool RIGHT = App::IsKeyPressed('D');
-    bool FORWARD = App::IsKeyPressed('W');
-    bool BACKWARD = App::IsKeyPressed('S');
-    bool R = App::IsKeyPressed('R');
-    bool F = App::IsKeyPressed('F');
-    bool V = App::IsKeyPressed('V');
-    bool I = App::IsKeyPressed('I'); // Pitch Up
-    bool K = App::IsKeyPressed('K'); // Pitch Down
-    bool J = App::IsKeyPressed('J'); // Yaw Left
-    bool L = App::IsKeyPressed('L'); // Yaw Right
+    bool PITCHUP = App::IsKeyPressed('W'); // Pitch Up
+    bool PITCHDOWN = App::IsKeyPressed('S'); // Pitch Down
+    bool YAWLEFT = App::IsKeyPressed('A'); // Yaw Left
+    bool YAWRIGHT = App::IsKeyPressed('D'); // Yaw Right
     bool SPACE = App::IsKeyPressed(VK_SPACE);
 
     // Update arrow view
@@ -102,24 +93,27 @@ void PlayerSystem::Update(float dt)
 
             // Calculate rotation deltas
             float deltaYaw = 0.0f;
-            if (J)
+            if (YAWLEFT)
                 deltaYaw += ROTATION_SPEED * dt; // Yaw Left
-            if (L)
+            if (YAWRIGHT)
                 deltaYaw -= ROTATION_SPEED * dt; // Yaw Right
 
             float deltaPitch = 0.0f;
-            if (I)
-                deltaPitch += ROTATION_SPEED * dt; // Pitch Up
-            if (K)
-                deltaPitch -= ROTATION_SPEED * dt; // Pitch Down
+            if (PITCHUP)
+                deltaPitch -= ROTATION_SPEED * dt; // Pitch Up
+            if (PITCHDOWN)
+                deltaPitch += ROTATION_SPEED * dt; // Pitch Down
 
-            // Convert degrees to radians
             float deltaYawRadians = MathUtil::DegreesToRadians(deltaYaw);
             float deltaPitchRadians = MathUtil::DegreesToRadians(deltaPitch);
 
-            // Create rotation quaternions
-            Quaternion deltaYawRotation(FVector3{0.0f, deltaYawRadians, 0.0f});
-            Quaternion deltaPitchRotation(FVector3{deltaPitchRadians, 0.0f, 0.0f});
+            FVector3 forward = (transform.Position - playerTransform.Position).Normalize();
+            FVector3 right = forward.Cross(FVector3{0.0f, 1.0f, 0.0f}).Normalize();
+            FVector3 localUp = right.Cross(forward).Normalize();                    
+
+            // Create rotation quaternions based on local axes
+            Quaternion deltaYawRotation(FVector3{0.0f, 1.0f, 0.0f} * deltaYawRadians); 
+            Quaternion deltaPitchRotation(right * deltaPitchRadians);                  
 
             // Update relative offset
             FVector3 relativeOffset = transform.Position - playerTransform.Position;
@@ -130,11 +124,8 @@ void PlayerSystem::Update(float dt)
 
             // Update rotation to look in the direction of the arrow
             FVector3 direction = relativeOffset.Normalize();
-            transform.Rotation =
-                Quaternion::Slerp(transform.Rotation, Quaternion::LookAtPlusZ(direction, FVector3{0, 1, 0}), 0.1f);
+            transform.Rotation = Quaternion::LookAtPlusZ(direction, FVector3{0.0f, 1.0f, 0.0f}); 
 
-            // Handle shooting when SPACE is released
-            // Handle shooting when SPACE is released
             if (!SPACE && previousSpace)
             {
                 m_playerManager->IncrementCurrentPlayerScore();
@@ -192,30 +183,6 @@ void PlayerSystem::Update(float dt)
                 transform.Position = player.spawnPoint;
             }
 
-            // Apply movement forces only if not resetting
-            if (!(transform.Position.y <= POSITION_RESET_Y))
-            {
-                if (UP)
-                    rigidbody.force += FVector3{0.0f, 1.0f, 0.0f};
-                if (DOWN)
-                    rigidbody.force -= FVector3{0.0f, 1.0f, 0.0f};
-                if (LEFT)
-                    rigidbody.force -= FVector3{1.0f, 0.0f, 0.0f};
-                if (RIGHT)
-                    rigidbody.force += FVector3{1.0f, 0.0f, 0.0f};
-                if (FORWARD)
-                    rigidbody.force -= FVector3{0.0f, 0.0f, 1.0f};
-                if (BACKWARD)
-                    rigidbody.force += FVector3{0.0f, 0.0f, 1.0f};
-
-                // Apply rotation torques
-                if (R)
-                    rigidbody.torque += FVector3{0.0f, 0.0f, 1.0f} * ROTATION_SPEED;
-                if (F)
-                    rigidbody.torque += FVector3{0.0f, 1.0f, 0.0f} * ROTATION_SPEED;
-                if (V)
-                    rigidbody.torque += FVector3{1.0f, 0.0f, 0.0f} * ROTATION_SPEED;
-            }
         });
 }
 
