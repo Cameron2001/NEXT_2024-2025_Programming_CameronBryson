@@ -31,7 +31,7 @@ class CollisionSystem
     bool CanCollide(const ColliderComponent &collider1, const ColliderComponent &collider2);
 
     void DetectCollisions();
-    void ResolveCollisions();
+    void ResolveCollisions(float dt);
     Registry *m_registry;
     EventManager *m_eventManager;
     std::unique_ptr<Octree> m_octree;

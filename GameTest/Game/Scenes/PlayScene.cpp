@@ -32,32 +32,7 @@ void PlayScene::Init()
     // m_entityFactory.CreateDynamicSphere(FVector3(1.5f, 0.0f, -20.0f), 1.0f);
     // Parameters for the grass grid
     // Parameters for the grass grid
-    const int gridRows = 3;      // Number of rows
-    const int gridColumns = 5;   // Number of columns
-    const float spacing = 6.05f; // Distance between blocks
-
-    // Starting position for the grid
-    FVector3 startPosition(-20.0f, 0.0f, 20.0f);
-
-    // Define two colors for alternating
-    FVector3 firstColor(0.0f, 0.7f, 0.0f);
-    FVector3 secondColor(0.7f, 0.7f, 0.7f);
-    /*m_entityFactory->CreateGrassBox(FVector3(-20.0f, -0.5f, 20.0f), FVector3(35.0f, 1.0f, 35.0f),
-                                    FVector3(0.0f, 0.0f, 0.0f));*/
-    for (int row = 0; row < gridRows; ++row)
-    {
-        for (int col = 0; col < gridColumns; ++col)
-        {
-            FVector3 position = startPosition;
-            position.x += col * spacing;
-            position.z += row * spacing;
-
-            // Determine the color based on row and column indices
-            FVector3 currentColor = (row + col) % 2 == 0 ? firstColor : secondColor;
-
-            m_entityFactory->CreateGrassBox(position, FVector3(3.0f, 2.0f, 3.0f), currentColor);
-        }
-    }
+    
 
 
 
@@ -251,4 +226,31 @@ void PlayScene::BuildLevelOne()
     auto powerScaleText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
     m_playerSystem->SetScaleTextEntity(powerScaleText);
+
+    const int gridRows = 6;      // Number of rows
+    const int gridColumns = 6;   // Number of columns
+    const float spacing = 6.02f; // Distance between blocks
+
+    // Starting position for the grid
+    FVector3 startPosition(-10.0f, 0.0f, 20.0f);
+
+    // Define two colors for alternating
+    FVector3 firstColor(0.0f, 0.7f, 0.0f);
+    FVector3 secondColor(0.7f, 0.7f, 0.7f);
+    /*m_entityFactory->CreateGrassBox(FVector3(-20.0f, -0.5f, 20.0f), FVector3(35.0f, 1.0f, 35.0f),
+                                    FVector3(0.0f, 0.0f, 0.0f));*/
+    for (int row = 0; row < gridRows; ++row)
+    {
+        for (int col = 0; col < gridColumns; ++col)
+        {
+            FVector3 position = startPosition;
+            position.x += col * spacing;
+            position.z += row * spacing;
+
+            // Determine the color based on row and column indices
+            FVector3 currentColor = (row + col) % 2 == 0 ? firstColor : secondColor;
+
+            m_entityFactory->CreateGrassBox(position, FVector3(3.0f, 2.0f, 3.0f), currentColor);
+        }
+    }
 }

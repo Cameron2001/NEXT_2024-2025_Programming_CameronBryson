@@ -21,12 +21,13 @@ void Matrix3::Set(int row, int column, float value)
     }
     m[column * 3 + row] = value;
 }
-void Matrix3::SetZero()
+Matrix3 Matrix3::SetZero()
 {
     for (int i = 0; i < 9; ++i)
     {
         m[i] = 0.0f;
     }
+    return *this;
 }
 
 void Matrix3::SetIdentity()

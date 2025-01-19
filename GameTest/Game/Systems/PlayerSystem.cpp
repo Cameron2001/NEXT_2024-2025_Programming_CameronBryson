@@ -100,9 +100,9 @@ void PlayerSystem::Update(float dt)
 
             float deltaPitch = 0.0f;
             if (PITCHUP)
-                deltaPitch -= ROTATION_SPEED * dt; // Pitch Up
+                deltaPitch += ROTATION_SPEED * dt; // Pitch Up
             if (PITCHDOWN)
-                deltaPitch += ROTATION_SPEED * dt; // Pitch Down
+                deltaPitch -= ROTATION_SPEED * dt; // Pitch Down
 
             float deltaYawRadians = MathUtil::DegreesToRadians(deltaYaw);
             float deltaPitchRadians = MathUtil::DegreesToRadians(deltaPitch);
@@ -124,7 +124,7 @@ void PlayerSystem::Update(float dt)
 
             // Update rotation to look in the direction of the arrow
             FVector3 direction = relativeOffset.Normalize();
-            transform.Rotation = Quaternion::LookAtPlusZ(direction, FVector3{0.0f, 1.0f, 0.0f}); 
+            transform.Rotation = Quaternion::LookAtPlusZ(direction, FVector3{0.0f, 1.0f, 0.0f});
 
             if (!SPACE && previousSpace)
             {
@@ -134,11 +134,17 @@ void PlayerSystem::Update(float dt)
 
                 const float angularVelocityMagnitude = 5.0f; 
 
-                FVector3 upVector = FVector3{0.0f, 1.0f, 0.0f};
+                FVector3 direction = relativeOffset.Normalize();
+                FVector3 forwardSpinAxis = FVector3{0.0f, 1.0f, 0.0f}.Cross(direction).Normalize();
 
-                FVector3 spinAxis = upVector.Cross(direction).Normalize();
+                if (forwardSpinAxis.Length() < 0.01f)
+                {
+                    forwardSpinAxis = FVector3{1.0f, 0.0f, 0.0f}; // Use a fallback axis for stability
+                }
 
-                rigidbody.angularVelocity += spinAxis * angularVelocityMagnitude;
+                // Apply angular velocity for top spin
+                rigidbody.angularVelocity = forwardSpinAxis * angularVelocityMagnitude;
+
 
                 App::PlaySoundW("assets/GolfHit.wav");
                 shotFired = true;

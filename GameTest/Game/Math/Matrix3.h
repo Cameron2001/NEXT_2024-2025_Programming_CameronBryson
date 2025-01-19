@@ -9,7 +9,7 @@ class Matrix3
     ~Matrix3() = default;
 
     void Set(int row, int column, float value);
-    void SetZero();
+    Matrix3 SetZero();
     void SetIdentity();
 
     FVector3 GetRight() const;
