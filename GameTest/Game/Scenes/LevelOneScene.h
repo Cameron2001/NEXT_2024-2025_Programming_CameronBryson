@@ -5,7 +5,10 @@ class LevelOneScene : public PlayScene
   public:
     LevelOneScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
                   std::shared_ptr<PlayerManager> scoreManager);
-    ~LevelOneScene() override = default;
+    ~LevelOneScene() override
+    {
+        printf("LevelOneScene Destructor\n");
+    }
     void Init() override;
     void LateInit() override;
     void Update(float dt) override;

@@ -14,6 +14,7 @@
 #include "Game/Scenes/PlayScene.h"
 #include "Game/Scenes/MainMenuScene.h"
 #include "Game/Scenes/LevelOneScene.h"
+#include "Game/Scenes/ResultsScene.h"
 #include "Game/Core/Tests.h"
 #include "Game/Core/Logger.h"
 float fps = 0.0f;

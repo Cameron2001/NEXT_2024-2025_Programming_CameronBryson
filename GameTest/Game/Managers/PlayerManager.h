@@ -18,19 +18,13 @@ class PlayerManager
 
     int GetPlayer1Score() const;
     int GetPlayer2Score() const;
-    int GetPlayer1TotalScore() const;
-    int GetPlayer2TotalScore() const;
 
     void IncrementPlayer1Score();
     void IncrementPlayer2Score();
-    void IncrementPlayer1TotalScore();
-    void IncrementPlayer2TotalScore();
 
     void IncrementCurrentPlayerScore();
-    void IncrementCurrentPlayerTotalScore();
 
     void ResetScores();
-    void ResetTotalScores();
 
     void SwapTurn();
 
@@ -48,8 +42,6 @@ class PlayerManager
 
     int m_player1Score = 0;
     int m_player2Score = 0;
-    int m_player1TotalScore = 0;
-    int m_player2TotalScore = 0;
 
     bool m_player1Turn = true;
     bool m_player1Complete = false;

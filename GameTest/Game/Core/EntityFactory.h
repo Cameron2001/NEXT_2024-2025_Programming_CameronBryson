@@ -13,8 +13,8 @@ class EntityFactory
                            const FVector3 &color);
     Entity CreateFlag(const FVector3 &position);
     Entity CreateArrow(Entity followTarget);
-    Entity CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents, const float elasticity,
-                                      const float staticFriction, const float dynamicFriction);
+    Entity CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents, const FVector3 &rotation,
+                                      const float elasticity, const float staticFriction, const float dynamicFriction);
     Entity CreateBouncyBox(const FVector3 &position, const FVector3 &extents);
     Entity CreateBouncySphere(const FVector3 &position, float radius);
     Entity CreateSandBox(const FVector3 &position, const FVector3 &extents);

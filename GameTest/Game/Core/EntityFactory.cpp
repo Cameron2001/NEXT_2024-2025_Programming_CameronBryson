@@ -14,10 +14,10 @@ Entity EntityFactory::CreateGolfBallOne(const FVector3 &position)
                                                  FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<PlayerComponent>(player, position);
     m_registry->AddComponent<ModelComponent>(player, "SphereOBJ", FVector3(0.5f, 0.0f, 1.0f),1);
-    m_registry->AddComponent<RigidBodyComponent>(player, 0.5,0.4, 0.6);
+    m_registry->AddComponent<RigidBodyComponent>(player, 0.3,0.5, 0.5);
     m_registry->AddComponent<ColliderComponent>(player, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 3.0f, 50.0f), 1.0);
+    m_registry->AddComponent<CameraFollowComponent>(player, FVector3(0.0f, 20.0f, 50.0f), 0.8);
     m_registry->AddComponent<SphereBoundsComponent>(player, 1.0f);
     return player;
 }
@@ -32,7 +32,7 @@ Entity EntityFactory::CreateGolfBallTwo(const FVector3 &position)
     m_registry->AddComponent<RigidBodyComponent>(player2, 0.5,0.4, 0.6);
     m_registry->AddComponent<ColliderComponent>(player2, ColliderType::Sphere, true, false, 0.8, 0.5f, 0.7f);
     // m_registry->AddComponent<BoxBoundsComponent>(player, FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<CameraFollowComponent>(player2, FVector3(0.0f, 3.0f, 50.0f), 1.9);
+    m_registry->AddComponent<CameraFollowComponent>(player2, FVector3(0.0f, 20.0f, 50.0f), 0.8);
     m_registry->AddComponent<SphereBoundsComponent>(player2, 1.0f);
     return player2;
 }
@@ -98,14 +98,14 @@ Entity EntityFactory::CreateArrow(Entity followTarget)
     return arrow;
 }
 
-Entity EntityFactory::CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents, const float elasticity, const float staticFriction, const float dynamicFriction)
+Entity EntityFactory::CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents, const FVector3& rotation, const float elasticity, const float staticFriction, const float dynamicFriction)
 {
     Entity collider = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(collider, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
-                                                 FVector3(1.0f, 1.0f, 1.0f)                      // Scale
+    m_registry->AddComponent<TransformComponent>(collider, position, rotation, // Rotation
+                                                 extents                      // Scale
     );
     m_registry->AddComponent<ColliderComponent>(collider, ColliderType::Box, false, true, elasticity,staticFriction, dynamicFriction);
-    m_registry->AddComponent<BoxBoundsComponent>(collider, extents);
+    m_registry->AddComponent<BoxBoundsComponent>(collider, FVector3(1.0,1.0,1.0));
     return collider;
 }
 
@@ -184,6 +184,7 @@ void EntityFactory::CreateStaticBoxGrid(int rows, int cols, const FVector3 &star
     largeColliderExtents.z = (rows * spacing) / 2.0f;
 
     // Create a single large invisible collider encompassing the entire grid
-    CreateInvisibleBoxCollider(largeColliderPosition, largeColliderExtents, elasticity, staticFriction,
+    CreateInvisibleBoxCollider(largeColliderPosition, largeColliderExtents, FVector3(0, 0, 0), elasticity,
+                               staticFriction,
                                dynamicFriction);
 }

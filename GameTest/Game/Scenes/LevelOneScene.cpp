@@ -51,11 +51,11 @@ void LevelOneScene::LateShutdown()
 
 void LevelOneScene::BuildLevelOne()
 {
-    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(0, 10, 6));
-    auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, -20.0f));
+    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(0.0f, 5.0f, 6.0f));
+    auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 5.5f, -38.0f));
     auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f),
-                                                 FVector3(0, 0, 0), FVector3(1, 1, 1));
-    m_registry->AddComponent<ColliderComponent>(hole, ColliderType::Box, false, true, 0.8, 0.5f, 0.7f);
+                                                 FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 1.0f, 1.0f));
+    m_registry->AddComponent<ColliderComponent>(hole, ColliderType::Box, false, true, 0.8f, 0.5f, 0.7f);
     m_registry->AddComponent<BoxBoundsComponent>(hole, FVector3(1.0f, 1.0f, 1.0f));
     m_entityFactory->CreateArrow(player1);
     m_entityFactory->CreateArrow(player2);
@@ -63,6 +63,7 @@ void LevelOneScene::BuildLevelOne()
     m_playerManager->SetPlayer2(player2);
     m_playerManager->SetHole(hole);
     m_entityFactory->CreateFlag(FVector3(1.5f, 2.5f, -20.0f));
+
     auto player1ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(player1ScoreText, "Player1 Score:", FVector2(20.0f, 15.9f));
 
@@ -75,12 +76,14 @@ void LevelOneScene::BuildLevelOne()
     m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
     m_playerSystem->SetScaleTextEntity(powerScaleText);
 
-    const int gridRows = 8;      
-    const int gridColumns = 6;   
-    const float spacing = 6.05f; 
+    const int gridRows = 8;
+    const int gridColumns = 6;
+    const float spacing = 6.05f;
 
-    FVector3 startPosition(-15.0f, 0.0f, -30.0f);
-    FVector3 startPosition2(-15.0f, 5.0f, -100.0f);
+    float borderHeight = 3.0f; // Set borderHeight to 3.0f for proper visibility
+
+    FVector3 startPosition(-15.0f, 0.0f, -29.25f);
+    FVector3 startPosition2(-15.0f, 2.9f, -89.0f);
 
     FVector3 firstGrassColor(0.0f, 0.7f, 0.0f);
     FVector3 secondGrassColor(0.7f, 0.7f, 0.7f);
@@ -88,9 +91,9 @@ void LevelOneScene::BuildLevelOne()
     FVector3 sandBoxColor(1.0f, 1.0f, 0.0f);
     FVector3 iceBoxColor(0.0f, 1.0f, 1.0f);
 
-    float grassGridElasticity = 0.65f;
-    float grassGridStaticFriction = 0.8f;
-    float grassGridDynamicFriction = 0.8f;
+    float grassGridElasticity = 0.5f;
+    float grassGridStaticFriction = 0.7f;
+    float grassGridDynamicFriction = 0.f;
 
     float bouncyGridElasticity = 2.0f;
     float bouncyGridStaticFriction = 0.1f;
@@ -104,11 +107,17 @@ void LevelOneScene::BuildLevelOne()
     float iceGridStaticFriction = 0.01f;
     float iceGridDynamicFriction = 0.01f;
 
-    float boundaryGridElasticity = 0.7f;
-    float boundaryGridStaticFriction = 0.7f;
-    float boundaryGridDynamicFriction = 0.7f;
+    float boundaryGridElasticity = 0.3f;
+    float boundaryGridStaticFriction = 0.3f;
+    float boundaryGridDynamicFriction = 0.3f;
 
-    for (int row = 0; row < gridRows; ++row)
+    const float SAND_BLOCK_HEIGHT = 2.0f;
+    const float SAND_COLLIDER_Y_EXTENT = SAND_BLOCK_HEIGHT / 2.0f; // 1.0f
+
+    // --------------------
+    // 3. Create Grass Grid
+    // --------------------
+    for (int row = 0; row < gridRows; ++row) // Start from row 1 to exclude sand row
     {
         for (int col = 0; col < gridColumns; ++col)
         {
@@ -117,42 +126,60 @@ void LevelOneScene::BuildLevelOne()
             position.z += row * spacing;
 
             FVector3 currentColor = (row + col) % 2 == 0 ? firstGrassColor : secondGrassColor;
-            m_entityFactory->CreateStaticBox(position, FVector3(3.0f, 2.0f, 3.0f), FVector3(0, 0, 0), currentColor);
+
+            Entity box = m_entityFactory->CreateStaticBox(position, FVector3(3.0f, 2.0f, 3.0f),
+                                                          FVector3(0.0f, 0.0f, 0.0f), currentColor);
+            // Removed individual ColliderComponent and BoxBoundsComponent
         }
     }
 
-    FVector3 largeColliderPosition(startPosition.x + (gridColumns * spacing) / 2.0f - spacing / 2.0f, startPosition.y,
-                                   startPosition.z + ((gridRows) * spacing) / 2.0f - spacing / 2.0f);
+    // Calculate Grass Collider Position and Extents Directly
+    FVector3 grassColliderPosition(startPosition.x + ((gridColumns-1) * spacing) / 2.0f, 
+                                   startPosition.y,
+                                   startPosition.z + ((gridRows-1) * spacing) / 2.0f 
+    );
 
-    FVector3 largeColliderExtents((gridColumns * spacing) / 2.0f, 2.0f, ((gridRows - 1) * spacing) / 2.0f);
+    FVector3 grassColliderExtents(
+        ((gridColumns) * spacing) / 2.0f, // Half width plus buffer
+        2.0f,                                        // Y extent (matches block height)
+        ((gridRows) * spacing) / 2.0f     // Half depth plus buffer (excluding sand row)
+    );
 
-    m_entityFactory->CreateInvisibleBoxCollider(largeColliderPosition, largeColliderExtents, grassGridElasticity,
-                                                grassGridStaticFriction, grassGridDynamicFriction);
+    // Create Grass Collider
+    m_entityFactory->CreateInvisibleBoxCollider(grassColliderPosition, grassColliderExtents, FVector3(0.0f, 0.0f, 0.0f),
+                                                grassGridElasticity, grassGridStaticFriction, grassGridDynamicFriction);
 
-    FVector3 borderColor(1.0f, 0.0f, 0.0f); 
-    float borderHeight = 3.0f;
+
+    // Add Visible Borders for First Grid
+    float leftBorderX = startPosition.x - spacing;
+    float rightBorderX = startPosition.x + gridColumns * spacing;
+
+    float borderY = startPosition.y + borderHeight / 2.0f;
+
+    float borderStartZ = startPosition.z;
+    float borderEndZ = startPosition.z + (gridRows - 1) * spacing;
 
     for (int row = 0; row < gridRows; ++row)
     {
-        FVector3 leftBorderPos(startPosition.x - spacing, startPosition.y + borderHeight / 2.0f,
-                               startPosition.z + row * spacing);
-        m_entityFactory->CreateStaticBox(leftBorderPos, FVector3(3.0f, borderHeight, 3.0f), FVector3(0, 0, 0),
-                                         borderColor);
-        m_entityFactory->CreateInvisibleBoxCollider(leftBorderPos, FVector3(3.0f, borderHeight, 3.0f), boundaryGridElasticity,boundaryGridStaticFriction,boundaryGridDynamicFriction);
+        // Left Border
+        FVector3 leftBorderPos(leftBorderX, borderY, startPosition.z + row * spacing);
+        m_entityFactory->CreateStaticBox(leftBorderPos, FVector3(3.0f, borderHeight, 3.0f), FVector3(0.0f, 0.0f, 0.0f),
+                                         FVector3(1.0f, 0.0f, 0.0f)); // Red color
+        m_entityFactory->CreateInvisibleBoxCollider(leftBorderPos, FVector3(3.0f, borderHeight, 3.0f),
+                                                    FVector3(0.0f, 0.0f, 0.0f), boundaryGridElasticity,
+                                                    boundaryGridStaticFriction, boundaryGridDynamicFriction);
 
-        FVector3 rightBorderPos(startPosition.x + gridColumns * spacing, startPosition.y + borderHeight / 2.0f,
-                                startPosition.z + row * spacing);
-        m_entityFactory->CreateStaticBox(rightBorderPos, FVector3(3.0f, borderHeight, 3.0f), FVector3(0, 0, 0),
-                                         borderColor);
+        // Right Border
+        FVector3 rightBorderPos(rightBorderX, borderY, startPosition.z + row * spacing);
+        m_entityFactory->CreateStaticBox(rightBorderPos, FVector3(3.0f, borderHeight, 3.0f), FVector3(0.0f, 0.0f, 0.0f),
+                                         FVector3(1.0f, 0.0f, 0.0f)); // Red color
         m_entityFactory->CreateInvisibleBoxCollider(rightBorderPos, FVector3(3.0f, borderHeight, 3.0f),
-                                                    boundaryGridElasticity, boundaryGridStaticFriction,
-                                                    boundaryGridDynamicFriction);
+                                                    FVector3(0.0f, 0.0f, 0.0f), boundaryGridElasticity,
+                                                    boundaryGridStaticFriction, boundaryGridDynamicFriction);
     }
 
-    m_entityFactory->CreateStaticBox(FVector3(0, 2.0f, -41), FVector3(22.0f, 1.0f, 6.0f), FVector3(-0.3f, 0.0f, 0.0f),
-                                     FVector3(0.5f, 0.5f, 0.5f));
-    m_entityFactory->CreateInvisibleBoxCollider(FVector3(0, 2.0f, -41), FVector3(22.0f, 1.0f, 6.0f), 0.5f, 0.5f, 0.5f);
 
+    // Second Grid - Entirely Ice
     for (int row = 0; row < gridRows; ++row)
     {
         for (int col = 0; col < gridColumns; ++col)
@@ -161,54 +188,111 @@ void LevelOneScene::BuildLevelOne()
             position.x += col * spacing;
             position.z += row * spacing;
 
-            FVector3 currentColor = (row + col) % 2 == 0 ? firstGrassColor : secondGrassColor;
-            m_entityFactory->CreateStaticBox(position, FVector3(3.0f, 2.0f, 3.0f), FVector3(0, 0, 0), currentColor);
+            FVector3 currentColor = iceBoxColor;
+            float elasticity = iceGridElasticity;
+            float staticFriction = iceGridStaticFriction;
+            float dynamicFriction = iceGridDynamicFriction;
+
+            Entity box = m_entityFactory->CreateStaticBox(position, FVector3(3.0f, 2.0f, 3.0f),
+                                                          FVector3(0.0f, 0.0f, 0.0f), currentColor);
+
+            // Removed individual ColliderComponent and BoxBoundsComponent
         }
     }
 
-    FVector3 largeColliderPosition2(startPosition2.x + (gridColumns * spacing) / 2.0f - spacing / 2.0f,
-                                    startPosition2.y,
-                                    startPosition2.z + ((gridRows) * spacing) / 2.0f - spacing / 2.0f);
+    FVector3 iceColliderPosition =
+        FVector3(startPosition2.x + (gridColumns * spacing) / 2.0f - spacing / 2.0f, // X position remains the same
+                 startPosition2.y,                                                   // Y position remains the same
+                 startPosition2.z + ((gridRows - 1) * spacing) / 2.0f                // Adjusted Z position
+        );
 
-    FVector3 largeColliderExtents2((gridColumns * spacing) / 2.0f, 2.0f, ((gridRows - 1) * spacing) / 2.0f);
+    FVector3 iceColliderExtents = FVector3((gridColumns * spacing) / 2.0f,   // X extents remain the same
+                                           2.0f,                             // Y extents remain the same
+                                           ((gridRows - 1) * spacing) / 2.0f // Adjusted Z extents
+    );
 
-    m_entityFactory->CreateInvisibleBoxCollider(largeColliderPosition2, largeColliderExtents2, grassGridElasticity,
-                                                grassGridStaticFriction, grassGridDynamicFriction);
+    m_entityFactory->CreateInvisibleBoxCollider(iceColliderPosition, iceColliderExtents, FVector3(0.0f, 0.0f, 0.0f),
+                                                iceGridElasticity, iceGridStaticFriction, iceGridDynamicFriction);
+
+    // Add Visible Borders for Second Grid
+    float leftBorderX2 = startPosition2.x - spacing;
+    float rightBorderX2 = startPosition2.x + gridColumns * spacing;
+
+    float borderY2 = startPosition2.y + borderHeight / 2.0f;
+
+    float borderStartZ2 = startPosition2.z;
+    float borderEndZ2 = startPosition2.z + (gridRows - 1) * spacing;
 
     for (int row = 0; row < gridRows; ++row)
     {
-        FVector3 leftBorderPos(startPosition2.x - spacing, startPosition2.y + borderHeight / 2.0f,
-                               startPosition2.z + row * spacing);
-        m_entityFactory->CreateStaticBox(leftBorderPos, FVector3(3.0f, borderHeight, 3.0f), FVector3(0, 0, 0),
-                                         borderColor);
-        m_entityFactory->CreateInvisibleBoxCollider(leftBorderPos, FVector3(3.0f, borderHeight, 3.0f),
-                                                    boundaryGridElasticity, boundaryGridStaticFriction,
-                                                    boundaryGridDynamicFriction);
+        // Left Border
+        FVector3 leftBorderPos2(leftBorderX2, borderY2, startPosition2.z + row * spacing);
+        m_entityFactory->CreateStaticBox(leftBorderPos2, FVector3(3.0f, borderHeight, 3.0f), FVector3(0.0f, 0.0f, 0.0f),
+                                         FVector3(1.0f, 0.0f, 0.0f)); // Red color
+        m_entityFactory->CreateInvisibleBoxCollider(leftBorderPos2, FVector3(3.0f, borderHeight, 3.0f),
+                                                    FVector3(0.0f, 0.0f, 0.0f), boundaryGridElasticity,
+                                                    boundaryGridStaticFriction, boundaryGridDynamicFriction);
 
-        FVector3 rightBorderPos(startPosition2.x + gridColumns * spacing, startPosition2.y + borderHeight / 2.0f,
-                                startPosition2.z + row * spacing);
-        m_entityFactory->CreateStaticBox(rightBorderPos, FVector3(3.0f, borderHeight, 3.0f), FVector3(0, 0, 0),
-                                         borderColor);
-        m_entityFactory->CreateInvisibleBoxCollider(rightBorderPos, FVector3(3.0f, borderHeight, 3.0f),
-                                                    boundaryGridElasticity, boundaryGridStaticFriction,
-                                                    boundaryGridDynamicFriction);
+        // Right Border
+        FVector3 rightBorderPos2(rightBorderX2, borderY2, startPosition2.z + row * spacing);
+        m_entityFactory->CreateStaticBox(rightBorderPos2, FVector3(3.0f, borderHeight, 3.0f),
+                                         FVector3(0.0f, 0.0f, 0.0f), FVector3(1.0f, 0.0f, 0.0f)); // Red color
+        m_entityFactory->CreateInvisibleBoxCollider(rightBorderPos2, FVector3(3.0f, borderHeight, 3.0f),
+                                                    FVector3(0.0f, 0.0f, 0.0f), boundaryGridElasticity,
+                                                    boundaryGridStaticFriction, boundaryGridDynamicFriction);
     }
 
-    m_entityFactory->CreateStaticBox(FVector3(-6, 4, -12), FVector3(2, 2, 2), FVector3(0, 0, 0), bouncyBoxColor);
-    m_entityFactory->CreateInvisibleBoxCollider(FVector3(-6, 4, -12), FVector3(2, 2, 2), bouncyGridElasticity, bouncyGridStaticFriction, bouncyGridDynamicFriction);
 
-    m_entityFactory->CreateStaticBox(FVector3(6, 4, -12), FVector3(2, 2, 2), FVector3(0, 0, 0), bouncyBoxColor);
-    m_entityFactory->CreateInvisibleBoxCollider(FVector3(6, 4, -12), FVector3(2, 2, 2), bouncyGridElasticity,
+    // Additional Entities
+    //Ramp
+    m_entityFactory->CreateStaticBox(FVector3(0.0f, 2.5f, -38.0f), FVector3(18.5f, 1.0f, 6.0f),
+                                     FVector3(-0.2f, 0.0f, 0.0f), FVector3(0.5f, 0.5f, 0.5f));
+    m_entityFactory->CreateInvisibleBoxCollider(FVector3(0.0f, 2.5f, -38.0f), FVector3(18.5f, 1.0f, 6.0f),
+                                                FVector3(-0.2f, 0.0f, 0.0f), 0.2f, 0.2f, 0.5f);
+
+    m_entityFactory->CreateStaticBox(FVector3(-6.0f, 4.0f, -12.0f), FVector3(2.0f, 2.0f, 2.0f),
+                                     FVector3(0.0f, 0.0f, 0.0f), bouncyBoxColor);
+    m_entityFactory->CreateInvisibleBoxCollider(FVector3(-6.0f, 4.0f, -12.0f), FVector3(2.0f, 2.0f, 2.0f),
+                                                FVector3(0.0f, 0.0f, 0.0f), bouncyGridElasticity,
                                                 bouncyGridStaticFriction, bouncyGridDynamicFriction);
 
-    m_entityFactory->CreateStaticBox(FVector3(5, 2, -10), FVector3(2, 2, 2), FVector3(0, 0, 0), iceBoxColor);
-    m_entityFactory->CreateInvisibleBoxCollider(FVector3(5, 2, -10), FVector3(2, 2, 2), iceGridElasticity,iceGridStaticFriction, iceGridDynamicFriction);
+    m_entityFactory->CreateStaticBox(FVector3(6.0f, 4.0f, -12.0f), FVector3(2.0f, 2.0f, 2.0f),
+                                     FVector3(0.0f, 0.0f, 0.0f), bouncyBoxColor);
+    m_entityFactory->CreateInvisibleBoxCollider(FVector3(6.0f, 4.0f, -12.0f), FVector3(2.0f, 2.0f, 2.0f),
+                                                FVector3(0.0f, 0.0f, 0.0f), bouncyGridElasticity,
+                                                bouncyGridStaticFriction, bouncyGridDynamicFriction);
 
-    m_entityFactory->CreateStaticBox(FVector3(-5, 2, -10), FVector3(2, 2, 2), FVector3(0, 0, 0), sandBoxColor);
-    m_entityFactory->CreateInvisibleBoxCollider(FVector3(-5, 2, -10), FVector3(2, 2, 2), sandGridElasticity, sandGridStaticFriction, sandGridDynamicFriction);
+    m_entityFactory->CreateStaticBox(FVector3(5.0f, 2.0f, -10.0f), FVector3(2.0f, 2.0f, 2.0f),
+                                     FVector3(0.0f, 0.0f, 0.0f), iceBoxColor);
+    m_entityFactory->CreateInvisibleBoxCollider(FVector3(5.0f, 2.0f, -10.0f), FVector3(2.0f, 2.0f, 2.0f),
+                                                FVector3(0.0f, 0.0f, 0.0f), iceGridElasticity, iceGridStaticFriction,
+                                                iceGridDynamicFriction);
 
-    m_entityFactory->CreateBouncySphere(FVector3(-2, 2, -5), 1.0f);
+    m_entityFactory->CreateStaticBox(FVector3(-5.0f, 2.0f, -10.0f), FVector3(2.0f, 2.0f, 2.0f),
+                                     FVector3(0.0f, 0.0f, 0.0f), sandBoxColor);
+    m_entityFactory->CreateInvisibleBoxCollider(FVector3(-5.0f, 2.0f, -10.0f), FVector3(2.0f, 2.0f, 2.0f),
+                                                FVector3(0.0f, 0.0f, 0.0f), sandGridElasticity, sandGridStaticFriction,
+                                                sandGridDynamicFriction);
 
-    /*m_entityFactory->CreateStaticBoxGrid(5, 5, FVector3(0, 5, -20), 6.0f, FVector3(2.0f, 2.0f, 2.0f), bouncyBoxColor,
-                                         bouncyGridElasticity, bouncyGridStaticFriction, bouncyGridDynamicFriction);*/
+    m_entityFactory->CreateBouncySphere(FVector3(-2.0f, 2.0f, -5.0f), 1.0f);
+
+    /*m_entityFactory->CreateStaticBoxGrid(5, 5, FVector3(0.0f, 5.0f, -20.0f), 6.0f, FVector3(2.0f, 2.0f, 2.0f),
+       bouncyBoxColor, bouncyGridElasticity, grassGridStaticFriction, grassGridDynamicFriction);*/
+
+    // Adjusted Ramp Positioning
+    FVector3 rampStartPosition(0, 5, -92);
+
+    // Create Ramp as a Single Sloped Piece
+    m_entityFactory->CreateStaticBox(rampStartPosition, FVector3(18.5f, 1.0f, 6.0f), // Dimensions
+                                     FVector3(-0.2f, 0.0f, 0.0f),                    // Rotation
+                                     FVector3(0.5f, 0.5f, 0.5f)                      // Color
+    );
+
+    // Create Collider for Ramp
+    m_entityFactory->CreateInvisibleBoxCollider(rampStartPosition,
+                                                FVector3(18.5f, 1.0f, 6.0f), // Extents matching the ramp dimensions
+                                                FVector3(-0.2f, 0.0f, 0.0f), // Rotation
+                                                0.2f, 0.2f, 0.5f             // Elasticity and friction
+    );
+
 }

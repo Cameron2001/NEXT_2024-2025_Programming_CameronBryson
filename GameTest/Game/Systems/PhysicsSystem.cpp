@@ -67,19 +67,15 @@ void PhysicsSystem::Update(const float dt)
 
         // Apply damping
         rigidBody.linearVelocity *= std::pow(1.0f - rigidBody.linearDrag, dt);
-        rigidBody.angularVelocity *= std::pow(1.0f - rigidBody.angularDrag, dt);
+        rigidBody.angularVelocity *= std::pow(1.0f- rigidBody.angularDrag, dt);
 
         // Update transform
         transform.Position += rigidBody.linearVelocity * dt;
 
         Quaternion omega(0.0f, rigidBody.angularVelocity.x, rigidBody.angularVelocity.y, rigidBody.angularVelocity.z);
-
-        // Calculate the change in rotation
         Quaternion deltaRotation = omega * transform.Rotation * 0.5f * dt;
 
-        // Update the rotation quaternion
-        transform.Rotation = (transform.Rotation + (deltaRotation*-1.0f)).Normalize();
-        //transform.Rotation.ApplyEulerAnglesXYZ(rigidBody.angularVelocity * dt*-1.0f);
+        transform.Rotation = (transform.Rotation + deltaRotation).Normalize();
 
         // Reset accelerations
         rigidBody.force = FVector3{0.0f, 0.0f, 0.0f};

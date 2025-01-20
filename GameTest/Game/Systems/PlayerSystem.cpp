@@ -77,7 +77,6 @@ void PlayerSystem::Update(float dt)
             shotFired = false;
             m_playerManager->SwapTurn();
         }
-
         // Set all arrow layers to -1
         m_arrowView.ForEach(
             [&](Entity, ArrowComponent &, ModelComponent &model, TransformComponent &) { model.layer = -1; });
@@ -92,18 +91,36 @@ void PlayerSystem::Update(float dt)
     // Update arrows related to the current player
     m_arrowView.ForEach(
         [&](Entity entity, ArrowComponent &arrow, ModelComponent &model, TransformComponent &transform) {
-            if (arrow.ball != currentPlayer || shotFired)
+            if (arrow.ball != currentPlayer)
             {
                 model.layer = -1;
                 return;
             }
 
-            model.layer = 1;
+            
+            
 
             // Get player transform and rigidbody
             TransformComponent &playerTransform = m_registry->GetComponent<TransformComponent>(arrow.ball);
             RigidBodyComponent &rigidbody = m_registry->GetComponent<RigidBodyComponent>(arrow.ball);
+            if (shotFired)
+            {
+                // Lerp camera towards ball's position based on shot direction
+                CameraFollowComponent &cameraFollow = m_registry->GetComponent<CameraFollowComponent>(arrow.ball);
 
+                // Desired camera position is behind the shot direction
+                FVector3 desiredCameraPos = playerTransform.Position - m_shotDirection * cameraFollow.offset.Length() +
+                                            FVector3(0, cameraFollow.offset.y, 0);
+
+                // Smoothly interpolate camera position
+                FVector3 currentCameraPos = m_camera->GetPosition();
+                FVector3 newCameraPos = MathUtil::Lerp(currentCameraPos, desiredCameraPos, cameraFollow.smoothSpeed * dt);
+                //m_camera->SetPosition(newCameraPos);
+
+
+                return;
+            }
+            model.layer = 1;
             // Calculate rotation deltas
             float deltaYaw = 0.0f;
             if (YAWLEFT)
@@ -142,8 +159,6 @@ void PlayerSystem::Update(float dt)
             newCameraPos.y = playerTransform.Position.y;
             newCameraPos += FVector3(0, 8, 0);
             m_camera->SetPosition(newCameraPos);
-
-
             m_camera->AddYaw(deltaYaw);
 
             float yawRadians = MathUtil::DegreesToRadians(totalYaw);
@@ -155,15 +170,14 @@ void PlayerSystem::Update(float dt)
             direction.y = sinf(pitchRadians);
             direction.z = cosf(yawRadians) * cosPitch;
             direction = direction.Normalize();
+            //direction.z = -direction.z;
 
             transform.Position = playerTransform.Position +direction * OFFSET_DISTANCE;
-
-
-            transform.Rotation = Quaternion::LookAt(direction, FVector3{0.0f, 1.0f, 0.0f});
+            transform.Rotation = Quaternion::LookAt(direction, FVector3{0.0f, -1.0f, 0.0f});
             if (!SPACE && previousSpace)
             {
                 m_playerManager->IncrementCurrentPlayerScore();
-
+                m_shotDirection = direction;
                 rigidbody.force += direction * 2.0f * forceScale;
 
                 const float angularVelocityMagnitude = 5.0f; 
@@ -283,6 +297,10 @@ void PlayerSystem::OnCollision(unsigned int ID1, unsigned int ID2)
         m_registry->RemoveComponent<ColliderComponent>(player2ID);
 
         m_playerManager->SwapTurn();
+    }
+    if (m_playerManager->IsPlayer1Complete() && m_playerManager->IsPlayer2Complete())
+    {
+        m_eventManager->Notify("SceneChange", "Results");
     }
 
 }

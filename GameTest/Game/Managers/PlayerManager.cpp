@@ -46,16 +46,6 @@ int PlayerManager::GetPlayer2Score() const
     return m_player2Score;
 }
 
-int PlayerManager::GetPlayer1TotalScore() const
-{
-    return m_player1TotalScore;
-}
-
-int PlayerManager::GetPlayer2TotalScore() const
-{
-    return m_player2TotalScore;
-}
-
 void PlayerManager::IncrementPlayer1Score()
 {
     m_player1Score++;
@@ -66,15 +56,6 @@ void PlayerManager::IncrementPlayer2Score()
     m_player2Score++;
 }
 
-void PlayerManager::IncrementPlayer1TotalScore()
-{
-    m_player1TotalScore += m_player1Score;
-}
-
-void PlayerManager::IncrementPlayer2TotalScore()
-{
-    m_player2TotalScore += m_player2Score;
-}
 
 void PlayerManager::IncrementCurrentPlayerScore()
 {
@@ -88,28 +69,14 @@ void PlayerManager::IncrementCurrentPlayerScore()
     }
 }
 
-void PlayerManager::IncrementCurrentPlayerTotalScore()
-{
-    if (m_player1Turn)
-    {
-        IncrementPlayer1TotalScore();
-    }
-    else
-    {
-        IncrementPlayer2TotalScore();
-    }
-}
 
 void PlayerManager::ResetScores()
 {
     m_player1Score = 0;
     m_player2Score = 0;
-}
-
-void PlayerManager::ResetTotalScores()
-{
-    m_player1TotalScore = 0;
-    m_player2TotalScore = 0;
+    m_player1Complete = false;
+    m_player2Complete = false;
+    m_player1Turn = true;
 }
 
 void PlayerManager::SwapTurn()

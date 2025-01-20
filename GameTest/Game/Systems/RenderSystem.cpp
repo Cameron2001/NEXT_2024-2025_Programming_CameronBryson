@@ -42,7 +42,7 @@ void RenderSystem::Update()
         auto &model = m_graphicsManager->GetModel(modelComponent.modelName);
 
         auto modelMatrix = Matrix4::CreateTranslationMatrix(transform.Position) *
-                           transform.Rotation.GetRotationMatrix4() * Matrix4::CreateScaleMatrix(transform.Scale);
+                           transform.Rotation.GetRotationMatrix4().Inverse() * Matrix4::CreateScaleMatrix(transform.Scale);
 
         auto mvpMatrix = viewProjectionMatrix*modelMatrix;
 

@@ -21,7 +21,7 @@ private:
     PlayerManager *m_playerManager;
     Camera *m_camera;
     bool shotFired = false;
-
+    FVector3 m_shotDirection = FVector3(0.0f, 0.0f, 0.0f);
     bool previousSpace = false;
     View<ArrowComponent, ModelComponent, TransformComponent> m_arrowView;
     float forceScale = 5.0f;

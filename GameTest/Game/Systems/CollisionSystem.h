@@ -34,6 +34,8 @@ class CollisionSystem
 
     void DetectCollisions();
     void ResolveCollisions(float dt);
+    void ApplyImpulse(RigidBodyComponent &body, const TransformComponent &transform, const FVector3 &impulse,
+                      const FVector3 &r);
     Registry *m_registry;
     EventManager *m_eventManager;
     std::unique_ptr<Octree> m_octree;

@@ -1,7 +1,8 @@
 #pragma once
 #include "Game/Core/Entity.h"
-#include "Game/Storage/Registry.h"
 #include "Game/Managers/PlayerManager.h"
+#include "Game/Storage/Registry.h"
+#include <memory>
 class UISystem
 {
 	//Use this class to update ui elements
@@ -13,6 +14,7 @@ class UISystem
   private:
     Registry *m_registry;
     PlayerManager *m_playerManager;
+
     Entity m_player1ScoreTextEntity;
     Entity m_player2ScoreTextEntity;
 };

@@ -84,6 +84,8 @@
     <ClCompile Include="Game\Scenes\LevelOneScene.cpp" />
     <ClCompile Include="Game\Scenes\LevelTwoScene.cpp" />
     <ClCompile Include="Game\Scenes\LevelThreeScene.cpp" />
+    <ClCompile Include="Game\Scenes\ResultsScene.cpp" />
+    <ClCompile Include="Game\Systems\ResultsSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -220,6 +222,8 @@
     <ClInclude Include="Game\Scenes\LevelOneScene.h" />
     <ClInclude Include="Game\Scenes\LevelTwoScene.h" />
     <ClInclude Include="Game\Scenes\LevelThreeScene.h" />
+    <ClInclude Include="Game\Scenes\ResultsScene.h" />
+    <ClInclude Include="Game\Systems\ResultsSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
