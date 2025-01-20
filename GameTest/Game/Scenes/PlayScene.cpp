@@ -6,7 +6,7 @@
 PlayScene::PlayScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
                      std::shared_ptr<PlayerManager> scoreManager)
     : Scene(graphicsManager, eventManager, scoreManager),
-      m_playerSystem(std::make_shared<PlayerSystem>(m_registry.get(), eventManager.get(), m_playerManager.get())),
+      m_playerSystem(std::make_shared<PlayerSystem>(m_registry.get(), eventManager.get(), m_playerManager.get(),m_camera.get())),
       m_collisionSystem(std::make_shared<CollisionSystem>(m_registry.get(), eventManager.get())),
       m_particleSystem(std::make_shared<ParticleSystem>(m_registry.get(), eventManager.get())),
       m_cameraSystem(std::make_shared<CameraSystem>(m_registry.get(), m_playerManager.get(), m_camera.get())),

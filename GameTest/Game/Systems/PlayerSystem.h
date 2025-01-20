@@ -3,11 +3,12 @@
 #include "Game/Managers/PlayerManager.h"
 #include <Game/Core/Components.h>
 #include <Game/Storage/Registry.h>
+#include "Game/Graphics/Camera.h"
 
 class PlayerSystem
 {
 public:
-    PlayerSystem(Registry* registry,EventManager* eventManager, PlayerManager* playerManager);
+    PlayerSystem(Registry* registry,EventManager* eventManager, PlayerManager* playerManager, Camera* camera);
     ~PlayerSystem() = default;
     void Init();
     void Update(float dt);
@@ -18,6 +19,7 @@ private:
     Registry *m_registry;
     EventManager *m_eventManager;
     PlayerManager *m_playerManager;
+    Camera *m_camera;
     bool shotFired = false;
 
     bool previousSpace = false;

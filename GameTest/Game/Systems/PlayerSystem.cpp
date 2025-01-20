@@ -8,8 +8,8 @@
 #include <Game/Storage/View.h>
 #include <Game/Math/MathUtil.h>
 
-PlayerSystem::PlayerSystem(Registry *registry, EventManager *eventManager, PlayerManager *playerManager)
-    : m_arrowView(registry)
+PlayerSystem::PlayerSystem(Registry *registry, EventManager *eventManager, PlayerManager *playerManager, Camera* camera)
+    : m_arrowView(registry), m_camera(camera)
 {
     m_registry = registry;
     m_eventManager = eventManager;
@@ -134,11 +134,20 @@ void PlayerSystem::Update(float dt)
             relativeOffset = deltaPitchRotation.RotateVector3(relativeOffset);
             relativeOffset = relativeOffset.Normalize() * OFFSET_DISTANCE;
             transform.Position = playerTransform.Position + relativeOffset;
+            FVector3 newCameraPos = transform.Position - (relativeOffset*12);
+            newCameraPos.y = playerTransform.Position.y;
+            newCameraPos += FVector3(0, 8, 0);
+            m_camera->SetPosition(newCameraPos);
 
-            // Update rotation to look in the direction of the arrow
+            //m_camera->AddPitch(deltaPitch);
+            m_camera->AddYaw(deltaYaw);
+            //m_camera->SetOrientation(transform.Rotation);
+
+            // Need to use yaw and pitch to look at where the arrow is pointing at
+            //Problem is when the camera moves to a new arrow the yaw gets all messed up again.
+
+
             FVector3 direction = relativeOffset.Normalize();
-            //transform.Rotation = Quaternion::LookAtPlusZ(direction, FVector3{0.0f, .0f, 0.0f});
-
             if (!SPACE && previousSpace)
             {
                 m_playerManager->IncrementCurrentPlayerScore();

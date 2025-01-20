@@ -17,8 +17,6 @@ class Quaternion
 
     ~Quaternion() = default;
 
-    static Quaternion LookAtPlusZ(const FVector3 &direction, const FVector3 &up = {0.0f, 1.0f, 0.0f});
-    static Quaternion LookAtNegativeZ(const FVector3 &direction, const FVector3 &up = {0.0f, 1.0f, 0.0f});
     static Quaternion FromAxisAngle(const FVector3 &axis, float angleRadians);
     static Quaternion FromEulerAnglesXYZ(const FVector3 &eulerAngles);
     static Quaternion FromMatrix3(const Matrix3 &matrix);

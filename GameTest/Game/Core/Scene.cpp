@@ -11,7 +11,7 @@
 Scene::Scene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
              std::shared_ptr<PlayerManager> scoreManager)
     : m_registry(std::make_unique<Registry>()),
-      m_camera(std::make_unique<Camera>(FVector3(0.0f, 10.0f, 55.0f))),
+      m_camera(std::make_unique<Camera>(FVector3(0.0f, 5.0f, 35.0f))),
       m_graphicsManager(graphicsManager),
       m_renderSystem(std::make_shared<RenderSystem>(m_registry.get(), m_graphicsManager.get(), m_camera.get())),
       m_physicsSystem(std::make_shared<PhysicsSystem>(m_registry.get())),

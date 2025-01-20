@@ -68,36 +68,35 @@ Matrix4 Matrix4::CreatePerspectiveMatrix(const float fov, const float aspectRati
     return perspectiveMatrix;
 }
 
-Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &target, const FVector3 &up)
+Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &position, const FVector3 &up)
 {
-    const FVector3 forward = (target - origin).Normalize(); // zAxis
-    const FVector3 right = forward.Cross(up).Normalize();   // xAxis
-    const FVector3 newUp = right.Cross(forward);            // yAxis
+    FVector3 zaxis = (origin - position).Normalize(); 
+    FVector3 xaxis = up.Cross(zaxis).Normalize(); 
+    FVector3 yaxis = zaxis.Cross(xaxis);
 
-    Matrix4 viewMatrix;
+    Matrix4 translation;
+    translation.SetIdentity();
+    translation.Set(0, 3, -position.x);
+    translation.Set(1, 3, -position.y);
+    translation.Set(2, 3, -position.z);
 
-    viewMatrix.Set(0, 0, right.x);
-    viewMatrix.Set(1, 0, right.y);
-    viewMatrix.Set(2, 0, right.z);
+    Matrix4 rotation;
+    rotation.SetIdentity();
+    rotation.Set(0, 0, xaxis.x);
+    rotation.Set(0, 1, yaxis.x);
+    rotation.Set(0, 2, zaxis.x);
 
-    viewMatrix.Set(0, 1, newUp.x);
-    viewMatrix.Set(1, 1, newUp.y);
-    viewMatrix.Set(2, 1, newUp.z);
+    rotation.Set(1, 0, xaxis.y);
+    rotation.Set(1, 1, yaxis.y);
+    rotation.Set(1, 2, zaxis.y);
 
-    viewMatrix.Set(0, 2, -forward.x);
-    viewMatrix.Set(1, 2, -forward.y);
-    viewMatrix.Set(2, 2, -forward.z);
+    rotation.Set(2, 0, xaxis.z);
+    rotation.Set(2, 1, yaxis.z);
+    rotation.Set(2, 2, zaxis.z);
 
-    viewMatrix.Set(0, 3, -right.Dot(origin));
-    viewMatrix.Set(1, 3, -newUp.Dot(origin));
-    viewMatrix.Set(2, 3, forward.Dot(origin));
-
-    viewMatrix.Set(3, 0, 0.0f);
-    viewMatrix.Set(3, 1, 0.0f);
-    viewMatrix.Set(3, 2, 0.0f);
-    viewMatrix.Set(3, 3, 1.0f);
-
-    return viewMatrix;
+    // Return lookAt matrix as combination of rotation and translation matrices
+    // Remember to multiply rotation * translation due to column-major order
+    return rotation * translation;
 }
 
 

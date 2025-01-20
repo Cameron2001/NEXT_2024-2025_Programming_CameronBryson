@@ -72,8 +72,10 @@ void LevelTwoScene::BuildLevelTwo()
     m_registry->AddComponent<TextComponent>(powerScaleText, "Power Scale:", FVector2(20.0f, 200.9f));
     m_playerSystem->SetScaleTextEntity(powerScaleText);
 
-    const int gridRows = 8;
-    const int gridColumns = 6;
+    
+
+    const int gridRows = 1;
+    const int gridColumns = 1;
     const float spacing = 6.05f;
 
     FVector3 startPosition(-15.0f, 0.0f, -30.0f);

@@ -55,6 +55,8 @@ void LevelOneScene::BuildLevelOne()
     auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-5.0f, 4.5f, -20.0f));
     auto hole = m_entityFactory->CreateStaticBox(FVector3(1.5f, 4.0f, -20.0f), FVector3(1.0f, 1.0f, 1.0f),
                                                  FVector3(0, 0, 0), FVector3(1, 1, 1));
+    m_registry->AddComponent<ColliderComponent>(hole, ColliderType::Box, false, true, 0.8, 0.5f, 0.7f);
+    m_registry->AddComponent<BoxBoundsComponent>(hole, FVector3(1.0f, 1.0f, 1.0f));
     m_entityFactory->CreateArrow(player1);
     m_entityFactory->CreateArrow(player2);
     m_playerManager->SetPlayer1(player1);
@@ -128,7 +130,7 @@ void LevelOneScene::BuildLevelOne()
                                                 grassGridStaticFriction, grassGridDynamicFriction);
 
     FVector3 borderColor(1.0f, 0.0f, 0.0f); 
-    float borderHeight = 5.0f;
+    float borderHeight = 3.0f;
 
     for (int row = 0; row < gridRows; ++row)
     {

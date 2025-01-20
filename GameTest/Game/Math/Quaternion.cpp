@@ -24,53 +24,6 @@ Quaternion::Quaternion(const Quaternion &copy) : w(copy.w), x(copy.x), y(copy.y)
 }
 
 
-
-Quaternion Quaternion::LookAtPlusZ(const FVector3 &direction, const FVector3 &up)
-{
-    Matrix3 lookAtMatrix;
-
-    FVector3 right = up.Cross(direction).Normalize();
-    FVector3 normalizedRight = right * (1.0f / sqrtf(std::max(0.00001f, right.Dot(right))));
-    FVector3 forward = right.Cross(normalizedRight);
-
-    lookAtMatrix.Set(2, 0, direction.x);
-    lookAtMatrix.Set(2, 1, direction.y);
-    lookAtMatrix.Set(2, 2, direction.z);
-
-    lookAtMatrix.Set(0, 0, normalizedRight.x);
-    lookAtMatrix.Set(0, 1, normalizedRight.y);
-    lookAtMatrix.Set(0, 2, normalizedRight.z);
-
-    lookAtMatrix.Set(1, 0, forward.x);
-    lookAtMatrix.Set(1, 1, forward.y);
-    lookAtMatrix.Set(1, 2, forward.z);
-
-    return Quaternion::FromMatrix3(lookAtMatrix);
-}
-
-Quaternion Quaternion::LookAtNegativeZ(const FVector3 &direction, const FVector3 &up)
-{
-    Matrix3 lookAtMatrix;
-
-    FVector3 right = up.Cross(-direction).Normalize();
-    FVector3 normalizedRight = right * (1.0f / sqrtf(std::max(0.00001f, right.Dot(right))));
-    FVector3 forward = right.Cross(normalizedRight);
-
-    lookAtMatrix.Set(2, 0, -direction.x);
-    lookAtMatrix.Set(2, 1, -direction.y);
-    lookAtMatrix.Set(2, 2, -direction.z);
-
-    lookAtMatrix.Set(0, 0, normalizedRight.x);
-    lookAtMatrix.Set(0, 1, normalizedRight.y);
-    lookAtMatrix.Set(0, 2, normalizedRight.z);
-
-    lookAtMatrix.Set(1, 0, forward.x);
-    lookAtMatrix.Set(1, 1, forward.y);
-    lookAtMatrix.Set(1, 2, forward.z);
-
-    return Quaternion::FromMatrix3(lookAtMatrix);
-}
-
 Quaternion Quaternion::FromAxisAngle(const FVector3 &axis, float angle)
 {
     float halfAngle = angle * 0.5f;
