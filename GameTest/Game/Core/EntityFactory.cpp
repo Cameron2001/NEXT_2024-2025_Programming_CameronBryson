@@ -61,84 +61,20 @@ Entity EntityFactory::CreateDynamicSphere(const FVector3 &position, float radius
     return sphere;
 }
 
-Entity EntityFactory::CreateStaticSphere(const FVector3 &position, float radius)
-{
-    Entity sphere = m_registry->CreateEntity();
 
-    // Add TransformComponent with the provided position, default rotation, and scale
-    m_registry->AddComponent<TransformComponent>(sphere, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
-                                                 FVector3(1.0f, 1.0f, 1.0f)                    // Scale
-    );
 
-    // Add ModelComponent with the model name "SphereOBJ"
-    m_registry->AddComponent<ModelComponent>(sphere, "SphereOBJ");
-
-    // Static objects typically do not require RigidBodyComponents or have them configured differently
-    // Add ColliderComponent as a static Sphere collider
-    m_registry->AddComponent<ColliderComponent>(sphere, ColliderType::Sphere, false);
-
-    // Add SphereBoundsComponent with the specified radius
-    m_registry->AddComponent<SphereBoundsComponent>(sphere, radius);
-
-    return sphere;
-}
-
-Entity EntityFactory::CreateDynamicBox(const FVector3 &position, const FVector3 &extents)
-{
-    Entity box = m_registry->CreateEntity();
-
-    // Add TransformComponent with the provided position, default rotation, and scale
-    m_registry->AddComponent<TransformComponent>(box, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
-                                                 FVector3(1.0f, 1.0f, 1.0f)                 // Scale
-    );
-
-    // Add ModelComponent with the model name "BoxOBJ"
-    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ");
-
-    // Add RigidBodyComponent with linear and angular drag of 0.5f each
-    m_registry->AddComponent<RigidBodyComponent>(box,1.0f, 0.5f, 0.5f);
-
-    // Add ColliderComponent as a dynamic Box collider
-    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, true);
-
-    // Add BoxBoundsComponent with the specified extents
-    m_registry->AddComponent<BoxBoundsComponent>(box, extents);
-
-    return box;
-}
 
 // Creates a static Box entity with the specified position and extents
-Entity EntityFactory::CreateStaticBox(const FVector3 &position, const FVector3 &extents, const FVector3 &rotation)
+Entity EntityFactory::CreateStaticBox(const FVector3 &position, const FVector3 &extents, const FVector3 &rotation, const FVector3& color)
 {
     Entity box = m_registry->CreateEntity();
 
-    // Add TransformComponent with the provided position, default rotation, and scale
-    m_registry->AddComponent<TransformComponent>(box, position, rotation, // Rotation
+    m_registry->AddComponent<TransformComponent>(box, position, rotation, 
                                                  extents                 // Scale
     );
+    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ", color);
 
-    // Add ModelComponent with the model name "BoxOBJ"
-    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ");
 
-    // Static objects typically do not require RigidBodyComponents or have them configured differently
-    // Add ColliderComponent as a static Box collider
-    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false);
-
-    // Add BoxBoundsComponent with the specified extents
-    m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0,1.0,1.0));
-
-    return box;
-}
-
-Entity EntityFactory::CreateGrassBox(const FVector3 &position, const FVector3 &scale, const FVector3 &color )
-{
-    Entity box = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(box, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
-                                                 scale               // Scale
-    );
-    m_registry->AddComponent<ModelComponent>(box, "CubeOBJ",color);
-    //m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false,false,0.2,0.8,0.6);
-    //m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0f,1.0f,1.0f));
     return box;
 }
 
@@ -162,26 +98,13 @@ Entity EntityFactory::CreateArrow(Entity followTarget)
     return arrow;
 }
 
-Entity EntityFactory::CreateBorder(const FVector3 &position, const FVector3 &scale, const FVector3 &color)
-{
-    Entity border = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(border, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
-                                                 scale                                         // Scale
-    );
-    m_registry->AddComponent<ModelComponent>(border, "CubeOBJ", color);
-    m_registry->AddComponent<ColliderComponent>(border, ColliderType::Box, false, false, 0.2, 0.8, 0.6);
-    m_registry->AddComponent<BoxBoundsComponent>(border, FVector3(1.0f, 1.0f, 1.0f));
-
-    return border;
-}
-
-Entity EntityFactory::CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents)
+Entity EntityFactory::CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents, const float elasticity, const float staticFriction, const float dynamicFriction)
 {
     Entity collider = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(collider, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
                                                  FVector3(1.0f, 1.0f, 1.0f)                      // Scale
     );
-    m_registry->AddComponent<ColliderComponent>(collider, ColliderType::Box, false, true, 0.7, 0.8, 0.8);
+    m_registry->AddComponent<ColliderComponent>(collider, ColliderType::Box, false, true, elasticity,staticFriction, dynamicFriction);
     m_registry->AddComponent<BoxBoundsComponent>(collider, extents);
     return collider;
 }
@@ -198,6 +121,18 @@ Entity EntityFactory::CreateBouncyBox(const FVector3 &position, const FVector3 &
     return box;
 }
 
+Entity EntityFactory::CreateBouncySphere(const FVector3 &position, float radius)
+{
+    Entity sphere = m_registry -> CreateEntity();
+    m_registry->AddComponent<TransformComponent>(sphere, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
+                                                 FVector3(radius, radius, radius)                    // Scale
+    );
+    m_registry->AddComponent<ModelComponent>(sphere, "SphereOBJ", FVector3(0.2f, 1.0f, 0.2f));
+    m_registry->AddComponent<ColliderComponent>(sphere, ColliderType::Sphere, false, false, 2.0, 0.1f, 0.1f);
+
+    return sphere;
+}
+
 Entity EntityFactory::CreateSandBox(const FVector3 &position, const FVector3 &extents)
 {
     Entity box = m_registry->CreateEntity();
@@ -206,7 +141,7 @@ Entity EntityFactory::CreateSandBox(const FVector3 &position, const FVector3 &ex
                                                  extents);                                  // Scale
     m_registry->AddComponent<BoxBoundsComponent>(box, FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<ModelComponent>(box, "CubeOBJ", FVector3(1.0f, 1.0f, 0.0f));
-    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false, false, 0.2, 0.95f, 0.95f);
+    m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false, false, 0.2, 0.99f, 0.99f);
     return box;
 }
 
