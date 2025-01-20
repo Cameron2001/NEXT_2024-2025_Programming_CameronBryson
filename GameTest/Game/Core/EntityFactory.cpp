@@ -156,3 +156,34 @@ Entity EntityFactory::CreateIceBox(const FVector3 &position, const FVector3 &ext
     m_registry->AddComponent<ColliderComponent>(box, ColliderType::Box, false, false, 0.4, 0.1f, 0.1f);
     return box;
 }
+
+void EntityFactory::CreateStaticBoxGrid(int rows, int cols, const FVector3 &startPosition, float spacing,
+                                        const FVector3 &extents, const FVector3 &color, const float elasticity,
+                                              const float staticFriction, const float dynamicFriction)
+{
+    for (int row = 0; row < rows; ++row)
+    {
+        for (int col = 0; col < cols; ++col)
+        {
+            FVector3 position = startPosition;
+            position.x += col * spacing;
+            position.z += row * spacing;
+
+            // Create the static box without an individual collider
+            CreateStaticBox(position, extents, FVector3(0.0f, 0.0f, 0.0f), color);
+        }
+    }
+    FVector3 largeColliderPosition;
+    largeColliderPosition.x = startPosition.x + (cols * spacing) / 2.0f - spacing / 2.0f;
+    largeColliderPosition.y = startPosition.y;
+    largeColliderPosition.z = startPosition.z + (rows * spacing) / 2.0f - spacing / 2.0f;
+
+    FVector3 largeColliderExtents;
+    largeColliderExtents.x = (cols * spacing) / 2.0f;
+    largeColliderExtents.y = extents.y; // Assuming the collider height matches the box height
+    largeColliderExtents.z = (rows * spacing) / 2.0f;
+
+    // Create a single large invisible collider encompassing the entire grid
+    CreateInvisibleBoxCollider(largeColliderPosition, largeColliderExtents, elasticity, staticFriction,
+                               dynamicFriction);
+}

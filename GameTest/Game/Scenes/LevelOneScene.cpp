@@ -206,4 +206,7 @@ void LevelOneScene::BuildLevelOne()
     m_entityFactory->CreateInvisibleBoxCollider(FVector3(-5, 2, -10), FVector3(2, 2, 2), sandGridElasticity, sandGridStaticFriction, sandGridDynamicFriction);
 
     m_entityFactory->CreateBouncySphere(FVector3(-2, 2, -5), 1.0f);
+
+    /*m_entityFactory->CreateStaticBoxGrid(5, 5, FVector3(0, 5, -20), 6.0f, FVector3(2.0f, 2.0f, 2.0f), bouncyBoxColor,
+                                         bouncyGridElasticity, bouncyGridStaticFriction, bouncyGridDynamicFriction);*/
 }
