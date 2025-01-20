@@ -20,6 +20,7 @@ class Quaternion
     static Quaternion FromAxisAngle(const FVector3 &axis, float angleRadians);
     static Quaternion FromEulerAnglesXYZ(const FVector3 &eulerAngles);
     static Quaternion FromMatrix3(const Matrix3 &matrix);
+    static Quaternion LookAt(const FVector3 &direction, const FVector3 &up);
 
 
     float GetPitch() const;

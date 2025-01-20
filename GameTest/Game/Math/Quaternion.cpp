@@ -112,6 +112,65 @@ Quaternion Quaternion::FromMatrix3(const Matrix3 &matrix)
     }
     return q;
 }
+Quaternion Quaternion::LookAt(const FVector3 &direction, const FVector3 &up)
+{
+    FVector3 forward = direction.Normalize();
+    FVector3 upDir = up.Normalize();
+
+    FVector3 right = upDir.Cross(forward).Normalize();
+    FVector3 trueUp = forward.Cross(right);
+
+    Matrix3 rotationMatrix;
+    rotationMatrix.Set(0, 0, right.x);
+    rotationMatrix.Set(1, 0, right.y);
+    rotationMatrix.Set(2, 0, right.z);
+
+    rotationMatrix.Set(0, 1, trueUp.x);
+    rotationMatrix.Set(1, 1, trueUp.y);
+    rotationMatrix.Set(2, 1, trueUp.z);
+
+    rotationMatrix.Set(0, 2, forward.x);
+    rotationMatrix.Set(1, 2, forward.y);
+    rotationMatrix.Set(2, 2, forward.z);
+
+    float trace = rotationMatrix.m[0] + rotationMatrix.m[4] + rotationMatrix.m[8];
+    float w_, x_, y_, z_;
+
+    if (trace > 0.0f)
+    {
+        float s = std::sqrt(trace + 1.0f) * 2.0f;
+        w_ = 0.25f * s;
+        x_ = (rotationMatrix.m[7] - rotationMatrix.m[5]) / s;
+        y_ = (rotationMatrix.m[2] - rotationMatrix.m[6]) / s;
+        z_ = (rotationMatrix.m[3] - rotationMatrix.m[1]) / s;
+    }
+    else if ((rotationMatrix.m[0] > rotationMatrix.m[4]) && (rotationMatrix.m[0] > rotationMatrix.m[8]))
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[0] - rotationMatrix.m[4] - rotationMatrix.m[8]) * 2.0f;
+        w_ = (rotationMatrix.m[7] - rotationMatrix.m[5]) / s;
+        x_ = 0.25f * s;
+        y_ = (rotationMatrix.m[1] + rotationMatrix.m[3]) / s;
+        z_ = (rotationMatrix.m[2] + rotationMatrix.m[6]) / s;
+    }
+    else if (rotationMatrix.m[4] > rotationMatrix.m[8])
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[4] - rotationMatrix.m[0] - rotationMatrix.m[8]) * 2.0f;
+        w_ = (rotationMatrix.m[2] - rotationMatrix.m[6]) / s;
+        x_ = (rotationMatrix.m[1] + rotationMatrix.m[3]) / s;
+        y_ = 0.25f * s;
+        z_ = (rotationMatrix.m[5] + rotationMatrix.m[7]) / s;
+    }
+    else
+    {
+        float s = std::sqrt(1.0f + rotationMatrix.m[8] - rotationMatrix.m[0] - rotationMatrix.m[4]) * 2.0f;
+        w_ = (rotationMatrix.m[3] - rotationMatrix.m[1]) / s;
+        x_ = (rotationMatrix.m[2] + rotationMatrix.m[6]) / s;
+        y_ = (rotationMatrix.m[5] + rotationMatrix.m[7]) / s;
+        z_ = 0.25f * s;
+    }
+
+    return Quaternion(w_, x_, y_, z_).Normalize();
+}
 float Quaternion::GetPitch() const
 {
     const float sinPitch = 2.0f * (y * z + w * x);

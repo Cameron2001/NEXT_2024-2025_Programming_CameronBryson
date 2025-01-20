@@ -71,6 +71,10 @@ void CollisionSystem::BuildOctree()
 
 void CollisionSystem::UpdateOctree()
 {
+    if (!m_octree)
+    {
+        return;
+    }
     m_octree->ClearDynamicColliders();
     m_dyanmicBoxView.Update();
     m_dynamicSphereView.Update();

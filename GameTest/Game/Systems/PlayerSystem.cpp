@@ -117,37 +117,49 @@ void PlayerSystem::Update(float dt)
             if (PITCHDOWN)
                 deltaPitch -= ROTATION_SPEED * dt; // Pitch Down
 
+            // Update cumulative yaw and pitch angles
+            totalYaw += deltaYaw;
+            totalPitch += deltaPitch;
+
+            // Clamp pitch to prevent flipping
+            const float MAX_PITCH_ANGLE = 89.0f; // To avoid gimbal lock
+            if (totalPitch > MAX_PITCH_ANGLE)
+                totalPitch = MAX_PITCH_ANGLE;
+            if (totalPitch < -MAX_PITCH_ANGLE)
+                totalPitch = -MAX_PITCH_ANGLE;
+
             float deltaYawRadians = MathUtil::DegreesToRadians(deltaYaw);
-            float deltaPitchRadians = MathUtil::DegreesToRadians(deltaPitch);
+            float deltaPitchRadians = MathUtil::DegreesToRadians(deltaPitch);                   
 
-            FVector3 forward = (transform.Position - playerTransform.Position).Normalize();
-            FVector3 right = forward.Cross(FVector3{0.0f, 1.0f, 0.0f}).Normalize();
-            FVector3 localUp = right.Cross(forward).Normalize();                    
-
-            // Create rotation quaternions based on local axes
             Quaternion deltaYawRotation = Quaternion::FromAxisAngle(FVector3(0.0f,1.0f,0.0f), deltaYawRadians);
-            Quaternion deltaPitchRotation = Quaternion::FromAxisAngle(right, deltaPitchRadians);                
+            Quaternion deltaPitchRotation = Quaternion::FromAxisAngle(FVector3(1.0f,0.0,0.0f), deltaPitchRadians);                
 
-            // Update relative offset
             FVector3 relativeOffset = transform.Position - playerTransform.Position;
             relativeOffset = deltaYawRotation.RotateVector3(relativeOffset);
             relativeOffset = deltaPitchRotation.RotateVector3(relativeOffset);
             relativeOffset = relativeOffset.Normalize() * OFFSET_DISTANCE;
-            transform.Position = playerTransform.Position + relativeOffset;
             FVector3 newCameraPos = transform.Position - (relativeOffset*12);
             newCameraPos.y = playerTransform.Position.y;
             newCameraPos += FVector3(0, 8, 0);
             m_camera->SetPosition(newCameraPos);
 
-            //m_camera->AddPitch(deltaPitch);
+
             m_camera->AddYaw(deltaYaw);
-            //m_camera->SetOrientation(transform.Rotation);
 
-            // Need to use yaw and pitch to look at where the arrow is pointing at
-            //Problem is when the camera moves to a new arrow the yaw gets all messed up again.
+            float yawRadians = MathUtil::DegreesToRadians(totalYaw);
+            float pitchRadians = MathUtil::DegreesToRadians(totalPitch);
+
+            float cosPitch = cosf(pitchRadians);
+            FVector3 direction;
+            direction.x = sinf(yawRadians) * cosPitch;
+            direction.y = sinf(pitchRadians);
+            direction.z = cosf(yawRadians) * cosPitch;
+            direction = direction.Normalize();
+
+            transform.Position = playerTransform.Position +direction * OFFSET_DISTANCE;
 
 
-            FVector3 direction = relativeOffset.Normalize();
+            transform.Rotation = Quaternion::LookAt(direction, FVector3{0.0f, 1.0f, 0.0f});
             if (!SPACE && previousSpace)
             {
                 m_playerManager->IncrementCurrentPlayerScore();

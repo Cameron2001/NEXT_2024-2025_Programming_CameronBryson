@@ -162,7 +162,7 @@ void Octree::ClearDynamicColliders()
             child->ClearDynamicColliders();
         }
     }
-    Merge();
+    //Merge();
 }
 
 

@@ -26,6 +26,8 @@ private:
     View<ArrowComponent, ModelComponent, TransformComponent> m_arrowView;
     float forceScale = 5.0f;
     Entity m_scaleTextEntity;
+    float totalYaw = 180;
+    float totalPitch = 0;
     
 
 };

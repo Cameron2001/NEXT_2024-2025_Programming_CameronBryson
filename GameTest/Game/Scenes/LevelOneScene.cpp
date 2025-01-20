@@ -80,7 +80,7 @@ void LevelOneScene::BuildLevelOne()
     const float spacing = 6.05f; 
 
     FVector3 startPosition(-15.0f, 0.0f, -30.0f);
-    FVector3 startPosition2(-15.0f, 7.0f, -100.0f);
+    FVector3 startPosition2(-15.0f, 5.0f, -100.0f);
 
     FVector3 firstGrassColor(0.0f, 0.7f, 0.0f);
     FVector3 secondGrassColor(0.7f, 0.7f, 0.7f);
@@ -149,9 +149,9 @@ void LevelOneScene::BuildLevelOne()
                                                     boundaryGridDynamicFriction);
     }
 
-    m_entityFactory->CreateStaticBox(FVector3(0, 2.0f, -42), FVector3(12.0f, 3.0f, 6.0f), FVector3(-0.3f, 0.0f, 0.0f),
+    m_entityFactory->CreateStaticBox(FVector3(0, 2.0f, -41), FVector3(22.0f, 1.0f, 6.0f), FVector3(-0.3f, 0.0f, 0.0f),
                                      FVector3(0.5f, 0.5f, 0.5f));
-    m_entityFactory->CreateInvisibleBoxCollider(FVector3(0, 2.0f, -42), FVector3(12.0f, 3.0f, 6.0f), 0.5f, 0.5f, 0.5f);
+    m_entityFactory->CreateInvisibleBoxCollider(FVector3(0, 2.0f, -41), FVector3(22.0f, 1.0f, 6.0f), 0.5f, 0.5f, 0.5f);
 
     for (int row = 0; row < gridRows; ++row)
     {
