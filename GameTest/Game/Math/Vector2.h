@@ -13,7 +13,6 @@ class FVector2
     FVector2(float X, float Y);
     FVector2(const FVector2 &copy);
 
-    // Operator Overloads
     FVector2 operator+(const FVector2 &obj) const;
     FVector2 operator-(const FVector2 &obj) const;
     FVector2 operator*(const FVector2 &obj) const;
@@ -31,7 +30,6 @@ class FVector2
     bool operator==(const FVector2 &other) const;
     bool operator!=(const FVector2 &other) const;
 
-    // Member Functions
     float Length() const;
     float LengthSquared() const;
     FVector2 Normalize() const;
@@ -51,7 +49,6 @@ class IVector2
     IVector2(int X, int Y);
     IVector2(const IVector2 &copy);
 
-    // Operator Overloads
     IVector2 operator+(const IVector2 &obj) const;
     IVector2 operator-(const IVector2 &obj) const;
     IVector2 operator*(const IVector2 &obj) const;
@@ -69,7 +66,6 @@ class IVector2
     bool operator==(const IVector2 &other) const;
     bool operator!=(const IVector2 &other) const;
 
-    // Member Functions
     float Length() const;
     float LengthSquared() const;
     float Dot(const IVector2 &obj) const;

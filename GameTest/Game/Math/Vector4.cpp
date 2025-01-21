@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Vector4.h"
 
-// FVector4 Implementations
 
 FVector4::FVector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f)
 {
@@ -177,7 +176,7 @@ FVector4 FVector4::Project(const FVector4 &normal) const
     return FVector4(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
-// IVector4 Implementations
+
 
 IVector4::IVector4() : x(0), y(0), z(0), w(0)
 {

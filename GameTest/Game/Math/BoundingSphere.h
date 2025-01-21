@@ -60,7 +60,6 @@ class BoundingSphere3D
     {
     }
 
-    // Check if this sphere intersects with another BoundingSphere3D
     bool Intersects(const BoundingSphere3D &other) const
     {
         float distanceSquared = (center - other.center).LengthSquared();
@@ -68,14 +67,12 @@ class BoundingSphere3D
         return distanceSquared <= (radiusSum * radiusSum);
     }
 
-    // Check if this sphere contains another BoundingSphere3D
     bool Contains(const BoundingSphere3D &other) const
     {
         float distance = (center - other.center).Length();
         return distance + other.radius <= radius;
     }
 
-    // Check if this sphere contains a point
     bool ContainsPoint(const FVector3 &point) const
     {
         float distanceSquared = (point - center).LengthSquared();

@@ -32,9 +32,7 @@ void CameraSystem::Update(float dt)
     }
     if (ARROW_UP)
     {
-        // Look up by increasing pitch
         m_camera->AddPitch(-rotationSpeed * dt);
-        //m_camera->SetPosition(m_camera->GetPosition() + FVector3(0,1,0) * moveSpeed * dt);
     }
     if (ARROW_DOWN)
     {

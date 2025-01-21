@@ -5,7 +5,6 @@
 #include "Game/Core/Collision.h"
 #include <Game/Math/Octree.h>
 #include <vector>
-#include <Game/Storage/IComponentArray.h>
 #include <Game/Math/Matrix4.h>
 #include <ppl.h>
 #include "Game/Managers/EventManager.h"
@@ -23,10 +22,10 @@ class CollisionSystem
   private:
     void BuildOctree();
     void UpdateOctree();
-    bool TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const FVector3 &scale1,
-                         const Matrix4 &rotation1, const BoxBoundsComponent &box2, const FVector3 &scale2,
-                         const Matrix4 &rotation2, const FVector3 &translation, float &minimalPenetration,
-                         FVector3 &collisionNormal) const;
+    static bool TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const FVector3 &scale1,
+                                const Matrix4 &rotation1, const BoxBoundsComponent &box2, const FVector3 &scale2,
+                                const Matrix4 &rotation2, const FVector3 &translation, float &minimalPenetration,
+                                FVector3 &collisionNormal);
     bool OOBvsOOB(Entity ID1, Entity ID2);
     bool SpherevsSphere(Entity ID1, Entity ID2);
     bool SpherevsOOB(Entity ID1, Entity ID2);
@@ -39,7 +38,6 @@ class CollisionSystem
     Registry *m_registry;
     EventManager *m_eventManager;
     std::unique_ptr<Octree> m_octree;
-    // We should decide if we want to defer collision resolution. Or resolve as they are found.
     std::vector<std::pair<unsigned int, unsigned int>> m_potentialCollisions;
     concurrency::combinable<std::vector<Collision>> m_threadCollisions;
     std::vector<Collision> m_collisions;
@@ -48,13 +46,3 @@ class CollisionSystem
     View<TransformComponent, SphereBoundsComponent, ColliderComponent> m_sphereView;
     View<TransformComponent, SphereBoundsComponent, ColliderComponent, RigidBodyComponent> m_dynamicSphereView;
 };
-
-// Read
-//  Transform
-//  Collider
-//  RigidBody
-//  BoxBounds
-//  SphereBounds
-
-// Write
-//  CollisionManager

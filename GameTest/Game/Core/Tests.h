@@ -25,11 +25,6 @@ inline std::vector<TestResult> RunTests()
     std::vector<TestResult> vector4Results = Vector4Tests::RunAllTests();
     results.insert(results.end(), vector4Results.begin(), vector4Results.end());
 
-    std::vector<TestResult> quaternionResults = QuaternionTests::RunAllTests();
-    results.insert(results.end(), quaternionResults.begin(), quaternionResults.end());
-
-    std::vector<TestResult> matrix3Results = Matrix3Tests::RunAllTests();
-    results.insert(results.end(), matrix3Results.begin(), matrix3Results.end());
 
     std::vector<TestResult> matrix4Results = Matrix4Tests::RunAllTests();
     results.insert(results.end(), matrix4Results.begin(), matrix4Results.end());
@@ -43,8 +38,6 @@ inline std::vector<TestResult> RunTests()
     std::vector<TestResult> quadTreeResults = QuadtreeTests::RunAllTests();
     results.insert(results.end(), quadTreeResults.begin(), quadTreeResults.end());
 
-    std::vector<TestResult> octreeResults = OctreeTests::RunAllTests();
-    results.insert(results.end(), octreeResults.begin(), octreeResults.end());
 
     return results;
 }

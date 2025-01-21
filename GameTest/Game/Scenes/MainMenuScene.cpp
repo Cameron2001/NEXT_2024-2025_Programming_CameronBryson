@@ -17,17 +17,12 @@ void MainMenuScene::Init()
     auto levelOneText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(levelOneText, "Press 1 for Level One", FVector2(500.0f, 400.0f));
 
-    auto levelTwoText = m_registry->CreateEntity();
-    m_registry->AddComponent<TextComponent>(levelTwoText, "Press 2 for Level Two", FVector2(500.0f, 300.0f));
+    auto controlsText = m_registry->CreateEntity();
+    m_registry->AddComponent<TextComponent>(controlsText, "WASD to move the arrow. Hold and release space bar to shoot!", FVector2(500.0f, 300.0f));
 
 
     auto escapeText = m_registry->CreateEntity();
-    m_registry->AddComponent<TextComponent>(escapeText, "Press ESC to Exit", FVector2(500.0f, 100.0f));
-
-    auto model = m_registry->CreateEntity();
-    m_registry->AddComponent<TransformComponent>(model, FVector3(-5.0f, 5.0f, 5.0f), FVector3(0.0f, 0.0f, 0.0f),
-                                                 FVector3(1.0f, 1.0f, 1.0f));
-    m_registry->AddComponent<ModelComponent>(model, "SphereOBJ");
+    m_registry->AddComponent<TextComponent>(escapeText, "Press ESC to Exit", FVector2(500.0f, 200.0f));
 
 
 

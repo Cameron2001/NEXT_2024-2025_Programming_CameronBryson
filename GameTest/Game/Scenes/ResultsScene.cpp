@@ -56,18 +56,18 @@ void ResultsScene::BuildResults()
     auto entityPlayer1ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(entityPlayer1ScoreText,
                                             "Player 1 Score: " + std::to_string(m_playerManager->GetPlayer1Score()),
-                                            FVector2(100.0f, 100.0f));
+                                            FVector2(540.0f, 500.0f));
     auto entityPlayer2ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(entityPlayer2ScoreText,
                                             "Player 2 Score: " + std::to_string(m_playerManager->GetPlayer2Score()),
-                                            FVector2(80,80));
+                                            FVector2(540,400));
 
     auto entityWinnerText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(entityWinnerText, "Winner: ",
-                                            FVector2(100, 150));
+                                            FVector2(540, 300));
 
     auto entityControlsText = m_registry->CreateEntity();
-    m_registry->AddComponent<TextComponent>(entityControlsText, "Press SPACE to return to Main Menu", FVector2(76,210));
+    m_registry->AddComponent<TextComponent>(entityControlsText, "Press SPACE to return to Main Menu", FVector2(540,200));
 
     m_resultsSystem->SetPlayer1ScoreText(entityPlayer1ScoreText);
     m_resultsSystem->SetPlayer2ScoreText(entityPlayer2ScoreText);

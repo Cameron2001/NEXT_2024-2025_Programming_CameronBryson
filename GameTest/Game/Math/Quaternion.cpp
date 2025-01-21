@@ -171,6 +171,38 @@ Quaternion Quaternion::LookAt(const FVector3 &direction, const FVector3 &up)
 
     return Quaternion(w_, x_, y_, z_).Normalize();
 }
+Quaternion Quaternion::Slerp(const Quaternion &start, const Quaternion &end, float t)
+{
+    Quaternion q1 = start.Normalize();
+    Quaternion q2 = end.Normalize();
+
+    float dot = q1.Dot(q2);
+
+    if (dot < 0.0f)
+    {
+        q2 = Quaternion(-q2.w, -q2.x, -q2.y, -q2.z);
+        dot = -dot;
+    }
+
+    const float DOT_THRESHOLD = 0.9995f;
+    if (dot > DOT_THRESHOLD)
+    {
+        Quaternion result = Quaternion(q1.w + t * (q2.w - q1.w), q1.x + t * (q2.x - q1.x), q1.y + t * (q2.y - q1.y),
+                                       q1.z + t * (q2.z - q1.z));
+        return result.Normalize();
+    }
+
+    float theta_0 = std::acos(dot);        
+    float theta = theta_0 * t;             
+    float sin_theta = std::sin(theta);     
+    float sin_theta_0 = std::sin(theta_0); 
+
+    float s0 = std::cos(theta) - dot * sin_theta / sin_theta_0;
+    float s1 = sin_theta / sin_theta_0;
+
+    return Quaternion((q1.w * s0) + (q2.w * s1), (q1.x * s0) + (q2.x * s1), (q1.y * s0) + (q2.y * s1),
+                      (q1.z * s0) + (q2.z * s1));
+}
 float Quaternion::GetPitch() const
 {
     const float sinPitch = 2.0f * (y * z + w * x);

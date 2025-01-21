@@ -28,6 +28,7 @@ private:
     Entity m_scaleTextEntity;
     float totalYaw = 180;
     float totalPitch = 0;
+
     
 
 };

@@ -14,7 +14,6 @@ class FVector3
     FVector3(float X, float Y, float Z);
     FVector3(const FVector3 &copy);
 
-    // Operator Overloads
     FVector3 operator+(const FVector3 &obj) const;
     FVector3 operator-(const FVector3 &obj) const;
     FVector3 operator*(const FVector3 &obj) const;
@@ -54,7 +53,6 @@ class IVector3
     IVector3(int X, int Y, int Z);
     IVector3(const IVector3 &copy);
 
-    // Operator Overloads
     IVector3 operator+(const IVector3 &obj) const;
     IVector3 operator-(const IVector3 &obj) const;
     IVector3 operator*(const IVector3 &obj) const;

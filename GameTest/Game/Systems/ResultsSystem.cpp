@@ -5,15 +5,16 @@
 
 
 ResultsSystem::ResultsSystem(Registry *registry, PlayerManager *playerManager, EventManager *eventManager)
-    : m_registry(registry), m_playerManager(playerManager), m_eventManager(eventManager)
+    : m_registry(registry), m_playerManager(playerManager), m_eventManager(eventManager), player1ScoreText(0),
+      player2ScoreText(0),
+      winnerText(0)
 {
 }
 
 void ResultsSystem::LateInit()
 {
-	//Determine winner and update text
-    int player1Score = m_playerManager->GetPlayer1Score();
-    int player2Score = m_playerManager->GetPlayer2Score();
+    const int player1Score = m_playerManager->GetPlayer1Score();
+    const int player2Score = m_playerManager->GetPlayer2Score();
 
     if (player1Score < player2Score)
     {
@@ -35,7 +36,7 @@ void ResultsSystem::LateInit()
 
 void ResultsSystem::Update(float dt)
 {
-    bool SPACE = App::IsKeyPressed(VK_SPACE);
+    const bool SPACE = App::IsKeyPressed(VK_SPACE);
     if (SPACE)
     {
         m_playerManager->ResetScores();
@@ -44,17 +45,17 @@ void ResultsSystem::Update(float dt)
 }
 
 
-void ResultsSystem::SetPlayer1ScoreText(Entity entity)
+void ResultsSystem::SetPlayer1ScoreText(const Entity entity)
 {
     player1ScoreText = entity;
 }
 
-void ResultsSystem::SetPlayer2ScoreText(Entity entity)
+void ResultsSystem::SetPlayer2ScoreText(const Entity entity)
 {
     player2ScoreText = entity;
 }
 
-void ResultsSystem::SetWinnerText(Entity entity)
+void ResultsSystem::SetWinnerText(const Entity entity)
 {
     winnerText = entity;
 }

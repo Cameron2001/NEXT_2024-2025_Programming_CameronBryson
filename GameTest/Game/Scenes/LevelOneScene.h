@@ -5,10 +5,7 @@ class LevelOneScene : public PlayScene
   public:
     LevelOneScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager,
                   std::shared_ptr<PlayerManager> scoreManager);
-    ~LevelOneScene() override
-    {
-        printf("LevelOneScene Destructor\n");
-    }
+    ~LevelOneScene() override = default;
     void Init() override;
     void LateInit() override;
     void Update(float dt) override;
@@ -19,4 +16,15 @@ class LevelOneScene : public PlayScene
     void LateShutdown() override;
   private:
     void BuildLevelOne();
+    void BuildPlayers();
+    void BuildUI();
+    void BuildGrassArea();
+    void BuildGrassBoundaries();
+    void BuildIceArea();
+    void BuildIceBoundaries();
+    void BuildBouncyBoxes();
+    void BuildRamps();
+    void BuildCentralGrassArea();
+    void BuildSandBorders();
+    void CreateBoundary(const FVector3 &position, float height, float elasticity, float friction);
 };

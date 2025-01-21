@@ -1,17 +1,10 @@
 #pragma once
 #include "Game/Math/Vector3.h"
 #include "Game/Math/Vector4.h"
-//eulerAngleXYZ
-//Get Axes
-//perspective
-//Look at
-//ortho
-//translate
-//scale
+
 class Matrix4
 {
 public:
-    //Column Major because of opengl
     float m[16];
     Matrix4();
     ~Matrix4() = default;

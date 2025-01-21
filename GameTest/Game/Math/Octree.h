@@ -3,7 +3,7 @@
 #include "BoundingBox.h"
 #include <memory>
 #include <vector>
-#include <set> // For std::set
+#include <set> 
 #include "Game/Core/Components.h"
 
 struct ColliderEntry
@@ -32,7 +32,6 @@ class Octree
 
   private:
     void Subdivide();
-    void Merge();
 
     void CollectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const;
 

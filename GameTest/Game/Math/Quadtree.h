@@ -42,7 +42,6 @@ class Quadtree
     std::vector<TriangleEntry> m_triangles;
     bool m_divided;
 
-    // Child quadrants
     std::unique_ptr<Quadtree> m_northWest;
     std::unique_ptr<Quadtree> m_northEast;
     std::unique_ptr<Quadtree> m_southWest;

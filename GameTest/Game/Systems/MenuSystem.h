@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include "Game/Managers/EventManager.h"
 class MenuSystem
 {

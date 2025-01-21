@@ -58,7 +58,6 @@ void Octree::Insert(const ColliderEntry &entry)
             {
                 child->Insert(entry);
                 insertedIntoChild = true;
-                // Do not break; the entry can reside in multiple children
             }
         }
     }
@@ -95,8 +94,6 @@ void Octree::Subdivide()
     m_children[7] =
         std::make_unique<Octree>(BoundingBox3D(midX, midY, midZ, m_bounds.maxX, m_bounds.maxY, m_bounds.maxZ),
                                  m_capacity, m_maxDepth, m_level + 1);
-
-    // Re-insert existing colliders into children
     std::vector<ColliderEntry> oldColliders = m_colliders;
     m_colliders.clear();
     for (const auto &entry : oldColliders)
@@ -105,38 +102,6 @@ void Octree::Subdivide()
     }
 }
 
-void Octree::Merge()
-{
-    bool canMerge = true;
-    size_t totalColliders = m_colliders.size();
-
-    for (const auto &child : m_children)
-    {
-        if (child)
-        {
-            if (child->m_children[0] != nullptr)
-            {
-                canMerge = false;
-                break;
-            }
-            totalColliders += child->m_colliders.size();
-        }
-    }
-
-    const size_t mergeThreshold = m_capacity;
-
-    if (canMerge && totalColliders <= mergeThreshold)
-    {
-        for (auto &child : m_children)
-        {
-            if (child)
-            {
-                m_colliders.insert(m_colliders.end(), child->m_colliders.begin(), child->m_colliders.end());
-                child.reset();
-            }
-        }
-    }
-}
 
 void Octree::GetPotentialCollisions(std::vector<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
 {
@@ -145,16 +110,13 @@ void Octree::GetPotentialCollisions(std::vector<std::pair<unsigned int, unsigned
     potentialCollisions.assign(collisionsSet.begin(), collisionsSet.end());
 }
 
-// In Octree.cpp
 
 void Octree::ClearDynamicColliders()
 {
-    // Remove dynamic colliders from the current node
     m_colliders.erase(std::remove_if(m_colliders.begin(), m_colliders.end(),
                                      [](const ColliderEntry &entry) { return entry.isDynamic; }),
                       m_colliders.end());
 
-    // Recursively clear dynamic colliders from child nodes
     for (auto &child : m_children)
     {
         if (child)
@@ -162,18 +124,15 @@ void Octree::ClearDynamicColliders()
             child->ClearDynamicColliders();
         }
     }
-    //Merge();
 }
 
 
 void Octree::CollectPotentialCollisions(std::set<std::pair<unsigned int, unsigned int>> &potentialCollisions) const
 {
-    // Check all pairs within this node
     for (size_t i = 0; i < m_colliders.size(); ++i)
     {
         for (size_t j = i + 1; j < m_colliders.size(); ++j)
         {
-            // Sphere-Sphere intersection
             if (m_colliders[i].boxBounds.Intersects(m_colliders[j].boxBounds))
             {
                 potentialCollisions.emplace(std::minmax(m_colliders[i].EntityID, m_colliders[j].EntityID));
@@ -185,13 +144,10 @@ void Octree::CollectPotentialCollisions(std::set<std::pair<unsigned int, unsigne
     {
         if (child)
         {
-            // Check collisions between this node's colliders and child's colliders
             for (const auto &entry : m_colliders)
             {
                 child->CollectCollisionsWithEntry(entry, potentialCollisions);
             }
-
-            // Recursively collect potential collisions from children
             child->CollectPotentialCollisions(potentialCollisions);
         }
     }
@@ -202,14 +158,12 @@ void Octree::CollectCollisionsWithEntry(const ColliderEntry &entry,
 {
     for (const auto &collider : m_colliders)
     {
-        // Sphere-Sphere intersection
         if (entry.boxBounds.Intersects(collider.boxBounds))
         {
             potentialCollisions.emplace(std::minmax(entry.EntityID, collider.EntityID));
         }
     }
 
-    // Recursively check in children
     for (const auto &child : m_children)
     {
         if (child)

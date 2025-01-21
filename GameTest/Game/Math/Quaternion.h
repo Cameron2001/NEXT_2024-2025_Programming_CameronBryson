@@ -21,6 +21,7 @@ class Quaternion
     static Quaternion FromEulerAnglesXYZ(const FVector3 &eulerAngles);
     static Quaternion FromMatrix3(const Matrix3 &matrix);
     static Quaternion LookAt(const FVector3 &direction, const FVector3 &up);
+    static Quaternion Slerp(const Quaternion &start, const Quaternion &end, float t);
 
 
     float GetPitch() const;

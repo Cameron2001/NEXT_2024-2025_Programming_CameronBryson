@@ -65,7 +65,6 @@ class BoundingBox3D
     }
     static BoundingBox3D CreateTransformedBox(const BoxBoundsComponent &box, const TransformComponent &transform)
     {
-        // Define the 8 corners of the local box
         std::vector<FVector3> localCorners = {FVector3(-box.extents.x, -box.extents.y, -box.extents.z),
                                               FVector3(box.extents.x, -box.extents.y, -box.extents.z),
                                               FVector3(-box.extents.x, box.extents.y, -box.extents.z),
@@ -75,7 +74,6 @@ class BoundingBox3D
                                               FVector3(-box.extents.x, box.extents.y, box.extents.z),
                                               FVector3(box.extents.x, box.extents.y, box.extents.z)};
 
-        // Initialize minimum and maximum points with the first transformed corner
         FVector3 firstTransformed = transform.rotation.RotateVector3(FVector3(localCorners[0].x * transform.scale.x,
                                                                               localCorners[0].y * transform.scale.y,
                                                                               localCorners[0].z * transform.scale.z)) +
@@ -84,7 +82,6 @@ class BoundingBox3D
         FVector3 minPoint = firstTransformed;
         FVector3 maxPoint = firstTransformed;
 
-        // Iterate through all corners, apply scale, rotation, and translation
         for (size_t i = 1; i < localCorners.size(); ++i)
         {
             FVector3 scaled = FVector3(localCorners[i].x * transform.scale.x, localCorners[i].y * transform.scale.y,

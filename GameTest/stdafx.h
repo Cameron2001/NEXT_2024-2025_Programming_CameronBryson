@@ -9,6 +9,11 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include <vector>
+#include <memory>
+#include <tuple>
+#include <utility>
+#include <algorithm>
 
 
 

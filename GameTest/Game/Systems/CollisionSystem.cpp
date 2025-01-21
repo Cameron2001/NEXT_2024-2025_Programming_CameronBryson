@@ -22,8 +22,7 @@
 
 CollisionSystem::CollisionSystem(Registry *registry, EventManager *eventManager)
     : m_registry(registry), m_eventManager(eventManager), m_boxView(registry), m_sphereView(registry),
-      m_dyanmicBoxView(registry), m_dynamicSphereView(registry), m_potentialCollisions(), m_threadCollisions(),
-      m_collisions()
+      m_dyanmicBoxView(registry), m_dynamicSphereView(registry)
 {
 }
 
@@ -62,12 +61,12 @@ void CollisionSystem::BuildOctree()
     m_octree = std::make_unique<Octree>(sceneBounds);
     m_boxView.Update();
     m_sphereView.Update();
-    m_boxView.ForEach([this](Entity entity, TransformComponent &transform, BoxBoundsComponent &boxBounds,
-                             ColliderComponent &collider) { m_octree->Insert(boxBounds, transform, entity,collider.isDynamic); });
+    m_boxView.ForEach([this](const Entity entity, const TransformComponent &transform, const BoxBoundsComponent &boxBounds,
+                             const ColliderComponent &collider) { m_octree->Insert(boxBounds, transform, entity,collider.isDynamic); });
 
     // Insert sphere colliders into the octree
-    m_sphereView.ForEach([this](Entity entity, TransformComponent &transform, SphereBoundsComponent &sphereBounds,
-                                ColliderComponent &collider) { m_octree->Insert(sphereBounds, transform, entity,collider.isDynamic); });
+    m_sphereView.ForEach([this](const Entity entity, const TransformComponent &transform, const SphereBoundsComponent &sphereBounds,
+                                const ColliderComponent &collider) { m_octree->Insert(sphereBounds, transform, entity,collider.isDynamic); });
 }
 
 void CollisionSystem::UpdateOctree()
@@ -80,17 +79,17 @@ void CollisionSystem::UpdateOctree()
     m_dyanmicBoxView.Update();
     m_dynamicSphereView.Update();
     m_dyanmicBoxView.ForEach(
-        [this](Entity entity, TransformComponent &transform, BoxBoundsComponent &boxBounds,
-               ColliderComponent &collider, RigidBodyComponent&) { m_octree->Insert(boxBounds, transform, entity, collider.isDynamic); });
+        [this](Entity entity, const TransformComponent &transform, const BoxBoundsComponent &boxBounds,
+               const ColliderComponent &collider, RigidBodyComponent&) { m_octree->Insert(boxBounds, transform, entity, collider.isDynamic); });
     m_dynamicSphereView.ForEach(
-        [this](Entity entity, TransformComponent &transform, SphereBoundsComponent &sphereBounds,
-               ColliderComponent &collider, RigidBodyComponent &) { m_octree->Insert(sphereBounds, transform, entity, collider.isDynamic); });
+        [this](Entity entity, const TransformComponent &transform, const SphereBoundsComponent &sphereBounds,
+               const ColliderComponent &collider, RigidBodyComponent &) { m_octree->Insert(sphereBounds, transform, entity, collider.isDynamic); });
 }
 
 bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsComponent &box1, const FVector3 &scale1,
                                       const Matrix4 &rotation1, const BoxBoundsComponent &box2, const FVector3 &scale2,
                                       const Matrix4 &rotation2, const FVector3 &translation, float &minimalPenetration,
-                                      FVector3 &collisionNormal) const
+                                      FVector3 &collisionNormal)
 {
     const FVector3 scaledBox1Extents = box1.extents * scale1;
     const FVector3 scaledBox2Extents = box2.extents * scale2;
