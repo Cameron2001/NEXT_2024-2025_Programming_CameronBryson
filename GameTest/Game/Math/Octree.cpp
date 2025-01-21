@@ -18,8 +18,8 @@ Octree::Octree(const BoundingBox3D &bounds, int capacity, int maxDepth, int leve
 
 void Octree::Insert(const SphereBoundsComponent &sphere, const TransformComponent &transform, unsigned int entityID, bool isDynamic)
 {
-    FVector3 minPoint = transform.Position - FVector3(sphere.radius, sphere.radius, sphere.radius);
-    FVector3 maxPoint = transform.Position + FVector3(sphere.radius, sphere.radius, sphere.radius);
+    FVector3 minPoint = transform.position - FVector3(sphere.radius, sphere.radius, sphere.radius);
+    FVector3 maxPoint = transform.position + FVector3(sphere.radius, sphere.radius, sphere.radius);
     BoundingBox3D aabb(minPoint, maxPoint);
 
     ColliderEntry colliderEntry(aabb, entityID, isDynamic);

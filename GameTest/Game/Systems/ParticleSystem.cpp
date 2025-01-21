@@ -45,27 +45,28 @@ void ParticleSystem::Render()
 {
     m_view.Update();
     m_view.ForEach([&](Entity entity, ParticleComponent &particle) {
-        Renderer::DrawParticle(particle.position, 0.02f, particle.rotation, FVector3(1.0f, 0.0f, 0.0f));
+        Renderer::DrawParticle(particle.position, 0.02f, particle.rotation, particle.color);
     });
 }
 
-void ParticleSystem::EmitParticles(FVector2 position, int count)
+void ParticleSystem::EmitParticles(FVector2 position, int count, FVector3 color)
 {
+
 
     for (int i = 0; i < count; ++i)
     {
         const auto entity = m_registry->CreateEntity();
-        m_registry->AddComponent<ParticleComponent>(entity, position, 0, GenerateRandomAcceleration(),
+        m_registry->AddComponent<ParticleComponent>(entity, position, color, 0, GenerateRandomAcceleration(),
                                                     FRAND_RANGE(1.0f, 25.0f), GenerateRandomLifeTime());
     }
 }
 
 float ParticleSystem::GenerateRandomLifeTime()
 {
-    return FRAND_RANGE(0.2f, 0.5f);
+    return FRAND_RANGE(0.6f, 1.5f);
 }
 
 FVector2 ParticleSystem::GenerateRandomAcceleration()
 {
-    return FVector2(FRAND_RANGE(-0.2f, 0.2f), FRAND_RANGE(-0.2f, 0.2f));
+    return FVector2(FRAND_RANGE(-0.5f, 0.5f), FRAND_RANGE(-0.5f, 0.5f));
 }

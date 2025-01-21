@@ -72,9 +72,9 @@ class HiddenLineRemoval
 
 inline void HiddenLineRemoval::CreateTriangleEdges(const Triangle2D &triangle, Edge2D edges[3])
 {
-    edges[0] = Edge2D(triangle.v0, triangle.v1, triangle.color, triangle.layer);
-    edges[1] = Edge2D(triangle.v1, triangle.v2, triangle.color, triangle.layer);
-    edges[2] = Edge2D(triangle.v2, triangle.v0, triangle.color, triangle.layer);
+    edges[0] = Edge2D(triangle.v0, triangle.v1, triangle.color);
+    edges[1] = Edge2D(triangle.v1, triangle.v2, triangle.color);
+    edges[2] = Edge2D(triangle.v2, triangle.v0, triangle.color);
 }
 
 inline bool HiddenLineRemoval::SharesVertex(const Triangle2D &triangleA, const Triangle2D &triangleB)

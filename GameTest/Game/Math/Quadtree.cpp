@@ -79,7 +79,7 @@ void Quadtree::QueryTriangle(const Triangle2D &triangle, std::vector<Triangle2D>
     const float maxY = std::max({triangle.v0.y, triangle.v1.y, triangle.v2.y});
     BoundingBox2D triangleBounds(minX, minY, maxX, maxY);
 
-    Query(triangleBounds, found, triangle.avgZ, triangle.layer);
+    Query(triangleBounds, found, triangle.avgZ);
 }
 
 void Quadtree::QueryEdge(const Edge2D &edge, std::vector<Triangle2D> &found) const
@@ -118,7 +118,7 @@ void Quadtree::Query(const BoundingBox2D &range, std::vector<Triangle2D> &found)
     }
 }
 
-void Quadtree::Query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ, int layer) const
+void Quadtree::Query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ) const
 {
     if (!m_bounds.Intersects(range))
     {
@@ -136,10 +136,10 @@ void Quadtree::Query(const BoundingBox2D &range, std::vector<Triangle2D> &found,
     // Recursively query child quadrants
     if (m_divided)
     {
-        m_northWest->Query(range, found, maxAvgZ, layer);
-        m_northEast->Query(range, found, maxAvgZ, layer);
-        m_southWest->Query(range, found, maxAvgZ, layer);
-        m_southEast->Query(range, found, maxAvgZ, layer);
+        m_northWest->Query(range, found, maxAvgZ);
+        m_northEast->Query(range, found, maxAvgZ);
+        m_southWest->Query(range, found, maxAvgZ);
+        m_southEast->Query(range, found, maxAvgZ);
     }
 }
 

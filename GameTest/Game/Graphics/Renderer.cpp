@@ -36,43 +36,10 @@ void Renderer::DrawLine(const Edge2D &edge, const FVector3 &color)
         DrawLine(clippedEdge.start, clippedEdge.end, color);
     }
 }
-void Renderer::DrawPolygon(const std::vector<FVector2> &vertices, const FVector3 &color)
-{
-    for (size_t i = 0; i < vertices.size(); ++i)
-    {
-        DrawLine(vertices[i], vertices[(i + 1) % vertices.size()], color);
-    }
-}
-
-void Renderer::DrawPolygon(const std::vector<FVector3> &vertices, const FVector3 &color)
-{
-    for (size_t i = 0; i < vertices.size(); ++i)
-    {
-        DrawLine(vertices[i], vertices[(i + 1) % vertices.size()], color);
-    }
-}
-
 void Renderer::PrintText(const std::string &text, const FVector2 &position, const FVector3 &color)
 {
     App::Print(position.x, position.y, text.c_str(), color.x, color.y, color.z);
 }
-
-void Renderer::DrawCross(const FVector2 &center, const float radius, const FVector3 &color)
-{
-    DrawLine(center, FVector2(center.x + radius, center.y), color);
-    DrawLine(center, FVector2(center.x, center.y + radius), color);
-    DrawLine(center, FVector2(center.x - radius, center.y), color);
-    DrawLine(center, FVector2(center.x, center.y - radius), color);
-}
-
-void Renderer::DrawCross(const FVector3 &center, const float radius, const FVector3 &color)
-{
-    DrawLine(center, FVector3(center.x + radius, center.y, center.z), color);
-    DrawLine(center, FVector3(center.x, center.y + radius, center.z), color);
-    DrawLine(center, FVector3(center.x - radius, center.y, center.z), color);
-    DrawLine(center, FVector3(center.x, center.y - radius, center.z), color);
-}
-
 void Renderer::DrawParticle(const FVector2 &center, const float length, const float rotation, const FVector3 &color)
 {
     // works for now but should be changed later

@@ -5,22 +5,17 @@
 
 struct Edge2D
 {
-    FVector2 start;
-    FVector2 end;
-    FVector3 color;
-    int layer;
+
 
     Edge2D() = default;
 
-    // Existing constructor
     Edge2D(const FVector2 &start2D, const FVector2 &end2D)
-        : start(start2D), end(end2D), color({1.0f, 1.0f, 1.0f}), layer(0)
+        : start(start2D), end(end2D), color({1.0f, 1.0f, 1.0f})
     {
     }
 
-    // New constructor with color and layer
-    Edge2D(const FVector2 &start2D, const FVector2 &end2D, const FVector3 &color, int layer)
-        : start(start2D), end(end2D), color(color), layer(layer)
+    Edge2D(const FVector2 &start2D, const FVector2 &end2D, const FVector3 &color)
+        : start(start2D), end(end2D), color(color)
     {
     }
 
@@ -44,32 +39,29 @@ struct Edge2D
     Edge2D &operator=(const Edge2D &other) = default;
     Edge2D(Edge2D &&other) noexcept = default;
     Edge2D &operator=(Edge2D &&other) noexcept = default;
+
+    FVector2 start;
+    FVector2 end;
+    FVector3 color;
 };
 
 struct Edge3D
 {
-    FVector3 start;
-    FVector3 end;
-    FVector3 color;
-    int layer;
 
     Edge3D() = default;
 
-    // Existing constructor
     Edge3D(const FVector3 &start3D, const FVector3 &end3D)
-        : start(start3D), end(end3D), color({1.0f, 1.0f, 1.0f}), layer(0)
+        : start(start3D), end(end3D), color({1.0f, 1.0f, 1.0f})
     {
     }
 
-    // New constructor with color and layer
-    Edge3D(const FVector3 &start3D, const FVector3 &end3D, const FVector3 &color, int layer)
-        : start(start3D), end(end3D), color(color), layer(layer)
+    Edge3D(const FVector3 &start3D, const FVector3 &end3D, const FVector3 &color)
+        : start(start3D), end(end3D), color(color)
     {
     }
 
     bool operator==(const Edge3D &other) const
     {
-        // Check for equality regardless of the order of start and end points
         return (start == other.start && end == other.end) || (start == other.end && end == other.start);
     }
 
@@ -77,4 +69,8 @@ struct Edge3D
     Edge3D &operator=(const Edge3D &other) = default;
     Edge3D(Edge3D &&other) noexcept = default;
     Edge3D &operator=(Edge3D &&other) noexcept = default;
+
+    FVector3 start;
+    FVector3 end;
+    FVector3 color;
 };

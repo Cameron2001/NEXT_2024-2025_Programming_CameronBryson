@@ -16,12 +16,11 @@ class Camera
     Camera &operator=(Camera &&other) noexcept = default;
 
     void SetPosition(const FVector3 &position);
-    void SetFOV(float fov);
+    void SetFOV(const float fov);
     void SetOrientation(const Quaternion &orientation);
-    void AddPitch(float degrees);
-    void AddYaw(float degrees);
+    void AddPitch(const float degrees);
+    void AddYaw(const float degrees);
 
-    // Getters
     const FVector3 &GetPosition() const
     {
         return m_position;

@@ -43,7 +43,7 @@ void Matrix4::SetIdentity()
     }
 }
 
-float Matrix4::Get(int row, int column) const
+float Matrix4::Get(const int row, const int column) const
 {
     if (row < 0 || row >= 4 || column < 0 || column >= 4)
     {
@@ -75,13 +75,11 @@ Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &positi
     FVector3 yaxis = zaxis.Cross(xaxis);
 
     Matrix4 translation;
-    translation.SetIdentity();
     translation.Set(0, 3, -position.x);
     translation.Set(1, 3, -position.y);
     translation.Set(2, 3, -position.z);
 
     Matrix4 rotation;
-    rotation.SetIdentity();
     rotation.Set(0, 0, xaxis.x);
     rotation.Set(0, 1, yaxis.x);
     rotation.Set(0, 2, zaxis.x);
@@ -94,8 +92,6 @@ Matrix4 Matrix4::CreateViewMatrix(const FVector3 &origin, const FVector3 &positi
     rotation.Set(2, 1, yaxis.z);
     rotation.Set(2, 2, zaxis.z);
 
-    // Return lookAt matrix as combination of rotation and translation matrices
-    // Remember to multiply rotation * translation due to column-major order
     return rotation * translation;
 }
 

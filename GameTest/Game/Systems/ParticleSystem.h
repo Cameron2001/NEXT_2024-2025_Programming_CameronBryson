@@ -8,7 +8,7 @@ class ParticleSystem
     explicit ParticleSystem(Registry *registry, EventManager *eventManager);
     void Update(float deltaTime);
     void Render();
-    void EmitParticles(FVector2 position, int count);
+    void EmitParticles(FVector2 position, int count, FVector3 color);
 
   private:
     Registry *m_registry;

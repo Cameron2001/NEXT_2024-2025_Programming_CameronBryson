@@ -8,11 +8,11 @@ class Matrix3
     Matrix3();
     ~Matrix3() = default;
 
-    void Set(int row, int column, float value);
+    void Set(const int row, const int column, const float value);
     Matrix3 SetZero();
     void SetIdentity();
 
-    float Get(int row, int column) const;
+    float Get(const int row, const int column) const;
 
     FVector3 GetRight() const;
     FVector3 GetUp() const;

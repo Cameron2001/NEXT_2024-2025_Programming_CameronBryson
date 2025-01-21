@@ -56,8 +56,8 @@ void CollisionSystem::Shutdown()
 void CollisionSystem::BuildOctree()
 {
     // Abartary bounds for now
-    const FVector3 minPoint(-100.0f, -100.0f, -100.0f);
-    const FVector3 maxPoint(100.0f, 100.0f, 100.0f);
+    const FVector3 minPoint(-100.0f, -100.0f, -1000.0f);
+    const FVector3 maxPoint(100.0f, 100.0f, 10.0f);
     const BoundingBox3D sceneBounds(minPoint, maxPoint);
     m_octree = std::make_unique<Octree>(sceneBounds);
     m_boxView.Update();
@@ -130,10 +130,10 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
     auto &box1 = m_registry->GetComponent<BoxBoundsComponent>(ID1);
     auto &box2 = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
-    const Matrix4 rotation1 = transform1.Rotation.GetRotationMatrix4();
-    const Matrix4 rotation2 = transform2.Rotation.GetRotationMatrix4();
+    const Matrix4 rotation1 = transform1.rotation.GetRotationMatrix4();
+    const Matrix4 rotation2 = transform2.rotation.GetRotationMatrix4();
 
-    const FVector3 translation = transform2.Position - transform1.Position;
+    const FVector3 translation = transform2.position - transform1.position;
 
     float minimalPenetration = (std::numeric_limits<float>::max)();
     FVector3 collisionNormal;
@@ -162,15 +162,15 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
 
     for (const auto &axis : axes)
     {
-        if (!TestAxisOverlap(axis, box1, transform1.Scale, rotation1, box2, transform2.Scale, rotation2, translation,
+        if (!TestAxisOverlap(axis, box1, transform1.scale, rotation1, box2, transform2.scale, rotation2, translation,
                              minimalPenetration, collisionNormal))
         {
             return false;
         }
     }
-    FVector3 contactPoint = transform1.Position + collisionNormal * (minimalPenetration / 2.0f);
+    FVector3 contactPoint = transform1.position + collisionNormal * (minimalPenetration / 2.0f);
     Collision collision(ID1, ID2, contactPoint, collisionNormal, minimalPenetration);
-    const FVector3 direction = (transform2.Position - transform1.Position).Normalize();
+    const FVector3 direction = (transform2.position - transform1.position).Normalize();
     if (collision.normal.Dot(direction) < 0)
         collision.normal = collision.normal * -1.0f;
 
@@ -188,10 +188,10 @@ bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
     auto &sphere1 = m_registry->GetComponent<SphereBoundsComponent>(ID1);
     auto &sphere2 = m_registry->GetComponent<SphereBoundsComponent>(ID2);
 
-    const float radius1 = sphere1.radius * (transform1.Scale.x + transform1.Scale.y + transform1.Scale.z) / 3;
-    const float radius2 = sphere2.radius * (transform2.Scale.x + transform2.Scale.y + transform2.Scale.z) / 3;
+    const float radius1 = sphere1.radius * (transform1.scale.x + transform1.scale.y + transform1.scale.z) / 3;
+    const float radius2 = sphere2.radius * (transform2.scale.x + transform2.scale.y + transform2.scale.z) / 3;
 
-    const FVector3 delta = transform2.Position - transform1.Position;
+    const FVector3 delta = transform2.position - transform1.position;
     const float distanceSquared = delta.LengthSquared();
     const float radiusSum = radius1 + radius2;
 
@@ -201,7 +201,7 @@ bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
         const float penetration = radiusSum - distance;
 
         const FVector3 collisionNormal = (distance != 0.0f) ? (delta / distance) : FVector3(1.0f, 0.0f, 0.0f);
-        FVector3 contactPoint = transform1.Position + collisionNormal * radius1;
+        FVector3 contactPoint = transform1.position + collisionNormal * radius1;
         m_threadCollisions.local().emplace_back(ID1, ID2, contactPoint, collisionNormal, penetration);
         return true;
     }
@@ -218,17 +218,17 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
     auto &boxBounds = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
     const float radius =
-        sphereBounds.radius * (sphereTransform.Scale.x + sphereTransform.Scale.y + sphereTransform.Scale.z) / 3.0f;
+        sphereBounds.radius * (sphereTransform.scale.x + sphereTransform.scale.y + sphereTransform.scale.z) / 3.0f;
 
-    const FVector3 scaledBoxExtents = boxBounds.extents * boxTransform.Scale;
+    const FVector3 scaledBoxExtents = boxBounds.extents * boxTransform.scale;
 
-    const Matrix4 boxRotationMatrix = boxTransform.Rotation.GetRotationMatrix4();
+    const Matrix4 boxRotationMatrix = boxTransform.rotation.GetRotationMatrix4();
     const FVector3 boxRight = boxRotationMatrix.GetRight().Normalize();
     const FVector3 boxUp = boxRotationMatrix.GetUp().Normalize();
     const FVector3 boxForward = boxRotationMatrix.GetForward().Normalize();
 
     // Compute vector from box center to sphere center
-    const FVector3 delta = sphereTransform.Position - boxTransform.Position;
+    const FVector3 delta = sphereTransform.position - boxTransform.position;
 
     // Project delta onto OBB's local axes to get the sphere center in OBB's local space
     float deltaLocalX = delta.Dot(boxRight);
@@ -241,11 +241,11 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
     float closestPointLocalZ = (std::max)(-scaledBoxExtents.z, (std::min)(deltaLocalZ, scaledBoxExtents.z));
 
     // Transform the closest point back to world space
-    FVector3 closestPointWorld = boxTransform.Position + boxRight * closestPointLocalX + boxUp * closestPointLocalY +
+    FVector3 closestPointWorld = boxTransform.position + boxRight * closestPointLocalX + boxUp * closestPointLocalY +
                                  boxForward * closestPointLocalZ;
 
     // Compute the vector from the closest point to the sphere center
-    FVector3 difference = sphereTransform.Position - closestPointWorld;
+    FVector3 difference = sphereTransform.position - closestPointWorld;
 
     float distanceSquared = difference.LengthSquared();
 
@@ -301,11 +301,11 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
         penetration = minPenetration + radius;
 
         // Contact point is the sphere center adjusted by the collision normal scaled by the sphere radius
-        contactPoint = sphereTransform.Position + collisionNormal * radius;
+        contactPoint = sphereTransform.position + collisionNormal * radius;
     }
 
     // Adjust collision normal to point from sphere to box
-    const FVector3 direction = (boxTransform.Position - sphereTransform.Position).Normalize();
+    const FVector3 direction = (boxTransform.position - sphereTransform.position).Normalize();
     if (collisionNormal.Dot(direction) < 0)
         collisionNormal = collisionNormal * -1.0f;
 
@@ -397,7 +397,6 @@ void CollisionSystem::ResolveCollisions(float dt)
         bool hasRigidBody1 = m_registry->HasComponent<RigidBodyComponent>(entityID1);
         bool hasRigidBody2 = m_registry->HasComponent<RigidBodyComponent>(entityID2);
 
-        // Skip if neither entity has a rigid body
         if (!hasRigidBody1 && !hasRigidBody2)
             continue;
 
@@ -411,26 +410,27 @@ void CollisionSystem::ResolveCollisions(float dt)
         ColliderComponent &collider1 = m_registry->GetComponent<ColliderComponent>(entityID1);
         ColliderComponent &collider2 = m_registry->GetComponent<ColliderComponent>(entityID2);
 
-        // Relative position vectors from centers to contact point
-        FVector3 r1 = collision.contactPoint - transform1.Position;
-        FVector3 r2 = collision.contactPoint - transform2.Position;
+        FVector3 r1 = collision.contactPoint - transform1.position;
+        FVector3 r2 = collision.contactPoint - transform2.position;
 
-        // Compute relative velocity at contact point
+        FVector3 direction = (transform2.position - transform1.position).Normalize();
+        if (collision.normal.Dot(direction) < 0.0f)
+        {
+            collision.normal = -collision.normal;
+        }
+
         FVector3 v1 = rb1 ? (rb1->linearVelocity + rb1->angularVelocity.Cross(r1)) : FVector3(0.0f, 0.0f, 0.0f);
         FVector3 v2 = rb2 ? (rb2->linearVelocity + rb2->angularVelocity.Cross(r2)) : FVector3(0.0f, 0.0f, 0.0f);
         FVector3 relativeVel = v2 - v1;
         float relVelAlongNormal = relativeVel.Dot(collision.normal);
 
-        // If objects are moving apart beyond the threshold, skip
         if (relVelAlongNormal > restitutionVelocityThreshold)
             continue;
 
-        // Combined restitution
-        float e = std::min(collider1.elasticity, collider2.elasticity);
+        float e = collider1.elasticity * collider2.elasticity;
 
-        // World inverse inertia tensors
-        Matrix3 rotationMatrix1 = transform1.Rotation.GetRotationMatrix3();
-        Matrix3 rotationMatrix2 = transform2.Rotation.GetRotationMatrix3();
+        Matrix3 rotationMatrix1 = transform1.rotation.GetRotationMatrix3();
+        Matrix3 rotationMatrix2 = transform2.rotation.GetRotationMatrix3();
 
         Matrix3 worldInvInertia1 =
             rb1 ? (rotationMatrix1 * rb1->localInverseInertiaTensor * rotationMatrix1.Transpose())
@@ -439,7 +439,6 @@ void CollisionSystem::ResolveCollisions(float dt)
             rb2 ? (rotationMatrix2 * rb2->localInverseInertiaTensor * rotationMatrix2.Transpose())
                 : Matrix3().SetZero();
 
-        // Calculate denominator for normal impulse
         FVector3 r1CrossN = r1.Cross(collision.normal);
         FVector3 r2CrossN = r2.Cross(collision.normal);
 
@@ -447,32 +446,28 @@ void CollisionSystem::ResolveCollisions(float dt)
                       r1CrossN.Dot(worldInvInertia1 * r1CrossN) + r2CrossN.Dot(worldInvInertia2 * r2CrossN);
 
         if (denom < 1e-8f)
-            continue; // Prevent division by zero or negligible masses
+            continue; 
 
-        // Normal impulse scalar
         float jNormal = -(1.0f + e) * relVelAlongNormal / denom;
         FVector3 impulseN = collision.normal * jNormal;
 
-        // Apply normal impulse
         if (rb1)
             ApplyImpulse(*rb1, transform1, -impulseN, r1);
         if (rb2)
             ApplyImpulse(*rb2, transform2, impulseN, r2);
 
-        // Recompute relative velocity after normal impulse
         FVector3 v1Post = rb1 ? (rb1->linearVelocity + rb1->angularVelocity.Cross(r1)) : FVector3(0.0f, 0.0f, 0.0f);
         FVector3 v2Post = rb2 ? (rb2->linearVelocity + rb2->angularVelocity.Cross(r2)) : FVector3(0.0f, 0.0f, 0.0f);
         FVector3 newRelVel = v2Post - v1Post;
 
         float normalComponent = newRelVel.Dot(collision.normal);
-FVector3 tangentialVel = newRelVel - (collision.normal * normalComponent);
+        FVector3 tangentialVel = newRelVel - (collision.normal * normalComponent);
         float tangentialLenSq = tangentialVel.LengthSquared();
 
         if (tangentialLenSq > 1e-8f)
         {
             FVector3 tangent = tangentialVel.Normalize();
 
-            // Calculate denominator for friction impulse
             FVector3 r1CrossT = r1.Cross(tangent);
             FVector3 r2CrossT = r2.Cross(tangent);
 
@@ -482,19 +477,17 @@ FVector3 tangentialVel = newRelVel - (collision.normal * normalComponent);
 
             if (denomT > 1e-8f)
             {
-                // Coulomb's law: jTangent = -v_t / denomT
                 float jTangent = -newRelVel.Dot(tangent) / denomT;
 
-                float mu = std::sqrt(collider1.dynamicFriction * collider2.dynamicFriction);
-
+                float mu = std::sqrt(collider1.friction * collider2.friction);
                 jTangent = MathUtil::Clamp(jTangent, -mu * jNormal, mu * jNormal);
 
                 FVector3 impulseT = tangent * jTangent;
 
                 if (rb1)
-                    ApplyImpulse(*rb1, transform1, impulseT, r1);
+                    ApplyImpulse(*rb1, transform1, -impulseT, r1);
                 if (rb2)
-                    ApplyImpulse(*rb2, transform2, -impulseT, r2);
+                    ApplyImpulse(*rb2, transform2, impulseT, r2);
             }
         }
 
@@ -502,14 +495,16 @@ FVector3 tangentialVel = newRelVel - (collision.normal * normalComponent);
         if (totalInvMass > 0.0f)
         {
             float penetration = std::max(collision.penetration - slop, 0.0f);
-            FVector3 correction = collision.normal*(penetration / totalInvMass) * percent;
+            FVector3 correction = collision.normal * (penetration / totalInvMass) * percent;
             if (rb1)
-                transform1.Position -= correction * rb1->inverseMass;
+                transform1.position -= correction * rb1->inverseMass;
             if (rb2)
-                transform2.Position += correction * rb2->inverseMass;
+                transform2.position += correction * rb2->inverseMass;
         }
     }
 }
+
+
 
 void CollisionSystem::ApplyImpulse(RigidBodyComponent &body, const TransformComponent& transform, const FVector3 &impulse, const FVector3 &r)
 {
@@ -518,8 +513,8 @@ void CollisionSystem::ApplyImpulse(RigidBodyComponent &body, const TransformComp
 
     body.linearVelocity += impulse * body.inverseMass;
 
-    Matrix3 rotationMatrix = transform.Rotation.GetRotationMatrix3();
+    Matrix3 rotationMatrix = transform.rotation.GetRotationMatrix3();
     Matrix3 worldInvInertia = rotationMatrix * body.localInverseInertiaTensor * rotationMatrix.Transpose();
     FVector3 angularImpulse = worldInvInertia * r.Cross(impulse);
-    body.angularVelocity -= angularImpulse;
+    body.angularVelocity += angularImpulse;
 }

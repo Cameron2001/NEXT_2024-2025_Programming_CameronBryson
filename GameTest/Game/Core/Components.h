@@ -13,27 +13,18 @@ enum class ColliderType : unsigned int
 };
 struct TransformComponent
 {
-    TransformComponent()
-        : Rotation(Quaternion()), Position(FVector3(0.0f, 0.0f, 0.0f)), Scale(FVector3(1.0f, 1.0f, 1.0f))
-    {
-    }
-
     TransformComponent(const FVector3 &position, const FVector3 &rotation, const FVector3 &scale)
-        : Rotation(Quaternion::FromEulerAnglesXYZ(rotation)), Position(position), Scale(scale)
+        : rotation(Quaternion::FromEulerAnglesXYZ(rotation)), position(position), scale(scale)
     {
     }
 
-    Quaternion Rotation;
-    FVector3 Position;
-    FVector3 Scale;
+    Quaternion rotation;
+    FVector3 position;
+    FVector3 scale;
 };
 struct BoxBoundsComponent
 {
-    BoxBoundsComponent() : extents(FVector3(0.0f, 0.0f, 0.0f))
-    {
-    }
-
-    explicit BoxBoundsComponent(const FVector3 &extents) : extents(extents)
+    BoxBoundsComponent(const FVector3 &extents) : extents(extents)
     {
     }
 
@@ -42,11 +33,7 @@ struct BoxBoundsComponent
 
 struct SphereBoundsComponent
 {
-    SphereBoundsComponent() : radius(0.0f)
-    {
-    }
-
-    explicit SphereBoundsComponent(const float radius) : radius(radius)
+    SphereBoundsComponent(const float radius) : radius(radius)
     {
     }
 
@@ -74,7 +61,7 @@ struct RigidBodyComponent
 
 struct TextComponent
 {
-    TextComponent(std::string text, const FVector2 &position) : text(std::move(text)), position(position)
+    TextComponent(const std::string &text, const FVector2 &position) : text(text), position(position)
     {
     }
     std::string text;
@@ -82,30 +69,28 @@ struct TextComponent
 };
 struct ModelComponent
 {
-    ModelComponent(std::string modelName) : modelName(std::move(modelName)), color({1.0f, 1.0f, 1.0f})
+    ModelComponent(const std::string& modelName) : modelName(modelName), color({1.0f, 1.0f, 1.0f})
     {
     }
-    ModelComponent(std::string modelName, const FVector3 &color) : modelName(std::move(modelName)), color(color)
-    {
-    }
-    ModelComponent(std::string modelName, const FVector3 &color, int layer)
-        : modelName(std::move(modelName)), color(color), layer(layer)
+    ModelComponent(const std::string& modelName, const FVector3 &color) : modelName(modelName), color(color)
     {
     }
 
     std::string modelName;
     FVector3 color = {1.0f, 1.0f, 1.0f};
-    int layer = 0;
+    bool enabled = true;
+
 };
 struct ParticleComponent
 {
-    ParticleComponent(const FVector2 &position, const float rotation, const FVector2 &linearVelocity,
+    ParticleComponent(const FVector2 &position, const FVector3& color, const float rotation, const FVector2 &linearVelocity,
                       const float angularVelocity, const float lifetime)
-        : position(position), linearVelocity(linearVelocity), rotation(rotation), angularVelocity(angularVelocity),
+        : position(position),color(color), linearVelocity(linearVelocity), rotation(rotation), angularVelocity(angularVelocity),
           lifetime(lifetime)
     {
     }
     FVector2 position = {0, 0};
+    FVector3 color = {1, 0, 0};
     FVector2 linearVelocity = {0, 0};
     float rotation = 0;
     float angularVelocity = 0;
@@ -115,23 +100,20 @@ struct ParticleComponent
 struct ColliderComponent
 {
     ColliderComponent(const ColliderType type, bool isDynamic)
-        : type(type), layer(LAYER_DEFAULT), mask(0xFFFFFFFF), isDynamic(isDynamic), isTrigger(false)
+        : type(type), layer(LAYER_DEFAULT), mask(0xFFFFFFFF), isDynamic(isDynamic)
     {
     }
-    ColliderComponent(const ColliderType type, bool isDynamic, bool isTrigger, float elasticity, float staticFriction,
-                      float dynamicFriction)
-        : type(type), layer(LAYER_DEFAULT), mask(0xFFFFFFFF), elasticity(elasticity), staticFriction(staticFriction),
-          dynamicFriction(dynamicFriction), isDynamic(isDynamic), isTrigger(isTrigger)
+    ColliderComponent(const ColliderType type, bool isDynamic,float elasticity, float friction)
+        : type(type), layer(LAYER_DEFAULT), mask(0xFFFFFFFF), elasticity(elasticity), isDynamic(isDynamic),
+          friction(friction)
     {
     }
     ColliderType type;
     unsigned int layer;
     unsigned int mask;
     float elasticity = 1.0f;
-    float staticFriction = 0.5f;
-    float dynamicFriction = 0.3f;
-    bool isDynamic;
-    bool isTrigger;
+    float friction = 0.5f;
+    bool isDynamic = false;
 };
 struct CameraFollowComponent
 {
@@ -150,7 +132,7 @@ struct PlayerComponent
 };
 struct ArrowComponent
 {
-    ArrowComponent(Entity ball) : ball(ball)
+    ArrowComponent(const Entity ball) : ball(ball)
     {
     }
     Entity ball = 0;

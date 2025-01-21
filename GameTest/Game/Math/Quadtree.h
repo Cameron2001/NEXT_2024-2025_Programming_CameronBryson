@@ -29,7 +29,7 @@ class Quadtree
     void Subdivide();
 
     void Query(const BoundingBox2D &range, std::vector<Triangle2D> &found) const;
-    void Query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ, int layer) const;
+    void Query(const BoundingBox2D &range, std::vector<Triangle2D> &found, float maxAvgZ) const;
 
     BoundingBox2D ComputeBox(const BoundingBox2D &box, int quadrant) const;
 

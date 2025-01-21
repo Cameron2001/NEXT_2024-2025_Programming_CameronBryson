@@ -35,14 +35,14 @@ void RenderSystem::Update()
     auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
 
     m_modelView.ParallelForEach([&](Entity entity, TransformComponent &transform, ModelComponent &modelComponent) {
-        if (modelComponent.layer < 0)
+        if (!modelComponent.enabled)
         {
             return;
         }
         auto &model = m_graphicsManager->GetModel(modelComponent.modelName);
 
-        auto modelMatrix = Matrix4::CreateTranslationMatrix(transform.Position) *
-                           transform.Rotation.GetRotationMatrix4().Inverse() * Matrix4::CreateScaleMatrix(transform.Scale);
+        auto modelMatrix = Matrix4::CreateTranslationMatrix(transform.position) *
+                           transform.rotation.GetRotationMatrix4().Inverse() * Matrix4::CreateScaleMatrix(transform.scale);
 
         auto mvpMatrix = viewProjectionMatrix*modelMatrix;
 
@@ -69,7 +69,7 @@ void RenderSystem::Update()
                 FVector2 v2(mvpVertex2.x, mvpVertex2.y);
 
                 // Add triangle to the concurrent vector
-                m_triangles.local().emplace_back(v0, v1, v2, avgZ, modelComponent.color, modelComponent.layer);
+                m_triangles.local().emplace_back(v0, v1, v2, avgZ, modelComponent.color);
             }
         }
     });

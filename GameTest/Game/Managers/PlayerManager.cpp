@@ -6,17 +6,17 @@ PlayerManager::PlayerManager()
 {
 }
 
-void PlayerManager::SetPlayer1(Entity player)
+void PlayerManager::SetPlayer1(const Entity player)
 {
     m_player1 = player;
 }
 
-void PlayerManager::SetPlayer2(Entity player)
+void PlayerManager::SetPlayer2(const Entity player)
 {
     m_player2 = player;
 }
 
-void PlayerManager::SetHole(Entity hole)
+void PlayerManager::SetHole(const Entity hole)
 {
     m_hole = hole;
 }

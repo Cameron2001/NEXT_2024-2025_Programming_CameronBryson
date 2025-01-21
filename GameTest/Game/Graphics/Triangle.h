@@ -4,24 +4,19 @@
 #include <functional>
 struct Triangle2D
 {
-    FVector2 v0;
-    FVector2 v1;
-    FVector2 v2;
-    float avgZ;
-    FVector3 color;
-    int layer;
 
-    Triangle2D() : v0(), v1(), v2(), avgZ(0.0f), color({1.0f, 1.0f, 1.0f}), layer(0)
+
+    Triangle2D() : v0(), v1(), v2(), avgZ(0.0f), color({1.0f, 1.0f, 1.0f})
     {
     }
 
     Triangle2D(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, float avgZ)
-        : v0(v0), v1(v1), v2(v2), avgZ(avgZ), color({1.0f, 1.0f, 1.0f}), layer(0)
+        : v0(v0), v1(v1), v2(v2), avgZ(avgZ), color({1.0f, 1.0f, 1.0f})
     {
     }
 
-    Triangle2D(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, float avgZ, const FVector3 &color, int layer)
-        : v0(v0), v1(v1), v2(v2), avgZ(avgZ), color(color), layer(layer)
+    Triangle2D(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, float avgZ, const FVector3 &color)
+        : v0(v0), v1(v1), v2(v2), avgZ(avgZ), color(color)
     {
     }
 
@@ -35,6 +30,12 @@ struct Triangle2D
 
     Triangle2D(Triangle2D &&other) noexcept = default;
     Triangle2D &operator=(Triangle2D &&other) noexcept = default;
+
+    FVector3 color;
+    FVector2 v0;
+    FVector2 v1;
+    FVector2 v2;
+    float avgZ;
 };
 struct Triangle3D
 {

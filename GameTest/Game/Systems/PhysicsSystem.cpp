@@ -57,7 +57,7 @@ void PhysicsSystem::Update(const float dt)
 
         FVector3 linearAcceleration = rigidBody.force * rigidBody.inverseMass;
 
-        Matrix3 rotationMatrix = transform.Rotation.GetRotationMatrix3();
+        Matrix3 rotationMatrix = transform.rotation.GetRotationMatrix3();
         Matrix3 worldInverseInertiaTensor =
             rotationMatrix * rigidBody.localInverseInertiaTensor * rotationMatrix.Transpose();
         FVector3 angularAcceleration = worldInverseInertiaTensor * rigidBody.torque;
@@ -70,12 +70,12 @@ void PhysicsSystem::Update(const float dt)
         rigidBody.angularVelocity *= std::pow(1.0f- rigidBody.angularDrag, dt);
 
         // Update transform
-        transform.Position += rigidBody.linearVelocity * dt;
+        transform.position += rigidBody.linearVelocity * dt;
 
         Quaternion omega(0.0f, rigidBody.angularVelocity.x, rigidBody.angularVelocity.y, rigidBody.angularVelocity.z);
-        Quaternion deltaRotation = omega * transform.Rotation * 0.5f * dt;
+        Quaternion deltaRotation = omega * transform.rotation * 0.5f * dt;
 
-        transform.Rotation = (transform.Rotation + deltaRotation).Normalize();
+        transform.rotation = (transform.rotation + deltaRotation).Normalize();
 
         // Reset accelerations
         rigidBody.force = FVector3{0.0f, 0.0f, 0.0f};
@@ -92,7 +92,7 @@ void PhysicsSystem::ComputeBoxInverseInertiaTensor(const TransformComponent &tra
 {
     float mass = 1.0f / rigidBody.inverseMass;
 
-    FVector3 fullBoxDimensions = boxBounds.extents * 2.0f * transform.Scale;
+    FVector3 fullBoxDimensions = boxBounds.extents * 2.0f * transform.scale;
 
     float Ixx =
         (mass / 12.0f) * (fullBoxDimensions.y * fullBoxDimensions.y + fullBoxDimensions.z * fullBoxDimensions.z);
@@ -116,7 +116,7 @@ void PhysicsSystem::ComputeSphereInverseInertiaTensor(const TransformComponent &
                                                       RigidBodyComponent &rigidBody)
 {
     float mass = 1.0f / rigidBody.inverseMass;
-    float scaledRadius = sphereBounds.radius * (tranform.Scale.x + tranform.Scale.y + tranform.Scale.z) / 3.0f;
+    float scaledRadius = sphereBounds.radius * (tranform.scale.x + tranform.scale.y + tranform.scale.z) / 3.0f;
 
     Matrix3 inertiaTensor;
     inertiaTensor.SetZero();

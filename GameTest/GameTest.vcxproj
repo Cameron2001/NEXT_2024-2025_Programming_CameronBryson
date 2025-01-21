@@ -232,7 +232,6 @@
     <ClInclude Include="Game\Systems\MenuSystem.h" />
     <ClInclude Include="Game\Scenes\LevelOneScene.h" />
     <ClInclude Include="Game\Scenes\LevelTwoScene.h" />
-    <ClInclude Include="Game\Scenes\LevelThreeScene.h" />
     <ClInclude Include="miniaudio\miniaudio.h" />
     <ClInclude Include="Game\Scenes\PlayScene.h" />
     <ClInclude Include="Game\Core\Scene.h" />
@@ -279,7 +278,6 @@
     <ClCompile Include="Game\Systems\MenuSystem.cpp" />
     <ClCompile Include="Game\Scenes\LevelOneScene.cpp" />
     <ClCompile Include="Game\Scenes\LevelTwoScene.cpp" />
-    <ClCompile Include="Game\Scenes\LevelThreeScene.cpp" />
     <ClCompile Include="miniaudio\miniaudio.cpp" />
     <ClCompile Include="Game\Scenes\PlayScene.cpp" />
     <ClCompile Include="Game\Core\Scene.cpp" />

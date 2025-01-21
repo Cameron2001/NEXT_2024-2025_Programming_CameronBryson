@@ -52,7 +52,7 @@ void CameraSystem::Update(float dt)
     m_view.ForEach([&](Entity entity, CameraFollowComponent &cameraFollow, TransformComponent &transform) {
         if (entity == currentPlayer)
         {
-            FVector3 targetPosition = transform.Position + cameraFollow.offset;
+            FVector3 targetPosition = transform.position + cameraFollow.offset;
             FVector3 smoothedPosition =
                 MathUtil::Lerp(m_camera->GetPosition(), targetPosition, cameraFollow.smoothSpeed * dt);
             //m_camera->SetPosition(smoothedPosition);

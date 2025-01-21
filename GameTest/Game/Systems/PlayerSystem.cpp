@@ -79,21 +79,21 @@ void PlayerSystem::Update(float dt)
         }
         // Set all arrow layers to -1
         m_arrowView.ForEach(
-            [&](Entity, ArrowComponent &, ModelComponent &model, TransformComponent &) { model.layer = -1; });
+            [&](Entity, ArrowComponent &, ModelComponent &model, TransformComponent &) { model.enabled = false; });
         // Do not return here to allow reset logic to execute
     }
 
     // Update arrow layer based on ball speed
-    int arrowLayer = (ballSpeed < VELOCITY_THRESHOLD) ? 1 : -1;
+    bool  enabled = (ballSpeed < VELOCITY_THRESHOLD) ? true : false;
     m_arrowView.ForEach(
-        [&](Entity, ArrowComponent &, ModelComponent &model, TransformComponent &) { model.layer = arrowLayer; });
+        [&](Entity, ArrowComponent &, ModelComponent &model, TransformComponent &) { model.enabled = enabled; });
 
     // Update arrows related to the current player
     m_arrowView.ForEach(
         [&](Entity entity, ArrowComponent &arrow, ModelComponent &model, TransformComponent &transform) {
             if (arrow.ball != currentPlayer)
             {
-                model.layer = -1;
+                model.enabled = false;
                 return;
             }
 
@@ -109,7 +109,7 @@ void PlayerSystem::Update(float dt)
                 CameraFollowComponent &cameraFollow = m_registry->GetComponent<CameraFollowComponent>(arrow.ball);
 
                 // Desired camera position is behind the shot direction
-                FVector3 desiredCameraPos = playerTransform.Position - m_shotDirection * cameraFollow.offset.Length() +
+                FVector3 desiredCameraPos = playerTransform.position - m_shotDirection * cameraFollow.offset.Length() +
                                             FVector3(0, cameraFollow.offset.y, 0);
 
                 // Smoothly interpolate camera position
@@ -120,7 +120,7 @@ void PlayerSystem::Update(float dt)
 
                 return;
             }
-            model.layer = 1;
+            model.enabled = true;
             // Calculate rotation deltas
             float deltaYaw = 0.0f;
             if (YAWLEFT)
@@ -151,12 +151,12 @@ void PlayerSystem::Update(float dt)
             Quaternion deltaYawRotation = Quaternion::FromAxisAngle(FVector3(0.0f,1.0f,0.0f), deltaYawRadians);
             Quaternion deltaPitchRotation = Quaternion::FromAxisAngle(FVector3(1.0f,0.0,0.0f), deltaPitchRadians);                
 
-            FVector3 relativeOffset = transform.Position - playerTransform.Position;
+            FVector3 relativeOffset = transform.position - playerTransform.position;
             relativeOffset = deltaYawRotation.RotateVector3(relativeOffset);
             relativeOffset = deltaPitchRotation.RotateVector3(relativeOffset);
             relativeOffset = relativeOffset.Normalize() * OFFSET_DISTANCE;
-            FVector3 newCameraPos = transform.Position - (relativeOffset*12);
-            newCameraPos.y = playerTransform.Position.y;
+            FVector3 newCameraPos = transform.position - (relativeOffset*12);
+            newCameraPos.y = playerTransform.position.y;
             newCameraPos += FVector3(0, 8, 0);
             m_camera->SetPosition(newCameraPos);
             m_camera->AddYaw(deltaYaw);
@@ -172,11 +172,10 @@ void PlayerSystem::Update(float dt)
             direction = direction.Normalize();
             //direction.z = -direction.z;
 
-            transform.Position = playerTransform.Position +direction * OFFSET_DISTANCE;
-            transform.Rotation = Quaternion::LookAt(direction, FVector3{0.0f, -1.0f, 0.0f});
+            transform.position = playerTransform.position +direction * OFFSET_DISTANCE;
+            transform.rotation = Quaternion::LookAt(direction, FVector3{0.0f, -1.0f, 0.0f});
             if (!SPACE && previousSpace)
             {
-                m_playerManager->IncrementCurrentPlayerScore();
                 m_shotDirection = direction;
                 rigidbody.force += direction * 2.0f * forceScale;
 
@@ -252,14 +251,14 @@ void PlayerSystem::Update(float dt)
     playerView.ForEach(
         [&](Entity entity, PlayerComponent &player, RigidBodyComponent &rigidbody, TransformComponent &transform) {
             // Reset conditions
-            if (transform.Position.y <= POSITION_RESET_Y)
+            if (transform.position.y <= POSITION_RESET_Y)
             {
                 rigidbody = RigidBodyComponent(); // Reset to default state
                 rigidbody.linearVelocity = FVector3{0.0f, 0.0f, 0.0f};
                 rigidbody.angularVelocity = FVector3{0.0f, 0.0f, 0.0f};
                 rigidbody.force = FVector3{0.0f, 0.0f, 0.0f};
                 rigidbody.torque = FVector3{0.0f, 0.0f, 0.0f};
-                transform.Position = player.spawnPoint;
+                transform.position = player.spawnPoint;
             }
 
         });
@@ -279,10 +278,10 @@ void PlayerSystem::OnCollision(unsigned int ID1, unsigned int ID2)
     if (player1Collides)
     {
         App::PlaySoundW("assets/GolfHole.wav");
-        m_eventManager->Notify("EmitParticles", FVector2{0.5f, 0.5f}, 100);
+        m_eventManager->Notify("EmitParticles", FVector2(0.0, 0.0), 100, FVector3(0.5f, 0.0f, 1.0f));
 
         m_playerManager->SetPlayer1Complete(true);
-        m_registry->GetComponent<ModelComponent>(player1ID).layer = -1;
+        m_registry->GetComponent<ModelComponent>(player1ID).enabled = false;
         m_registry->RemoveComponent<ColliderComponent>(player1ID);
 
         m_playerManager->SwapTurn();
@@ -290,10 +289,10 @@ void PlayerSystem::OnCollision(unsigned int ID1, unsigned int ID2)
     else if (player2Collides)
     {
         App::PlaySoundW("assets/GolfHole.wav");
-        m_eventManager->Notify("EmitParticles", FVector2{0.5f, 0.5f}, 100);
+        m_eventManager->Notify("EmitParticles", FVector2(0.0f, 0.0f), 100,FVector3 (1.0, 0.0, 0.5));
 
         m_playerManager->SetPlayer2Complete(true);
-        m_registry->GetComponent<ModelComponent>(player2ID).layer = -1;
+        m_registry->GetComponent<ModelComponent>(player2ID).enabled = false;
         m_registry->RemoveComponent<ColliderComponent>(player2ID);
 
         m_playerManager->SwapTurn();

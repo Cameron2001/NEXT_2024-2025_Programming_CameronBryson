@@ -8,9 +8,9 @@ class PlayerManager
     PlayerManager();
     ~PlayerManager() = default;
 
-    void SetPlayer1(Entity player);
-    void SetPlayer2(Entity player);
-    void SetHole(Entity hole);
+    void SetPlayer1(const Entity player);
+    void SetPlayer2(const Entity player);
+    void SetHole(const Entity hole);
 
     Entity GetPlayer1();
     Entity GetPlayer2();
@@ -32,8 +32,8 @@ class PlayerManager
     bool IsPlayer1Complete() const;
     bool IsPlayer2Complete() const;
 
-    void SetPlayer1Complete(bool complete);
-    void SetPlayer2Complete(bool complete);
+    void SetPlayer1Complete(const bool complete);
+    void SetPlayer2Complete(const bool complete);
 
   private:
     Entity m_player1;

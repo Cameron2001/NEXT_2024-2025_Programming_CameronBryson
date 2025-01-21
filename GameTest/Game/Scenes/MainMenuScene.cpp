@@ -20,8 +20,6 @@ void MainMenuScene::Init()
     auto levelTwoText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(levelTwoText, "Press 2 for Level Two", FVector2(500.0f, 300.0f));
 
-    auto levelThreeText = m_registry->CreateEntity();
-    m_registry->AddComponent<TextComponent>(levelThreeText, "Press 3 for Level Three", FVector2(500.0f, 200.0f));
 
     auto escapeText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(escapeText, "Press ESC to Exit", FVector2(500.0f, 100.0f));

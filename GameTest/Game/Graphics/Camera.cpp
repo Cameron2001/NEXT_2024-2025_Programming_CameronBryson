@@ -43,7 +43,7 @@ void Camera::SetOrientation(const Quaternion &orientation)
     UpdateViewMatrix();
 }
 
-void Camera::AddPitch(float degrees)
+void Camera::AddPitch(const float degrees)
 {
     float radians = MathUtil::DegreesToRadians(degrees);
 
@@ -56,7 +56,7 @@ void Camera::AddPitch(float degrees)
     UpdateViewMatrix();
 }
 
-void Camera::AddYaw(float degrees)
+void Camera::AddYaw(const float degrees)
 {
     float radians = MathUtil::DegreesToRadians(degrees);
     radians = -radians;

@@ -22,7 +22,7 @@ void PlayScene::Init()
     m_playerSystem->Init();
     
     m_eventManager->AddListener<unsigned int, unsigned int>("CollisionEvent", m_playerSystem, &PlayerSystem::OnCollision);
-    m_eventManager->AddListener<FVector2, int>("EmitParticles", m_particleSystem, &ParticleSystem::EmitParticles);
+    m_eventManager->AddListener<FVector2, int, FVector3>("EmitParticles", m_particleSystem, &ParticleSystem::EmitParticles);
     m_collisionSystem->Init();
     m_physicsSystem->Init();
     

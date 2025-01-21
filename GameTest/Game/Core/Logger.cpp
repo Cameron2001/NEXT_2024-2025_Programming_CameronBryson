@@ -1,4 +1,3 @@
-// Logger.cpp
 #include "stdafx.h"
 #include "Logger.h"
 #include <windows.h>

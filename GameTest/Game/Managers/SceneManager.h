@@ -9,7 +9,6 @@
 #include "Game/Scenes/MainMenuScene.h"
 #include "Game/Scenes/LevelOneScene.h"
 #include "Game/Scenes/LevelTwoScene.h"
-#include "Game/Scenes/LevelThreeScene.h"
 #include "Game/Scenes/ResultsScene.h"
 class SceneManager : public std::enable_shared_from_this<SceneManager>
 {
@@ -53,10 +52,6 @@ class SceneManager : public std::enable_shared_from_this<SceneManager>
         else if (name == "LevelTwo")
         {
             LoadScene<LevelTwoScene>();
-        }
-        else if (name == "LevelThree")
-        {
-            LoadScene<LevelThreeScene>();
         }
         else if (name == "Results")
         {

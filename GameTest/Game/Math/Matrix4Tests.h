@@ -272,6 +272,7 @@ inline TestResult CreateViewMatrix()
     expected.Set(1, 1, 1.0f);
     expected.Set(2, 2, 1.0f);
     expected.Set(3, 3, 1.0f);
+    expected.Set(2, 3, 1.0f);
     bool isEqual = (viewMatrix == expected);
     std::ostringstream oss;
     if (isEqual)

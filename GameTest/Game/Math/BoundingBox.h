@@ -10,8 +10,7 @@
 class BoundingBox2D
 {
   public:
-    float minX, minY;
-    float maxX, maxY;
+
 
     BoundingBox2D() : minX(0), minY(0), maxX(0), maxY(0)
     {
@@ -41,13 +40,14 @@ class BoundingBox2D
     {
         return (point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY);
     }
+    float minX, minY;
+    float maxX, maxY;
 };
 
 class BoundingBox3D
 {
   public:
-    float minX, minY, minZ;
-    float maxX, maxY, maxZ;
+
 
     BoundingBox3D() : minX(0), minY(0), minZ(0), maxX(0), maxY(0), maxZ(0)
     {
@@ -76,10 +76,10 @@ class BoundingBox3D
                                               FVector3(box.extents.x, box.extents.y, box.extents.z)};
 
         // Initialize minimum and maximum points with the first transformed corner
-        FVector3 firstTransformed = transform.Rotation.RotateVector3(FVector3(localCorners[0].x * transform.Scale.x,
-                                                                              localCorners[0].y * transform.Scale.y,
-                                                                              localCorners[0].z * transform.Scale.z)) +
-                                    transform.Position;
+        FVector3 firstTransformed = transform.rotation.RotateVector3(FVector3(localCorners[0].x * transform.scale.x,
+                                                                              localCorners[0].y * transform.scale.y,
+                                                                              localCorners[0].z * transform.scale.z)) +
+                                    transform.position;
 
         FVector3 minPoint = firstTransformed;
         FVector3 maxPoint = firstTransformed;
@@ -87,11 +87,11 @@ class BoundingBox3D
         // Iterate through all corners, apply scale, rotation, and translation
         for (size_t i = 1; i < localCorners.size(); ++i)
         {
-            FVector3 scaled = FVector3(localCorners[i].x * transform.Scale.x, localCorners[i].y * transform.Scale.y,
-                                       localCorners[i].z * transform.Scale.z);
+            FVector3 scaled = FVector3(localCorners[i].x * transform.scale.x, localCorners[i].y * transform.scale.y,
+                                       localCorners[i].z * transform.scale.z);
 
-            FVector3 rotated = transform.Rotation.RotateVector3(scaled);
-            FVector3 worldPos = rotated + transform.Position;
+            FVector3 rotated = transform.rotation.RotateVector3(scaled);
+            FVector3 worldPos = rotated + transform.position;
 
             minPoint.x = (std::min)(minPoint.x, worldPos.x);
             minPoint.y = (std::min)(minPoint.y, worldPos.y);
@@ -126,21 +126,23 @@ class BoundingBox3D
     {
         float sqDist = 0.0f;
 
-        if (sphere.Center.x < minX)
-            sqDist += (minX - sphere.Center.x) * (minX - sphere.Center.x);
-        else if (sphere.Center.x > maxX)
-            sqDist += (sphere.Center.x - maxX) * (sphere.Center.x - maxX);
+        if (sphere.center.x < minX)
+            sqDist += (minX - sphere.center.x) * (minX - sphere.center.x);
+        else if (sphere.center.x > maxX)
+            sqDist += (sphere.center.x - maxX) * (sphere.center.x - maxX);
 
-        if (sphere.Center.y < minY)
-            sqDist += (minY - sphere.Center.y) * (minY - sphere.Center.y);
-        else if (sphere.Center.y > maxY)
-            sqDist += (sphere.Center.y - maxY) * (sphere.Center.y - maxY);
+        if (sphere.center.y < minY)
+            sqDist += (minY - sphere.center.y) * (minY - sphere.center.y);
+        else if (sphere.center.y > maxY)
+            sqDist += (sphere.center.y - maxY) * (sphere.center.y - maxY);
 
-        if (sphere.Center.z < minZ)
-            sqDist += (minZ - sphere.Center.z) * (minZ - sphere.Center.z);
-        else if (sphere.Center.z > maxZ)
-            sqDist += (sphere.Center.z - maxZ) * (sphere.Center.z - maxZ);
+        if (sphere.center.z < minZ)
+            sqDist += (minZ - sphere.center.z) * (minZ - sphere.center.z);
+        else if (sphere.center.z > maxZ)
+            sqDist += (sphere.center.z - maxZ) * (sphere.center.z - maxZ);
 
-        return sqDist <= (sphere.Radius * sphere.Radius);
+        return sqDist <= (sphere.radius * sphere.radius);
     }
+    float minX, minY, minZ;
+    float maxX, maxY, maxZ;
 };

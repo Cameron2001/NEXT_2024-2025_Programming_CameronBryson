@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Semaphore.h"
 
-Semaphore::Semaphore(int count) : m_count(count)
+Semaphore::Semaphore(const int count) : m_count(count)
 {
 }
 

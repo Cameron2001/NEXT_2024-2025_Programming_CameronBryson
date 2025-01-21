@@ -79,7 +79,7 @@ class EventManager
         }
         return nullptr;
     }
-
+    //Do we want this to be shared ptr?
     std::unordered_map<std::pair<std::string, std::type_index>, std::shared_ptr<void>, pair_hash> m_events;
     std::mutex m_mutex;
 };

@@ -13,7 +13,7 @@ Matrix3::Matrix3()
         }
     }
 }
-void Matrix3::Set(int row, int column, float value)
+void Matrix3::Set(const int row, const int column, const float value)
 {
     if (row < 0 || row >= 3 || column < 0 || column >= 3)
     {
@@ -40,7 +40,7 @@ void Matrix3::SetIdentity()
         }
     }
 }
-float Matrix3::Get(int row, int column) const
+float Matrix3::Get(const int row, const int column) const
 {
     if (row < 0 || row >= 3 || column < 0 || column >= 3)
     {

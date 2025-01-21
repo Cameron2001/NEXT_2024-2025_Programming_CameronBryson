@@ -217,7 +217,7 @@ void HiddenLineRemoval::ClipEdgeAgainstTriangle(const Edge2D &edge, const Triang
             {
                 // m_visibleEdges.local().emplace_back(sortedPoints[i], sortedPoints[i + 1]);
 
-                segments.emplace_back(sortedPoints[i], sortedPoints[i + 1],edge.color,edge.layer);
+                segments.emplace_back(sortedPoints[i], sortedPoints[i + 1],edge.color);
             }
         }
     }
