@@ -20,13 +20,13 @@ void ResultsScene::LateInit()
     Scene::LateInit();
 }
 
-void ResultsScene::Update(float dt)
+void ResultsScene::Update(const float dt)
 {
     m_resultsSystem->Update(dt);
     Scene::Update(dt);
 }
 
-void ResultsScene::LateUpdate(float dt)
+void ResultsScene::LateUpdate(const float dt)
 {
     Scene::LateUpdate(dt);
 }
@@ -53,20 +53,20 @@ void ResultsScene::LateShutdown()
 
 void ResultsScene::BuildResults()
 {
-    auto entityPlayer1ScoreText = m_registry->CreateEntity();
+    const auto entityPlayer1ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(entityPlayer1ScoreText,
                                             "Player 1 Score: " + std::to_string(m_playerManager->GetPlayer1Score()),
                                             FVector2(540.0f, 500.0f));
-    auto entityPlayer2ScoreText = m_registry->CreateEntity();
+    const auto entityPlayer2ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(entityPlayer2ScoreText,
                                             "Player 2 Score: " + std::to_string(m_playerManager->GetPlayer2Score()),
                                             FVector2(540,400));
 
-    auto entityWinnerText = m_registry->CreateEntity();
+    const auto entityWinnerText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(entityWinnerText, "Winner: ",
                                             FVector2(540, 300));
 
-    auto entityControlsText = m_registry->CreateEntity();
+    const auto entityControlsText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(entityControlsText, "Press SPACE to return to Main Menu", FVector2(540,200));
 
     m_resultsSystem->SetPlayer1ScoreText(entityPlayer1ScoreText);

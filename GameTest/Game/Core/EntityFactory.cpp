@@ -9,7 +9,7 @@ EntityFactory::EntityFactory(Registry *registry) : m_registry(registry)
 
 Entity EntityFactory::CreateGolfBallOne(const FVector3 &position)
 {
-    Entity player = m_registry->CreateEntity();
+    const Entity player = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player, position, FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<PlayerComponent>(player, position);
@@ -23,7 +23,7 @@ Entity EntityFactory::CreateGolfBallOne(const FVector3 &position)
 
 Entity EntityFactory::CreateGolfBallTwo(const FVector3 &position)
 {
-    Entity player2 = m_registry->CreateEntity();
+    const Entity player2 = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(player2, position, FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<PlayerComponent>(player2, position);
@@ -42,7 +42,7 @@ Entity EntityFactory::CreateGolfBallTwo(const FVector3 &position)
 // Creates a static Box entity with the specified position and extents
 Entity EntityFactory::CreateStaticBox(const FVector3 &position, const FVector3 &extents, const FVector3 &rotation, const FVector3& color)
 {
-    Entity box = m_registry->CreateEntity();
+    const Entity box = m_registry->CreateEntity();
 
     m_registry->AddComponent<TransformComponent>(box, position, rotation, 
                                                  extents                 // Scale
@@ -55,7 +55,7 @@ Entity EntityFactory::CreateStaticBox(const FVector3 &position, const FVector3 &
 
 Entity EntityFactory::CreateFlag(const FVector3 &position)
 {
-    Entity flag = m_registry->CreateEntity();
+    const Entity flag = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(flag, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
                                                  FVector3(1.0f, 1.0f, 1.0f)                  // Scale
     );
@@ -65,7 +65,7 @@ Entity EntityFactory::CreateFlag(const FVector3 &position)
 
 Entity EntityFactory::CreateArrow(const Entity followTarget)
 {
-    Entity arrow = m_registry->CreateEntity();
+    const Entity arrow = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(arrow, FVector3(0.0f, 0.0f, 0.0f), FVector3(0.0f, 0.0f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<ModelComponent>(arrow, "ArrowOBJ");
@@ -75,7 +75,7 @@ Entity EntityFactory::CreateArrow(const Entity followTarget)
 
 Entity EntityFactory::CreateInvisibleBoxCollider(const FVector3 &position, const FVector3 &extents, const FVector3& rotation, const float elasticity, const float friction)
 {
-    Entity collider = m_registry->CreateEntity();
+    const Entity collider = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(collider, position, rotation, // Rotation
                                                  extents                      // Scale
     );
@@ -86,7 +86,7 @@ Entity EntityFactory::CreateInvisibleBoxCollider(const FVector3 &position, const
 
 Entity EntityFactory::CreateBouncyBox(const FVector3 &position, const FVector3 &extents)
 {
-    Entity box = m_registry->CreateEntity();
+    const Entity box = m_registry->CreateEntity();
 
     m_registry->AddComponent<TransformComponent>(box, position, FVector3(0.0f, 0.0f, 0.0f), // Rotation
                                                  extents);                                  // Scale

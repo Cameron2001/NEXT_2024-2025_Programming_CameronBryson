@@ -64,14 +64,14 @@ void LevelOneScene::BuildLevelOne()
 
 void LevelOneScene::BuildPlayers()
 {
-    auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(6.0f, 3.5f, 10.0f));
-    auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-6.0f, 3.5f, 10.0f));
+    const auto player1 = m_entityFactory->CreateGolfBallOne(FVector3(6.0f, 3.5f, 10.0f));
+    const auto player2 = m_entityFactory->CreateGolfBallTwo(FVector3(-6.0f, 3.5f, 10.0f));
     m_entityFactory->CreateArrow(player1);
     m_entityFactory->CreateArrow(player2);
     m_playerManager->SetPlayer1(player1);
     m_playerManager->SetPlayer2(player2);
 
-    auto hole = m_registry->CreateEntity();
+    const auto hole = m_registry->CreateEntity();
     m_registry->AddComponent<TransformComponent>(hole, FVector3(-4.0f, 10.0f, -160.0f), FVector3(0.0f, 0.5f, 0.0f),
                                                  FVector3(1.0f, 1.0f, 1.0f));
     m_registry->AddComponent<ColliderComponent>(hole, ColliderType::Box, false, 0.8f, 0.5f);
@@ -82,9 +82,9 @@ void LevelOneScene::BuildPlayers()
 
 void LevelOneScene::BuildUI()
 {
-    auto player1ScoreText = m_registry->CreateEntity();
+    const auto player1ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(player1ScoreText, "Player1 Score:", FVector2(20.0f, 100.0f));
-    auto player2ScoreText = m_registry->CreateEntity();
+    const auto player2ScoreText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(player2ScoreText, "Player2 Score:", FVector2(20.0f, 50.0f));
     m_uiSystem->SetScoreTextEntities(player1ScoreText, player2ScoreText);
 
@@ -95,14 +95,14 @@ void LevelOneScene::BuildUI()
 
 void LevelOneScene::BuildGrassArea()
 {
-    const int gridRows = 8;
-    const int gridColumns = 6;
-    const float spacing = 6.05f;
-    FVector3 startPosition(-15.0f, 0.0f, -29.25f);
-    FVector3 firstGrassColor(0.0f, 0.7f, 0.0f);
-    FVector3 secondGrassColor(0.7f, 0.7f, 0.7f);
-    float grassGridElasticity = 0.5f;
-    float grassGridFriction = 0.8f;
+    constexpr int gridRows = 8;
+    constexpr int gridColumns = 6;
+    constexpr float spacing = 6.05f;
+    const FVector3 startPosition(-15.0f, 0.0f, -29.25f);
+    const FVector3 firstGrassColor(0.0f, 0.7f, 0.0f);
+    const FVector3 secondGrassColor(0.7f, 0.7f, 0.7f);
+    constexpr float grassGridElasticity = 0.5f;
+    constexpr float grassGridFriction = 0.8f;
 
     for (int row = 0; row < gridRows; ++row)
     {
@@ -126,16 +126,16 @@ void LevelOneScene::BuildGrassArea()
 
 void LevelOneScene::BuildGrassBoundaries()
 {
-    const int gridRows = 8;
-    const int gridColumns = 6;
-    const float spacing = 6.05f;
-    float borderHeight = 3.0f;
-    FVector3 startPosition(-15.0f, 0.0f, -29.25f);
-    float leftBorderX = startPosition.x - spacing;
-    float rightBorderX = startPosition.x + gridColumns * spacing;
-    float borderY = startPosition.y + borderHeight / 2.0f;
-    float boundaryGridElasticity = 0.3f;
-    float boundaryGridFriction = 0.3f;
+    constexpr int gridRows = 8;
+    constexpr int gridColumns = 6;
+    constexpr float spacing = 6.05f;
+    constexpr float borderHeight = 3.0f;
+    const FVector3 startPosition(-15.0f, 0.0f, -29.25f);
+    const float leftBorderX = startPosition.x - spacing;
+    const float rightBorderX = startPosition.x + gridColumns * spacing;
+    const float borderY = startPosition.y + borderHeight / 2.0f;
+    constexpr float boundaryGridElasticity = 0.3f;
+    constexpr float boundaryGridFriction = 0.3f;
 
     for (int row = 0; row < gridRows; ++row)
     {
@@ -148,13 +148,13 @@ void LevelOneScene::BuildGrassBoundaries()
 
 void LevelOneScene::BuildIceArea()
 {
-    const int gridRows = 8;
-    const int gridColumns = 6;
-    const float spacing = 6.05f;
-    FVector3 startPosition(-15.0f, 2.9f, -89.0f);
-    FVector3 iceBoxColor(0.0f, 1.0f, 1.0f);
-    float iceGridElasticity = 0.5f;
-    float iceGridFriction = 0.2f;
+    constexpr int gridRows = 8;
+    constexpr int gridColumns = 6;
+    constexpr float spacing = 6.05f;
+    const FVector3 startPosition(-15.0f, 2.9f, -89.0f);
+    const FVector3 iceBoxColor(0.0f, 1.0f, 1.0f);
+    constexpr float iceGridElasticity = 0.5f;
+    constexpr float iceGridFriction = 0.2f;
 
     for (int row = 0; row < gridRows; ++row)
     {
@@ -177,16 +177,16 @@ void LevelOneScene::BuildIceArea()
 
 void LevelOneScene::BuildIceBoundaries()
 {
-    const int gridRows = 8;
-    const int gridColumns = 6;
-    const float spacing = 6.05f;
-    float borderHeight = 3.0f;
-    FVector3 startPosition(-15.0f, 2.9f, -89.0f);
-    float leftBorderX = startPosition.x - spacing;
-    float rightBorderX = startPosition.x + gridColumns * spacing;
-    float borderY = startPosition.y + borderHeight / 2.0f;
-    float boundaryGridElasticity = 0.3f;
-    float boundaryGridFriction = 0.3f;
+    constexpr int gridRows = 8;
+    constexpr int gridColumns = 6;
+    constexpr float spacing = 6.05f;
+    constexpr float borderHeight = 3.0f;
+    const FVector3 startPosition(-15.0f, 2.9f, -89.0f);
+    const float leftBorderX = startPosition.x - spacing;
+    const float rightBorderX = startPosition.x + gridColumns * spacing;
+    const float borderY = startPosition.y + borderHeight / 2.0f;
+    constexpr float boundaryGridElasticity = 0.3f;
+    constexpr float boundaryGridFriction = 0.3f;
 
     for (int row = 0; row < gridRows; ++row)
     {
@@ -199,9 +199,9 @@ void LevelOneScene::BuildIceBoundaries()
 
 void LevelOneScene::BuildBouncyBoxes()
 {
-    FVector3 bouncyBoxColor(0.0f, 0.0f, 1.0f);
-    float bouncyGridElasticity = 3.0f;
-    float bouncyGridFriction = 0.1f;
+    const FVector3 bouncyBoxColor(0.0f, 0.0f, 1.0f);
+    constexpr float bouncyGridElasticity = 3.0f;
+    constexpr float bouncyGridFriction = 0.1f;
 
     m_entityFactory->CreateStaticBox(FVector3(0.0f, 4.0f, -20.0f), FVector3(2.0f, 2.0f, 4.0f),
                                      FVector3(0.0f, 0.0f, 0.0f), bouncyBoxColor);
@@ -221,7 +221,7 @@ void LevelOneScene::BuildBouncyBoxes()
 
 void LevelOneScene::BuildRamps()
 {
-    FVector3 rampPosition1(0.0f, 2.5f, -38.0f);
+    const FVector3 rampPosition1(0.0f, 2.5f, -38.0f);
     m_entityFactory->CreateStaticBox(rampPosition1, FVector3(18.5f, 1.0f, 6.0f), FVector3(0.2f, 0.0f, 0.0f),
                                      FVector3(0.5f, 0.5f, 0.5f));
     m_entityFactory->CreateInvisibleBoxCollider(rampPosition1, FVector3(18.5f, 1.0f, 6.0f), FVector3(-0.2f, 0.0f, 0.0f),
@@ -236,18 +236,18 @@ void LevelOneScene::BuildRamps()
 
 void LevelOneScene::BuildCentralGrassArea()
 {
-    const int centralGrassRows = 8;
-    const int centralGrassColumns = 8;
-    const int sandBorderWidth = 1;
-    const float spacing = 6.05f;
-    FVector3 sandStartPosition(20.0f, 5.25f, -145.0f);
+    constexpr int centralGrassRows = 8;
+    constexpr int centralGrassColumns = 8;
+    constexpr int sandBorderWidth = 1;
+    constexpr float spacing = 6.05f;
+    const FVector3 sandStartPosition(20.0f, 5.25f, -145.0f);
     FVector3 centralGrassStartPosition = sandStartPosition;
     centralGrassStartPosition.x -= ((centralGrassColumns + 2 * sandBorderWidth) * spacing) / 2.0f;
     centralGrassStartPosition.z -= ((centralGrassRows + 2 * sandBorderWidth) * spacing) / 2.0f;
-    FVector3 firstGrassColor(0.0f, 0.7f, 0.0f);
-    FVector3 secondGrassColor(0.7f, 0.7f, 0.7f);
-    float grassGridElasticity = 0.5f;
-    float grassGridFriction = 0.8f;
+    const FVector3 firstGrassColor(0.0f, 0.7f, 0.0f);
+    const FVector3 secondGrassColor(0.7f, 0.7f, 0.7f);
+    constexpr float grassGridElasticity = 0.5f;
+    constexpr float grassGridFriction = 0.8f;
 
     for (int row = 0; row < centralGrassRows; ++row)
     {
@@ -273,22 +273,22 @@ void LevelOneScene::BuildCentralGrassArea()
 
 void LevelOneScene::BuildSandBorders()
 {
-    const int centralGrassRows = 8;
-    const int centralGrassColumns = 8;
-    const int sandBorderWidth = 1;
-    const float spacing = 6.05f;
-    FVector3 sandStartPosition(20.0f, 5.25f, -145.0f);
+    constexpr int centralGrassRows = 8;
+    constexpr int centralGrassColumns = 8;
+    constexpr int sandBorderWidth = 1;
+    constexpr float spacing = 6.05f;
+    const FVector3 sandStartPosition(20.0f, 5.25f, -145.0f);
     FVector3 centralGrassStartPosition = sandStartPosition;
     centralGrassStartPosition.x -= ((centralGrassColumns + 2 * sandBorderWidth) * spacing) / 2.0f;
     centralGrassStartPosition.z -= ((centralGrassRows + 2 * sandBorderWidth) * spacing) / 2.0f;
     FVector3 sandBordersStartPosition = centralGrassStartPosition;
     sandBordersStartPosition.x -= sandBorderWidth * spacing;
     sandBordersStartPosition.z -= sandBorderWidth * spacing;
-    int totalSandRows = centralGrassRows + 2 * sandBorderWidth;
-    int totalSandColumns = centralGrassColumns + 2 * sandBorderWidth;
-    FVector3 sandBoxColor(1.0f, 1.0f, 0.0f);
-    float sandGridElasticity = 0.1f;
-    float sandGridFriction = 0.9f;
+    constexpr int totalSandRows = centralGrassRows + 2 * sandBorderWidth;
+    constexpr int totalSandColumns = centralGrassColumns + 2 * sandBorderWidth;
+    const FVector3 sandBoxColor(1.0f, 1.0f, 0.0f);
+    constexpr float sandGridElasticity = 0.1f;
+    constexpr float sandGridFriction = 0.9f;
 
     for (int row = 0; row < totalSandRows; ++row)
     {
@@ -312,9 +312,9 @@ void LevelOneScene::BuildSandBorders()
 
 void LevelOneScene::CreateBoundary(const FVector3 &position, float height, float elasticity, float friction)
 {
-    FVector3 size(3.0f, height, 3.0f);
-    FVector3 rotation(0.0f, 0.0f, 0.0f);
-    FVector3 color(1.0f, 0.0f, 0.0f);
+    const FVector3 size(3.0f, height, 3.0f);
+    const FVector3 rotation(0.0f, 0.0f, 0.0f);
+    const FVector3 color(1.0f, 0.0f, 0.0f);
     m_entityFactory->CreateStaticBox(position, size, rotation, color);
     m_entityFactory->CreateInvisibleBoxCollider(position, size, rotation, elasticity, friction);
 }

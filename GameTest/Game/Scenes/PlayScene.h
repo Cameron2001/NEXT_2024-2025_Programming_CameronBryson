@@ -17,15 +17,12 @@ class PlayScene : public Scene
     void LateRender() override;
     void Shutdown() override;
     void LateShutdown() override;
-    void Test(int value);
-    void CollisionEvent(unsigned int ID1, unsigned int ID2);
 
   protected:
     std::shared_ptr<PlayerSystem> m_playerSystem;
     std::shared_ptr<CollisionSystem> m_collisionSystem;
     
     std::shared_ptr<ParticleSystem> m_particleSystem;
-    std::shared_ptr<CameraSystem> m_cameraSystem;
     std::shared_ptr<UISystem> m_uiSystem;
     std::shared_ptr<EntityFactory> m_entityFactory;
 };

@@ -5,7 +5,6 @@
 #include <memory>
 class UISystem
 {
-	//Use this class to update ui elements
   public:
     UISystem(Registry *registry, PlayerManager *playerManager);
     void SetScoreTextEntities(Entity player1ScoreTextEntity, Entity player2ScoreTextEntity);

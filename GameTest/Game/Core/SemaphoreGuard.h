@@ -5,9 +5,6 @@ class SemaphoreGuard
   public:
     explicit SemaphoreGuard(Semaphore &semaphore);
     ~SemaphoreGuard();
-    SemaphoreGuard(const SemaphoreGuard &) = delete;
-    SemaphoreGuard &operator=(const SemaphoreGuard &) = delete;
-
     SemaphoreGuard(SemaphoreGuard &&other) noexcept;
     SemaphoreGuard &operator=(SemaphoreGuard &&other) noexcept;
 

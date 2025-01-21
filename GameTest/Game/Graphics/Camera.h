@@ -10,10 +10,6 @@ class Camera
     Camera(const FVector3 &position);
     ~Camera() = default;
 
-    Camera(const Camera &other) = default;
-    Camera(Camera &&other) noexcept = default;
-    Camera &operator=(const Camera &other) = default;
-    Camera &operator=(Camera &&other) noexcept = default;
 
     void SetPosition(const FVector3 &position);
     void SetFOV(const float fov);

@@ -21,11 +21,6 @@ struct BufferContext
         potentialOccluders.reserve(100);
         segments.reserve(100);
     }
-    BufferContext(const BufferContext &) = delete;
-    BufferContext &operator=(const BufferContext &) = delete;
-
-    BufferContext(BufferContext &&) = default;
-    BufferContext &operator=(BufferContext &&) = default;
     void clear()
     {
         potentialOccluders.clear();
@@ -39,12 +34,7 @@ class HiddenLineRemoval
     HiddenLineRemoval();
     ~HiddenLineRemoval() = default;
 
-    HiddenLineRemoval(const HiddenLineRemoval &) = delete;
-    HiddenLineRemoval &operator=(const HiddenLineRemoval &) = delete;
-    HiddenLineRemoval(HiddenLineRemoval &&) = delete;
-    HiddenLineRemoval &operator=(HiddenLineRemoval &&) = delete;
-
-    std::vector<Edge2D> RemoveHiddenLines(std::vector<Triangle2D> &triangles);
+    std::vector<Edge2D> RemoveHiddenLines(const std::vector<Triangle2D> &triangles);
 
   private:
     void InitializeQuadtree(const std::vector<Triangle2D> &triangles);
@@ -53,7 +43,7 @@ class HiddenLineRemoval
 
     void ProcessEdge(const Edge2D &edge, const std::vector<Triangle2D> &occluders, std::vector<Edge2D> &segments);
 
-    void ClipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle, std::vector<Edge2D> &clippedEdges);
+    static void ClipEdgeAgainstTriangle(const Edge2D &edge, const Triangle2D &triangle, std::vector<Edge2D> &clippedEdges);
 
     //No std optional in c++14 so instead of we return value via intersectionPoint param
     static bool GetEdgeIntersection(const Edge2D &edgeA, const Edge2D &edgeB, FVector2 &intersectionPoint);
@@ -86,10 +76,10 @@ inline bool HiddenLineRemoval::SharesVertex(const Triangle2D &triangleA, const T
 
 inline bool HiddenLineRemoval::IsPointInsideTriangle(const FVector2 &point, const Triangle2D &triangle)
 {
-    float deltaX = point.x - triangle.v0.x;
-    float deltaY = point.y - triangle.v0.y;
+    const float deltaX = point.x - triangle.v0.x;
+    const float deltaY = point.y - triangle.v0.y;
 
-    bool isSideABPositive = (triangle.v1.x - triangle.v0.x) * deltaY - (triangle.v1.y - triangle.v0.y) * deltaX > 0;
+    const bool isSideABPositive = (triangle.v1.x - triangle.v0.x) * deltaY - (triangle.v1.y - triangle.v0.y) * deltaX > 0;
 
     if (((triangle.v2.x - triangle.v0.x) * deltaY - (triangle.v2.y - triangle.v0.y) * deltaX > 0) == isSideABPositive)
         return false;

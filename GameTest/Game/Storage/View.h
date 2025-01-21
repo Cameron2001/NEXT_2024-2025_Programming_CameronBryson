@@ -27,7 +27,7 @@ template <typename... Components> class View
         using pointer = value_type *;
         using reference = value_type &;
 
-        Iterator(View *view, size_t index) : m_view(view), m_index(index)
+        Iterator(View *view, const size_t index) : m_view(view), m_index(index)
         {
         }
 
@@ -69,7 +69,7 @@ template <typename... Components> class View
         using pointer = value_type *;
         using reference = value_type &;
 
-        ConstIterator(const View *view, size_t index) : m_view(view), m_index(index)
+        ConstIterator(const View *view, const size_t index) : m_view(view), m_index(index)
         {
         }
 

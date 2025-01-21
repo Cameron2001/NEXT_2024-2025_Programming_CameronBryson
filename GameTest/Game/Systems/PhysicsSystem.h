@@ -14,20 +14,12 @@ class PhysicsSystem
     void Shutdown();
 
   private:
-    void ComputeBoxInverseInertiaTensor(const TransformComponent &transform, const BoxBoundsComponent &boxBounds,
-                                        RigidBodyComponent &rigidBody);
-    void ComputeSphereInverseInertiaTensor(const TransformComponent &tranform,
-                                           const SphereBoundsComponent &sphereBounds, RigidBodyComponent &rigidBody);
+    static void ComputeBoxInverseInertiaTensor(const TransformComponent &transform, const BoxBoundsComponent &boxBounds,
+                                               RigidBodyComponent &rigidBody);
+    static void ComputeSphereInverseInertiaTensor(const TransformComponent &tranform,
+                                                  const SphereBoundsComponent &sphereBounds, RigidBodyComponent &rigidBody);
     Registry *m_registry;
     View<TransformComponent, RigidBodyComponent> m_view;
     View<TransformComponent, BoxBoundsComponent, RigidBodyComponent> m_boxView;
     View<TransformComponent, SphereBoundsComponent, RigidBodyComponent> m_sphereView;
 };
-
-// Read:
-// transform
-// rigidbody
-
-// Write:
-// transform
-// rigidbody

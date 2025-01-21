@@ -9,7 +9,6 @@ PlayScene::PlayScene(std::shared_ptr<GraphicsManager> graphicsManager, std::shar
       m_playerSystem(std::make_shared<PlayerSystem>(m_registry.get(), eventManager.get(), m_playerManager.get(),m_camera.get())),
       m_collisionSystem(std::make_shared<CollisionSystem>(m_registry.get(), eventManager.get())),
       m_particleSystem(std::make_shared<ParticleSystem>(m_registry.get(), eventManager.get())),
-      m_cameraSystem(std::make_shared<CameraSystem>(m_registry.get(), m_playerManager.get(), m_camera.get())),
       m_entityFactory(std::make_shared<EntityFactory>(m_registry.get())),
       m_uiSystem(std::make_shared<UISystem>(m_registry.get(), m_playerManager.get()))
 {
@@ -39,7 +38,6 @@ void PlayScene::Update(const float dt)
     m_physicsSystem->Update(dt);
     m_collisionSystem->Update(dt);
     m_particleSystem->Update(dt);
-    m_cameraSystem->Update(dt);
     m_uiSystem->Update(dt);
     m_playerSystem->Update(dt);
     Scene::Update(dt);
@@ -71,13 +69,4 @@ void PlayScene::LateShutdown()
     Scene::LateShutdown();
 }
 
-void PlayScene::Test(int value)
-{
-    printf("Value: %d\n", value);
-}
-
-void PlayScene::CollisionEvent(unsigned int ID1, unsigned int ID2)
-{
-    printf("Collision between %d and %d\n", ID1, ID2);
-}
 

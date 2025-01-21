@@ -79,10 +79,10 @@ void CollisionSystem::UpdateOctree()
     m_dyanmicBoxView.Update();
     m_dynamicSphereView.Update();
     m_dyanmicBoxView.ForEach(
-        [this](Entity entity, const TransformComponent &transform, const BoxBoundsComponent &boxBounds,
+        [this](const Entity entity, const TransformComponent &transform, const BoxBoundsComponent &boxBounds,
                const ColliderComponent &collider, RigidBodyComponent&) { m_octree->Insert(boxBounds, transform, entity, collider.isDynamic); });
     m_dynamicSphereView.ForEach(
-        [this](Entity entity, const TransformComponent &transform, const SphereBoundsComponent &sphereBounds,
+        [this](const Entity entity, const TransformComponent &transform, const SphereBoundsComponent &sphereBounds,
                const ColliderComponent &collider, RigidBodyComponent &) { m_octree->Insert(sphereBounds, transform, entity, collider.isDynamic); });
 }
 
@@ -123,11 +123,11 @@ bool CollisionSystem::TestAxisOverlap(const FVector3 &axis, const BoxBoundsCompo
 
 bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
 {
-    auto &transform1 = m_registry->GetComponent<TransformComponent>(ID1);
-    auto &transform2 = m_registry->GetComponent<TransformComponent>(ID2);
+    const auto &transform1 = m_registry->GetComponent<TransformComponent>(ID1);
+    const auto &transform2 = m_registry->GetComponent<TransformComponent>(ID2);
 
-    auto &box1 = m_registry->GetComponent<BoxBoundsComponent>(ID1);
-    auto &box2 = m_registry->GetComponent<BoxBoundsComponent>(ID2);
+    const auto &box1 = m_registry->GetComponent<BoxBoundsComponent>(ID1);
+    const auto &box2 = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
     const Matrix4 rotation1 = transform1.rotation.GetRotationMatrix4();
     const Matrix4 rotation2 = transform2.rotation.GetRotationMatrix4();
@@ -167,7 +167,7 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
             return false;
         }
     }
-    FVector3 contactPoint = transform1.position + collisionNormal * (minimalPenetration / 2.0f);
+    const FVector3 contactPoint = transform1.position + collisionNormal * (minimalPenetration / 2.0f);
     Collision collision(ID1, ID2, contactPoint, collisionNormal, minimalPenetration);
     const FVector3 direction = (transform2.position - transform1.position).Normalize();
     if (collision.normal.Dot(direction) < 0)
@@ -181,11 +181,11 @@ bool CollisionSystem::OOBvsOOB(Entity ID1, Entity ID2)
 
 bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
 {
-    auto &transform1 = m_registry->GetComponent<TransformComponent>(ID1);
-    auto &transform2 = m_registry->GetComponent<TransformComponent>(ID2);
+    const auto &transform1 = m_registry->GetComponent<TransformComponent>(ID1);
+    const auto &transform2 = m_registry->GetComponent<TransformComponent>(ID2);
 
-    auto &sphere1 = m_registry->GetComponent<SphereBoundsComponent>(ID1);
-    auto &sphere2 = m_registry->GetComponent<SphereBoundsComponent>(ID2);
+    const auto &sphere1 = m_registry->GetComponent<SphereBoundsComponent>(ID1);
+    const auto &sphere2 = m_registry->GetComponent<SphereBoundsComponent>(ID2);
 
     const float radius1 = sphere1.radius * (transform1.scale.x + transform1.scale.y + transform1.scale.z) / 3;
     const float radius2 = sphere2.radius * (transform2.scale.x + transform2.scale.y + transform2.scale.z) / 3;
@@ -210,11 +210,11 @@ bool CollisionSystem::SpherevsSphere(Entity ID1, Entity ID2)
 
 bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
 {
-    auto &sphereTransform = m_registry->GetComponent<TransformComponent>(ID1);
-    auto &boxTransform = m_registry->GetComponent<TransformComponent>(ID2);
+    const auto &sphereTransform = m_registry->GetComponent<TransformComponent>(ID1);
+    const auto &boxTransform = m_registry->GetComponent<TransformComponent>(ID2);
 
-    auto &sphereBounds = m_registry->GetComponent<SphereBoundsComponent>(ID1);
-    auto &boxBounds = m_registry->GetComponent<BoxBoundsComponent>(ID2);
+    const auto &sphereBounds = m_registry->GetComponent<SphereBoundsComponent>(ID1);
+    const auto &boxBounds = m_registry->GetComponent<BoxBoundsComponent>(ID2);
 
     const float radius =
         sphereBounds.radius * (sphereTransform.scale.x + sphereTransform.scale.y + sphereTransform.scale.z) / 3.0f;
@@ -230,23 +230,23 @@ bool CollisionSystem::SpherevsOOB(Entity ID1, Entity ID2)
     const FVector3 delta = sphereTransform.position - boxTransform.position;
 
     // Project delta onto OBB's local axes to get the sphere center in OBB's local space
-    float deltaLocalX = delta.Dot(boxRight);
-    float deltaLocalY = delta.Dot(boxUp);
-    float deltaLocalZ = delta.Dot(boxForward);
+    const float deltaLocalX = delta.Dot(boxRight);
+    const float deltaLocalY = delta.Dot(boxUp);
+    const float deltaLocalZ = delta.Dot(boxForward);
 
     // Clamp the projected point to the extents of the OBB to find the closest point
-    float closestPointLocalX = (std::max)(-scaledBoxExtents.x, (std::min)(deltaLocalX, scaledBoxExtents.x));
-    float closestPointLocalY = (std::max)(-scaledBoxExtents.y, (std::min)(deltaLocalY, scaledBoxExtents.y));
-    float closestPointLocalZ = (std::max)(-scaledBoxExtents.z, (std::min)(deltaLocalZ, scaledBoxExtents.z));
+    const float closestPointLocalX = (std::max)(-scaledBoxExtents.x, (std::min)(deltaLocalX, scaledBoxExtents.x));
+    const float closestPointLocalY = (std::max)(-scaledBoxExtents.y, (std::min)(deltaLocalY, scaledBoxExtents.y));
+    const float closestPointLocalZ = (std::max)(-scaledBoxExtents.z, (std::min)(deltaLocalZ, scaledBoxExtents.z));
 
     // Transform the closest point back to world space
-    FVector3 closestPointWorld = boxTransform.position + boxRight * closestPointLocalX + boxUp * closestPointLocalY +
+    const FVector3 closestPointWorld = boxTransform.position + boxRight * closestPointLocalX + boxUp * closestPointLocalY +
                                  boxForward * closestPointLocalZ;
 
     // Compute the vector from the closest point to the sphere center
-    FVector3 difference = sphereTransform.position - closestPointWorld;
+    const FVector3 difference = sphereTransform.position - closestPointWorld;
 
-    float distanceSquared = difference.LengthSquared();
+    const float distanceSquared = difference.LengthSquared();
 
     if (distanceSquared > radius * radius + 0.00001f)
     {
@@ -344,8 +344,8 @@ void CollisionSystem::DetectCollisions()
     concurrency::parallel_for_each(
         m_potentialCollisions.begin(), m_potentialCollisions.end(),
         [&](const std::pair<unsigned int, unsigned int> &collisionPair) {
-            unsigned int entityID1 = collisionPair.first;
-            unsigned int entityID2 = collisionPair.second;
+            const unsigned int entityID1 = collisionPair.first;
+            const unsigned int entityID2 = collisionPair.second;
 
             const auto &collider1 = colliders.GetComponent(entityID1);
             const auto &collider2 = colliders.GetComponent(entityID2);
@@ -512,8 +512,8 @@ void CollisionSystem::ApplyImpulse(RigidBodyComponent &body, const TransformComp
 
     body.linearVelocity += impulse * body.inverseMass;
 
-    Matrix3 rotationMatrix = transform.rotation.GetRotationMatrix3();
-    Matrix3 worldInvInertia = rotationMatrix * body.localInverseInertiaTensor * rotationMatrix.Transpose();
-    FVector3 angularImpulse = worldInvInertia * r.Cross(impulse);
+    const Matrix3 rotationMatrix = transform.rotation.GetRotationMatrix3();
+    const Matrix3 worldInvInertia = rotationMatrix * body.localInverseInertiaTensor * rotationMatrix.Transpose();
+    const FVector3 angularImpulse = worldInvInertia * r.Cross(impulse);
     body.angularVelocity += angularImpulse;
 }

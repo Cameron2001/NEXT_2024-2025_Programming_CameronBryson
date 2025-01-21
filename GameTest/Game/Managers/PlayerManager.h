@@ -1,4 +1,3 @@
-// File: GameTest/Game/Managers/PlayerManager.h
 #pragma once
 #include "Game/Core/Entity.h"
 
@@ -8,13 +7,13 @@ class PlayerManager
     PlayerManager();
     ~PlayerManager() = default;
 
-    void SetPlayer1(const Entity player);
-    void SetPlayer2(const Entity player);
-    void SetHole(const Entity hole);
+    void SetPlayer1(Entity player);
+    void SetPlayer2(Entity player);
+    void SetHole(Entity hole);
 
-    Entity GetPlayer1();
-    Entity GetPlayer2();
-    Entity GetHole();
+    Entity GetPlayer1() const;
+    Entity GetPlayer2() const;
+    Entity GetHole() const;
 
     int GetPlayer1Score() const;
     int GetPlayer2Score() const;

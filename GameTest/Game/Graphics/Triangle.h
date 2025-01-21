@@ -6,17 +6,17 @@ struct Triangle2D
 {
 
 
-    Triangle2D() : v0(), v1(), v2(), avgZ(0.0f), color({1.0f, 1.0f, 1.0f})
+    Triangle2D() : color({1.0f, 1.0f, 1.0f}), avgZ(0.0f)
     {
     }
 
-    Triangle2D(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, float avgZ)
-        : v0(v0), v1(v1), v2(v2), avgZ(avgZ), color({1.0f, 1.0f, 1.0f})
+    Triangle2D(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, const float avgZ)
+        : color({1.0f, 1.0f, 1.0f}), v0(v0), v1(v1), v2(v2), avgZ(avgZ)
     {
     }
 
-    Triangle2D(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, float avgZ, const FVector3 &color)
-        : v0(v0), v1(v1), v2(v2), avgZ(avgZ), color(color)
+    Triangle2D(const FVector2 &v0, const FVector2 &v1, const FVector2 &v2, const float avgZ, const FVector3 &color)
+        : color(color), v0(v0), v1(v1), v2(v2), avgZ(avgZ)
     {
     }
 
@@ -25,11 +25,6 @@ struct Triangle2D
         return v0 == other.v0 && v1 == other.v1 && v2 == other.v2;
     }
 
-    Triangle2D(const Triangle2D &other) noexcept = default;
-    Triangle2D &operator=(const Triangle2D &other) noexcept = default;
-
-    Triangle2D(Triangle2D &&other) noexcept = default;
-    Triangle2D &operator=(Triangle2D &&other) noexcept = default;
 
     FVector3 color;
     FVector2 v0;
@@ -42,11 +37,6 @@ struct Triangle3D
     Triangle3D(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2) : v0(v0), v1(v1), v2(v2)
     {
     }
-    Triangle3D(const Triangle3D &other) noexcept = default;
-    Triangle3D &operator=(const Triangle3D &other) noexcept = default;
-
-    Triangle3D(Triangle3D &&other) noexcept = default;
-    Triangle3D &operator=(Triangle3D &&other) noexcept = default;
     bool operator==(const Triangle3D &other) const
     {
         return v0 == other.v0 && v1 == other.v1 && v2 == other.v2;

@@ -16,10 +16,10 @@ PhysicsSystem::PhysicsSystem(Registry *registry)
 void PhysicsSystem::Init()
 {
     m_boxView.ParallelForEach(
-        [this](Entity entity, TransformComponent &transform, BoxBoundsComponent &boxBounds,
+        [this](Entity entity, const TransformComponent &transform, const BoxBoundsComponent &boxBounds,
                RigidBodyComponent &rigidBody) { ComputeBoxInverseInertiaTensor(transform, boxBounds, rigidBody); });
-    m_sphereView.ParallelForEach([this](Entity entity, TransformComponent &transform,
-                                        SphereBoundsComponent &sphereBounds, RigidBodyComponent &rigidBody) {
+    m_sphereView.ParallelForEach([this](Entity entity, const TransformComponent &transform,
+                                        const SphereBoundsComponent &sphereBounds, RigidBodyComponent &rigidBody) {
         ComputeSphereInverseInertiaTensor(transform, sphereBounds, rigidBody);
     });
 }
@@ -38,15 +38,15 @@ void PhysicsSystem::Update(const float dt)
             rigidBody.force += GRAVITY * (1.0f / rigidBody.inverseMass);
         }
     });
-    m_boxView.ParallelForEach([this](Entity entity, TransformComponent &transform, BoxBoundsComponent &boxBounds,
+    m_boxView.ParallelForEach([this](Entity entity, const TransformComponent &transform, const BoxBoundsComponent &boxBounds,
                                      RigidBodyComponent &rigidBody) {
         if (!rigidBody.isInitialized)
         {
             ComputeBoxInverseInertiaTensor(transform, boxBounds, rigidBody);
         }
     });
-    m_sphereView.ParallelForEach([this](Entity entity, TransformComponent &transform,
-                                        SphereBoundsComponent &sphereBounds, RigidBodyComponent &rigidBody) {
+    m_sphereView.ParallelForEach([this](Entity entity, const TransformComponent &transform,
+                                        const SphereBoundsComponent &sphereBounds, RigidBodyComponent &rigidBody) {
         if (!rigidBody.isInitialized)
         {
             ComputeSphereInverseInertiaTensor(transform, sphereBounds, rigidBody);
@@ -55,12 +55,12 @@ void PhysicsSystem::Update(const float dt)
     m_view.ParallelForEach([dt](Entity entity, TransformComponent &transform, RigidBodyComponent &rigidBody) {
         // Update velocities
 
-        FVector3 linearAcceleration = rigidBody.force * rigidBody.inverseMass;
+        const FVector3 linearAcceleration = rigidBody.force * rigidBody.inverseMass;
 
-        Matrix3 rotationMatrix = transform.rotation.GetRotationMatrix3();
-        Matrix3 worldInverseInertiaTensor =
+        const Matrix3 rotationMatrix = transform.rotation.GetRotationMatrix3();
+        const Matrix3 worldInverseInertiaTensor =
             rotationMatrix * rigidBody.localInverseInertiaTensor * rotationMatrix.Transpose();
-        FVector3 angularAcceleration = worldInverseInertiaTensor * rigidBody.torque;
+        const FVector3 angularAcceleration = worldInverseInertiaTensor * rigidBody.torque;
 
         rigidBody.linearVelocity += linearAcceleration * dt;
         rigidBody.angularVelocity += angularAcceleration * dt;
@@ -72,8 +72,8 @@ void PhysicsSystem::Update(const float dt)
         // Update transform
         transform.position += rigidBody.linearVelocity * dt;
 
-        Quaternion omega(0.0f, rigidBody.angularVelocity.x, rigidBody.angularVelocity.y, rigidBody.angularVelocity.z);
-        Quaternion deltaRotation = omega * transform.rotation * 0.5f * dt;
+        const Quaternion omega(0.0f, rigidBody.angularVelocity.x, rigidBody.angularVelocity.y, rigidBody.angularVelocity.z);
+        const Quaternion deltaRotation = omega * transform.rotation * 0.5f * dt;
 
         transform.rotation = (transform.rotation + deltaRotation).Normalize();
 
@@ -90,15 +90,15 @@ void PhysicsSystem::Shutdown()
 void PhysicsSystem::ComputeBoxInverseInertiaTensor(const TransformComponent &transform,
                                                    const BoxBoundsComponent &boxBounds, RigidBodyComponent &rigidBody)
 {
-    float mass = 1.0f / rigidBody.inverseMass;
+    const float mass = 1.0f / rigidBody.inverseMass;
 
-    FVector3 fullBoxDimensions = boxBounds.extents * 2.0f * transform.scale;
+    const FVector3 fullBoxDimensions = boxBounds.extents * 2.0f * transform.scale;
 
-    float Ixx =
+    const float Ixx =
         (mass / 12.0f) * (fullBoxDimensions.y * fullBoxDimensions.y + fullBoxDimensions.z * fullBoxDimensions.z);
-    float Iyy =
+    const float Iyy =
         (mass / 12.0f) * (fullBoxDimensions.x * fullBoxDimensions.x + fullBoxDimensions.z * fullBoxDimensions.z);
-    float Izz =
+    const float Izz =
         (mass / 12.0f) * (fullBoxDimensions.x * fullBoxDimensions.x + fullBoxDimensions.y * fullBoxDimensions.y);
 
     Matrix3 inertiaTensor;
@@ -115,13 +115,13 @@ void PhysicsSystem::ComputeSphereInverseInertiaTensor(const TransformComponent &
                                                       const SphereBoundsComponent &sphereBounds,
                                                       RigidBodyComponent &rigidBody)
 {
-    float mass = 1.0f / rigidBody.inverseMass;
-    float scaledRadius = sphereBounds.radius * (tranform.scale.x + tranform.scale.y + tranform.scale.z) / 3.0f;
+    const float mass = 1.0f / rigidBody.inverseMass;
+    const float scaledRadius = sphereBounds.radius * (tranform.scale.x + tranform.scale.y + tranform.scale.z) / 3.0f;
 
     Matrix3 inertiaTensor;
     inertiaTensor.SetZero();
 
-    float I = (2.0f / 5.0f) * mass * scaledRadius * scaledRadius;
+    const float I = (2.0f / 5.0f) * mass * scaledRadius * scaledRadius;
 
     inertiaTensor.Set(0, 0, I);
     inertiaTensor.Set(1, 1, I);

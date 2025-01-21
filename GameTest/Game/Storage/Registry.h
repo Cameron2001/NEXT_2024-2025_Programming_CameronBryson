@@ -74,7 +74,7 @@ template <typename T> bool Registry::HasComponent(Entity entity)
 
 template <typename... T> std::vector<Entity> Registry::GetEntitiesWithComponents()
 {
-    if constexpr (sizeof...(T) == 0)
+    if (sizeof...(T) == 0)
     {
         return std::vector<Entity>();
     }

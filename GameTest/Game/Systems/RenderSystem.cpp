@@ -19,7 +19,7 @@
 
 RenderSystem::RenderSystem(Registry *registry, GraphicsManager *graphicsManager, Camera *camera)
     : m_registry(registry), m_modelView(registry), m_textView(registry), m_graphicsManager(graphicsManager),
-      m_camera(camera), m_hiddenLineRemoval(), m_triangles(), m_triangleList(), m_visibleSegments()
+      m_camera(camera), m_hiddenLineRemoval(), m_triangles(), m_visibleSegments()
 {
     m_triangles.local().reserve(2000);
     m_triangleList.reserve(2000);
@@ -34,7 +34,7 @@ void RenderSystem::Update()
     m_modelView.Update();
     auto viewProjectionMatrix = m_camera->GetProjectionMatrix() * m_camera->GetViewMatrix();
 
-    m_modelView.ParallelForEach([&](Entity entity, TransformComponent &transform, ModelComponent &modelComponent) {
+    m_modelView.ParallelForEach([&](Entity entity, const TransformComponent &transform, ModelComponent &modelComponent) {
         if (!modelComponent.enabled)
         {
             return;
@@ -101,7 +101,7 @@ void RenderSystem::LateRender()
     //  UI Rendering
     m_textView.Update();
     m_textView.ForEach(
-        [&](Entity entity, TextComponent &text) { Renderer::PrintText(text.text, text.position, {1.0f, 1.0f, 1.0f}); });
+        [&](Entity entity, const TextComponent &text) { Renderer::PrintText(text.text, text.position, {1.0f, 1.0f, 1.0f}); });
 }
 
 void RenderSystem::Shutdown()
@@ -116,7 +116,7 @@ bool RenderSystem::RejectTriangle(const FVector3 &v0, const FVector3 &v1, const 
         return true;
     }
 
-    auto closestPoint = std::max({v0.z, v1.z, v2.z});
+    const auto closestPoint = std::max({v0.z, v1.z, v2.z});
     //idk why 5 but it works perfectly
     if (closestPoint > 5.0f)
     {

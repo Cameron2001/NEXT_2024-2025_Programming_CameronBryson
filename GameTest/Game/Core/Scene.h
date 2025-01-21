@@ -8,7 +8,6 @@
 #include "Game/Systems/PhysicsSystem.h"
 #include "Game/Systems/RenderSystem.h"
 #include "Game/Systems/ParticleSystem.h"
-#include "Game/Systems/CameraSystem.h"
 #include "Game/Systems/UISystem.h"
 #include "Game/Core/EntityFactory.h"
 #include <Game/Managers/PlayerManager.h>
@@ -17,10 +16,7 @@ class Scene
   public:
     Scene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<EventManager> eventManager, std::shared_ptr<PlayerManager> scoreManager);
     virtual ~Scene() = default;
-    Scene(const Scene &) = delete;
-    Scene &operator=(const Scene &) = delete;
-    Scene(Scene &&) = delete;
-    Scene &operator=(Scene &&) = delete;
+
     virtual void Init();
     virtual void LateInit();
     virtual void Update(float dt);

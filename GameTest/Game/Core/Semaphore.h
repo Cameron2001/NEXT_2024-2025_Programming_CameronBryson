@@ -5,7 +5,7 @@
 class Semaphore
 {
   public:
-    explicit Semaphore(const int count = 0);
+    explicit Semaphore(int count = 0);
     void Acquire();
     void Release();
 

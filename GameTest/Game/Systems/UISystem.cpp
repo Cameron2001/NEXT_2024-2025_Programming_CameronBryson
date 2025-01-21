@@ -3,11 +3,11 @@
 #include <Game/Core/Components.h>
 
 UISystem::UISystem(Registry *registry, PlayerManager *playerManager)
-    : m_registry(registry), m_playerManager(playerManager)
+    : m_registry(registry), m_playerManager(playerManager), m_player1ScoreTextEntity(0), m_player2ScoreTextEntity(0)
 {
 }
 
-void UISystem::SetScoreTextEntities(Entity player1ScoreTextEntity, Entity player2ScoreTextEntity)
+void UISystem::SetScoreTextEntities(const Entity player1ScoreTextEntity, const Entity player2ScoreTextEntity)
 {
     m_player1ScoreTextEntity = player1ScoreTextEntity;
     m_player2ScoreTextEntity = player2ScoreTextEntity;

@@ -3,8 +3,7 @@
 #include "PlayerManager.h"
 
 PlayerManager::PlayerManager()
-{
-}
+= default;
 
 void PlayerManager::SetPlayer1(const Entity player)
 {
@@ -21,17 +20,17 @@ void PlayerManager::SetHole(const Entity hole)
     m_hole = hole;
 }
 
-Entity PlayerManager::GetPlayer1()
+Entity PlayerManager::GetPlayer1() const
 {
     return m_player1;
 }
 
-Entity PlayerManager::GetPlayer2()
+Entity PlayerManager::GetPlayer2() const
 {
     return m_player2;
 }
 
-Entity PlayerManager::GetHole()
+Entity PlayerManager::GetHole() const
 {
     return m_hole;
 }

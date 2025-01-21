@@ -15,7 +15,7 @@ ParticleSystem::ParticleSystem(Registry *registry, EventManager *eventManager) :
 {
 }
 
-void ParticleSystem::Update(float deltaTime)
+void ParticleSystem::Update(const float deltaTime)
 {
     m_view.Update();
 
@@ -23,7 +23,7 @@ void ParticleSystem::Update(float deltaTime)
     // We should also figure out what is better, combinable vector or concurrent vector
     Concurrency::concurrent_vector<Entity> entitiesToDestroy;
 
-    m_view.ParallelForEach([&](Entity entity, ParticleComponent &particle) {
+    m_view.ParallelForEach([&](const Entity entity, ParticleComponent &particle) {
         particle.position += particle.linearVelocity * deltaTime;
         particle.rotation += particle.angularVelocity * deltaTime;
         particle.age += deltaTime;
@@ -44,7 +44,7 @@ void ParticleSystem::Update(float deltaTime)
 void ParticleSystem::Render()
 {
     m_view.Update();
-    m_view.ForEach([&](Entity entity, ParticleComponent &particle) {
+    m_view.ForEach([&](Entity entity, const ParticleComponent &particle) {
         Renderer::DrawParticle(particle.position, 0.02f, particle.rotation, particle.color);
     });
 }

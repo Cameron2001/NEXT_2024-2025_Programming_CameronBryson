@@ -34,12 +34,6 @@ struct Edge2D
             return end.x < other.end.x;
         return end.y < other.end.y;
     }
-
-    Edge2D(const Edge2D &other) = default;
-    Edge2D &operator=(const Edge2D &other) = default;
-    Edge2D(Edge2D &&other) noexcept = default;
-    Edge2D &operator=(Edge2D &&other) noexcept = default;
-
     FVector2 start;
     FVector2 end;
     FVector3 color;
@@ -64,11 +58,6 @@ struct Edge3D
     {
         return (start == other.start && end == other.end) || (start == other.end && end == other.start);
     }
-
-    Edge3D(const Edge3D &other) = default;
-    Edge3D &operator=(const Edge3D &other) = default;
-    Edge3D(Edge3D &&other) noexcept = default;
-    Edge3D &operator=(Edge3D &&other) noexcept = default;
 
     FVector3 start;
     FVector3 end;

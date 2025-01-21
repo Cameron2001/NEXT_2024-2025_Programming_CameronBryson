@@ -9,7 +9,7 @@
 #include <Game/Math/MathUtil.h>
 
 PlayerSystem::PlayerSystem(Registry *registry, EventManager *eventManager, PlayerManager *playerManager, Camera* camera)
-    : m_arrowView(registry), m_scaleTextEntity(0), m_camera(camera)
+    : m_camera(camera), m_arrowView(registry), m_scaleTextEntity(0)
 {
     m_registry = registry;
     m_eventManager = eventManager;
@@ -34,11 +34,11 @@ void PlayerSystem::Update(float dt)
 
     auto playerView = m_registry->CreateView<PlayerComponent, RigidBodyComponent, TransformComponent>();
 
-    bool PITCHUP = App::IsKeyPressed('S');
-    bool PITCHDOWN = App::IsKeyPressed('W');
-    bool YAWLEFT = App::IsKeyPressed('A');
-    bool YAWRIGHT = App::IsKeyPressed('D');
-    bool SPACE = App::IsKeyPressed(VK_SPACE);
+    const bool PITCHUP = App::IsKeyPressed('S');
+    const bool PITCHDOWN = App::IsKeyPressed('W');
+    const bool YAWLEFT = App::IsKeyPressed('A');
+    const bool YAWRIGHT = App::IsKeyPressed('D');
+    const bool SPACE = App::IsKeyPressed(VK_SPACE);
    
 
     m_arrowView.Update();
@@ -80,7 +80,7 @@ void PlayerSystem::Update(float dt)
         ballRb.torque = FVector3(0, 0, 0);
     }
 
-    m_arrowView.ForEach([&](Entity entity, ArrowComponent &arrow, ModelComponent &model, TransformComponent &arrowTf) {
+    m_arrowView.ForEach([&](Entity entity, const ArrowComponent &arrow, ModelComponent &model, TransformComponent &arrowTf) {
         if (arrow.ball != currentPlayer)
         {
             model.enabled = false;
@@ -93,7 +93,7 @@ void PlayerSystem::Update(float dt)
 
         model.enabled = true;
 
-        TransformComponent &playerTf = m_registry->GetComponent<TransformComponent>(arrow.ball);
+        const TransformComponent &playerTf = m_registry->GetComponent<TransformComponent>(arrow.ball);
         RigidBodyComponent &rb = m_registry->GetComponent<RigidBodyComponent>(arrow.ball);
 
         float deltaYaw = 0.0f;
@@ -111,42 +111,41 @@ void PlayerSystem::Update(float dt)
         totalYaw += deltaYaw;
         totalPitch += deltaPitch;
 
-        const float MAX_PITCH_ANGLE = 60.0f;
+        constexpr float MAX_PITCH_ANGLE = 60.0f;
         if (totalPitch > MAX_PITCH_ANGLE)
             totalPitch = MAX_PITCH_ANGLE;
         if (totalPitch < -MAX_PITCH_ANGLE)
             totalPitch = -MAX_PITCH_ANGLE;
-        float yawRad = MathUtil::DegreesToRadians(totalYaw);
-        float pitchRad = MathUtil::DegreesToRadians(totalPitch);
+        const float yawRad = MathUtil::DegreesToRadians(totalYaw);
+        const float pitchRad = MathUtil::DegreesToRadians(totalPitch);
 
         Quaternion yawQ = Quaternion::FromAxisAngle(FVector3(0, 1, 0), yawRad);
         Quaternion pitchQ = Quaternion::FromAxisAngle(FVector3(1, 0, 0), pitchRad);
 
         arrowTf.rotation = yawQ * pitchQ;
 
-        FVector3 arrowForward = arrowTf.rotation.RotateVector3(FVector3(0, 0, 1)).Normalize();
+        const FVector3 arrowForward = arrowTf.rotation.RotateVector3(FVector3(0, 0, 1)).Normalize();
 
         arrowTf.position = playerTf.position + arrowForward * ARROW_DISTANCE;
 
 
-        float cameraYawRad = yawRad;
+        const float cameraYawRad = yawRad;
 
-        Quaternion cameraYawQ = Quaternion::FromAxisAngle(FVector3(0, -1, 0), cameraYawRad);
+        const Quaternion cameraYawQ = Quaternion::FromAxisAngle(FVector3(0, -1, 0), cameraYawRad);
 
 
         static const Quaternion flipY180 =
             Quaternion::FromAxisAngle(FVector3(0, 1, 0), MathUtil::DegreesToRadians(180.0f));
 
 
-        Quaternion finalCamOrientation = cameraYawQ * flipY180;
+        const Quaternion finalCamOrientation = cameraYawQ * flipY180;
 
 
         m_camera->SetOrientation(finalCamOrientation);
 
+        
 
-        FVector3 cameraWorldForward = finalCamOrientation.RotateVector3(FVector3(0, 0, -1)).Normalize();
-
-        FVector3 cameraPos = playerTf.position - (arrowForward * FVector3(1,0,1) * CAMERA_DISTANCE) + FVector3(0, CAMERA_HEIGHT, 0);
+        const FVector3 cameraPos = playerTf.position - (arrowForward * FVector3(1,0,1) * CAMERA_DISTANCE) + FVector3(0, CAMERA_HEIGHT, 0);
 
         m_camera->SetPosition(cameraPos);
 
@@ -155,8 +154,7 @@ void PlayerSystem::Update(float dt)
             m_shotDirection = arrowForward;
             rb.force += arrowForward * 2.0f * forceScale;
 
-
-            const float angularVelocityMagnitude = 5.0f;
+            constexpr float angularVelocityMagnitude = 5.0f;
             FVector3 spinAxis = FVector3(0, 1, 0).Cross(arrowForward).Normalize();
             if (spinAxis.Length() < 0.01f)
             {
@@ -190,7 +188,7 @@ void PlayerSystem::Update(float dt)
     }
 
 
-    playerView.ForEach([&](Entity e, PlayerComponent &player, RigidBodyComponent &rb, TransformComponent &tf) {
+    playerView.ForEach([&](Entity e, const PlayerComponent &player, RigidBodyComponent &rb, TransformComponent &tf) {
         if (tf.position.y <= POSITION_RESET_Y)
         {
             rb = RigidBodyComponent();
@@ -199,15 +197,15 @@ void PlayerSystem::Update(float dt)
     });
 }
 
-void PlayerSystem::OnCollision(unsigned int ID1, unsigned int ID2)
+void PlayerSystem::OnCollision(const unsigned int ID1, const unsigned int ID2)
 {
-    Entity player1ID = m_playerManager->GetPlayer1();
-    Entity player2ID = m_playerManager->GetPlayer2();
-    Entity holeID = m_playerManager->GetHole();
+    const Entity player1ID = m_playerManager->GetPlayer1();
+    const Entity player2ID = m_playerManager->GetPlayer2();
+    const Entity holeID = m_playerManager->GetHole();
 
     // Check if any player collides with hole
-    bool player1Collides = (ID1 == player1ID && ID2 == holeID) || (ID1 == holeID && ID2 == player1ID);
-    bool player2Collides = (ID1 == player2ID && ID2 == holeID) || (ID1 == holeID && ID2 == player2ID);
+    const bool player1Collides = (ID1 == player1ID && ID2 == holeID) || (ID1 == holeID && ID2 == player1ID);
+    const bool player2Collides = (ID1 == player2ID && ID2 == holeID) || (ID1 == holeID && ID2 == player2ID);
 
     if (player1Collides)
     {

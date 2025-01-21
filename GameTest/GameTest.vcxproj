@@ -206,7 +206,6 @@
     <ClInclude Include="Game\Math\Vector3Tests.h" />
     <ClInclude Include="Game\Math\Vector4Tests.h" />
     <ClInclude Include="Game\Storage\View.h" />
-    <ClInclude Include="Game\Systems\CameraSystem.h" />
     <ClInclude Include="Game\Systems\CollisionSystem.h" />
     <ClInclude Include="Game\Systems\PhysicsSystem.h" />
     <ClInclude Include="Game\Systems\RenderSystem.h" />
@@ -257,7 +256,6 @@
     <ClCompile Include="App\SimpleController.cpp" />
     <ClCompile Include="App\SimpleSound.cpp" />
     <ClCompile Include="App\SimpleSprite.cpp" />
-    <ClCompile Include="Game\Systems\CameraSystem.cpp" />
     <ClCompile Include="Game\Systems\CollisionSystem.cpp" />
     <ClCompile Include="Game\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Game\Systems\RenderSystem.cpp" />

@@ -28,7 +28,7 @@ HiddenLineRemoval::HiddenLineRemoval()
     m_visibleEdges.local().reserve(10000);
 }
 
-std::vector<Edge2D> HiddenLineRemoval::RemoveHiddenLines(std::vector<Triangle2D> &triangles)
+std::vector<Edge2D> HiddenLineRemoval::RemoveHiddenLines(const std::vector<Triangle2D> &triangles)
 {
     InitializeQuadtree(triangles);
     for (const auto &triangle : triangles)
@@ -36,18 +36,17 @@ std::vector<Edge2D> HiddenLineRemoval::RemoveHiddenLines(std::vector<Triangle2D>
         m_quadtree->Insert(triangle);
     }
 
-    size_t totalTriangles = triangles.size();
+    const size_t totalTriangles = triangles.size();
     size_t batchSize = totalTriangles / m_bufferPoolSize;
     if (batchSize <= 0)
     {
         batchSize = 1;
     }
-    size_t numBatches = (totalTriangles + batchSize - 1) / batchSize;
+    const size_t numBatches = (totalTriangles + batchSize - 1) / batchSize;
 
-    concurrency::parallel_for(size_t(0), numBatches, [&](size_t batchIndex) {
-        size_t startIdx = batchIndex * batchSize;
-        size_t endIdx = std::min(startIdx + batchSize, totalTriangles);
-        size_t currentBatchSize = endIdx - startIdx;
+    concurrency::parallel_for(size_t(0), numBatches, [&](const size_t batchIndex) {
+        const size_t startIdx = batchIndex * batchSize;
+        const size_t endIdx = std::min(startIdx + batchSize, totalTriangles);
 
         // Acquire a buffer for the entire batch
         SemaphoreGuard guard(m_semaphore);
@@ -137,7 +136,7 @@ void HiddenLineRemoval::ProcessEdge(const Edge2D &edge, const std::vector<Triang
 
     for (const auto &occluder : occluders)
     {
-        size_t endIndex = segments.size();
+        const size_t endIndex = segments.size();
 
         // Process segments from currentIndex to endIndex
         for (size_t i = currentIndex; i < endIndex; ++i)

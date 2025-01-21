@@ -31,7 +31,7 @@ void Camera::SetPosition(const FVector3 &position)
     UpdateViewMatrix();
 }
 
-void Camera::SetFOV(float fov)
+void Camera::SetFOV(const float fov)
 {
     m_FOV = fov;
     UpdateProjectionMatrix();
@@ -45,10 +45,10 @@ void Camera::SetOrientation(const Quaternion &orientation)
 
 void Camera::AddPitch(const float degrees)
 {
-    float radians = MathUtil::DegreesToRadians(degrees);
+    const float radians = MathUtil::DegreesToRadians(degrees);
 
-    FVector3 localX = m_orientation.RotateVector3(FVector3(1.0f, 0.0f, 0.0f)).Normalize();
-    Quaternion pitchQuat = Quaternion::FromAxisAngle(localX, radians);
+    const FVector3 localX = m_orientation.RotateVector3(FVector3(1.0f, 0.0f, 0.0f)).Normalize();
+    const Quaternion pitchQuat = Quaternion::FromAxisAngle(localX, radians);
 
     m_orientation = (pitchQuat * m_orientation).Normalize();
 
@@ -61,7 +61,7 @@ void Camera::AddYaw(const float degrees)
     float radians = MathUtil::DegreesToRadians(degrees);
     radians = -radians;
 
-    Quaternion yawQuat = Quaternion::FromAxisAngle(m_worldUp, radians);
+    const Quaternion yawQuat = Quaternion::FromAxisAngle(m_worldUp, radians);
 
     m_orientation = (yawQuat * m_orientation).Normalize();
 
@@ -70,16 +70,16 @@ void Camera::AddYaw(const float degrees)
 
 void Camera::ClampPitch()
 {
-    float currentPitch = MathUtil::RadiansToDegrees(m_orientation.GetPitch());
+    const float currentPitch = MathUtil::RadiansToDegrees(m_orientation.GetPitch());
 
     if (currentPitch > m_maxPitch)
     {
-        float excess = currentPitch - m_maxPitch;
+        const float excess = currentPitch - m_maxPitch;
         AddPitch(-excess);
     }
     else if (currentPitch < m_minPitch)
     {
-        float deficit = m_minPitch - currentPitch;
+        const float deficit = m_minPitch - currentPitch;
         AddPitch(deficit); 
     }
 }
@@ -90,13 +90,13 @@ void Camera::UpdateViewMatrix()
     m_up = m_orientation.RotateVector3(FVector3(0.0f, 1.0f, 0.0f)).Normalize();
     m_right = m_orientation.RotateVector3(FVector3(1.0f, 0.0f, 0.0f)).Normalize();
 
-    FVector3 target = m_position + m_forward;
+    const FVector3 target = m_position + m_forward;
 
     m_viewMatrix = Matrix4::CreateViewMatrix(m_position, target, m_up);
 }
 
 void Camera::UpdateProjectionMatrix()
 {
-    float aspectRatio = static_cast<float>(APP_VIRTUAL_WIDTH) / static_cast<float>(APP_INIT_WINDOW_HEIGHT);
+    constexpr float aspectRatio = static_cast<float>(APP_VIRTUAL_WIDTH) / static_cast<float>(APP_INIT_WINDOW_HEIGHT);
     m_projectionMatrix = Matrix4::CreatePerspectiveMatrix(m_FOV, aspectRatio, m_zNear, m_zFar);
 }

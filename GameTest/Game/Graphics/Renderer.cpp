@@ -30,7 +30,7 @@ void Renderer::DrawLine(const FVector3 &start, const FVector3 &end, const FVecto
 }
 void Renderer::DrawLine(const Edge2D &edge, const FVector3 &color)
 {
-    auto clippedEdge = LiangBarsky(edge);
+    const auto clippedEdge = LiangBarsky(edge);
     if (clippedEdge.start != clippedEdge.end)
     {
         DrawLine(clippedEdge.start, clippedEdge.end, color);

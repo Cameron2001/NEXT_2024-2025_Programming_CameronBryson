@@ -99,11 +99,11 @@ struct ParticleComponent
 };
 struct ColliderComponent
 {
-    ColliderComponent(const ColliderType type, bool isDynamic)
+    ColliderComponent(const ColliderType type, const bool isDynamic)
         : type(type), layer(LAYER_DEFAULT), mask(0xFFFFFFFF), isDynamic(isDynamic)
     {
     }
-    ColliderComponent(const ColliderType type, bool isDynamic,float elasticity, float friction)
+    ColliderComponent(const ColliderType type, const bool isDynamic, const float elasticity, const float friction)
         : type(type), layer(LAYER_DEFAULT), mask(0xFFFFFFFF), elasticity(elasticity), isDynamic(isDynamic),
           friction(friction)
     {
@@ -117,7 +117,7 @@ struct ColliderComponent
 };
 struct CameraFollowComponent
 {
-    CameraFollowComponent(const FVector3 &offset, float smoothSpeed) : offset(offset), smoothSpeed(smoothSpeed)
+    CameraFollowComponent(const FVector3 &offset, const float smoothSpeed) : offset(offset), smoothSpeed(smoothSpeed)
     {
     }
     FVector3 offset;

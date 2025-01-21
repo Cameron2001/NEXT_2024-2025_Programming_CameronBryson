@@ -14,8 +14,7 @@ class ParticleSystem
     Registry *m_registry;
     EventManager *m_eventManager;
 
-  private:
-    float GenerateRandomLifeTime();
-    FVector2 GenerateRandomAcceleration();
+    static float GenerateRandomLifeTime();
+    static FVector2 GenerateRandomAcceleration();
     View<ParticleComponent> m_view;
 };

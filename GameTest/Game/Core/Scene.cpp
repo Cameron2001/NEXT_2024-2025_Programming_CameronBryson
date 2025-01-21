@@ -21,7 +21,6 @@ Scene::Scene(std::shared_ptr<GraphicsManager> graphicsManager, std::shared_ptr<E
 
 void Scene::Init()
 {
-    // m_graphicsManager->LoadResources();
     m_renderSystem->Init();
     
 }

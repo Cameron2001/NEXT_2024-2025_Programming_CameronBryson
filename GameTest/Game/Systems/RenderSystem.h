@@ -23,7 +23,7 @@ class RenderSystem
     void Shutdown();
 
   private:
-    bool RejectTriangle(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2);
+    static bool RejectTriangle(const FVector3 &v0, const FVector3 &v1, const FVector3 &v2);
     Registry *m_registry;
     View<TransformComponent, ModelComponent> m_modelView;
     View<TextComponent> m_textView;
@@ -34,17 +34,7 @@ class RenderSystem
     // Pre-allocated buffers
     // Should probably change concurrent vecctor to combinable vector
     concurrency::combinable<std::vector<Triangle2D>> m_triangles;
-    // concurrency::concurrent_vector<Triangle2D> m_triangles;
     std::vector<Triangle2D> m_triangleList;
     std::vector<Edge2D> m_visibleSegments;
 };
 
-// Read:
-// GraphicsManager
-// Camera
-// TransformComponent
-// ModelComponent
-// TextComponent
-
-// Write:
-// None

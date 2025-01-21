@@ -62,7 +62,7 @@ void Logger::WriteLog(const std::string &message)
     if (m_outputFile.is_open())
     {
         // Get the current time
-        std::time_t t = std::time(nullptr);
+        const std::time_t t = std::time(nullptr);
         std::tm tm;
         localtime_s(&tm, &t); // Thread-safe function on Windows
 

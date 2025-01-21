@@ -11,17 +11,17 @@ MainMenuScene::MainMenuScene(std::shared_ptr<GraphicsManager> graphicsManager,
 void MainMenuScene::Init()
 {
     Scene::Init();
-    auto mainMenuText = m_registry->CreateEntity();
+    const auto mainMenuText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(mainMenuText, "Main Menu", FVector2(500.0f, 500.0f));
 
-    auto levelOneText = m_registry->CreateEntity();
+    const auto levelOneText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(levelOneText, "Press 1 for Level One", FVector2(500.0f, 400.0f));
 
-    auto controlsText = m_registry->CreateEntity();
+    const auto controlsText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(controlsText, "WASD to move the arrow. Hold and release space bar to shoot!", FVector2(500.0f, 300.0f));
 
 
-    auto escapeText = m_registry->CreateEntity();
+    const auto escapeText = m_registry->CreateEntity();
     m_registry->AddComponent<TextComponent>(escapeText, "Press ESC to Exit", FVector2(500.0f, 200.0f));
 
 

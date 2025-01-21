@@ -20,10 +20,10 @@ private:
     EventManager *m_eventManager;
     PlayerManager *m_playerManager;
     Camera *m_camera;
-    bool shotFired = false;
     FVector3 m_shotDirection = FVector3(0.0f, 0.0f, 0.0f);
-    bool previousSpace = false;
     View<ArrowComponent, ModelComponent, TransformComponent> m_arrowView;
+    bool shotFired = false;
+    bool previousSpace = false;
     float forceScale = 5.0f;
     Entity m_scaleTextEntity;
     float totalYaw = 180;

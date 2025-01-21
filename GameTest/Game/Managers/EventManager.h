@@ -55,24 +55,21 @@ class EventManager
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         std::pair<std::string, std::type_index> key = {identifier, typeid(Event<Args...>)};
-        auto it = m_events.find(key);
+        const auto it = m_events.find(key);
         if (it != m_events.end())
         {
             return std::static_pointer_cast<Event<Args...>>(it->second);
         }
-        else
-        {
-            auto event = std::make_shared<Event<Args...>>();
-            m_events.emplace(key, event);
-            return event;
-        }
+        auto event = std::make_shared<Event<Args...>>();
+        m_events.emplace(key, event);
+        return event;
     }
 
     template <typename... Args> std::shared_ptr<Event<Args...>> GetEvent(const std::string &identifier)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        std::pair<std::string, std::type_index> key = {identifier, typeid(Event<Args...>)};
-        auto it = m_events.find(key);
+        const std::pair<std::string, std::type_index> key = {identifier, typeid(Event<Args...>)};
+        const auto it = m_events.find(key);
         if (it != m_events.end())
         {
             return std::static_pointer_cast<Event<Args...>>(it->second);
