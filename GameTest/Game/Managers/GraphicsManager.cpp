@@ -21,7 +21,7 @@ void GraphicsManager::LoadResources()
     LoadModel("SphereOBJ", "assets/sphere.obj");
     LoadModel("FlagOBJ", "assets/flag.obj");
     LoadModel("AsteroidOBJ", "assets/asteroid.obj");
-    LoadModel("ArrowOBJ", "assets/arrow2.obj");
+    LoadModel("ArrowOBJ", "assets/arrow.obj");
     LoadModel("GolfCourseOBJ", "assets/golf_course.obj");
 }
 

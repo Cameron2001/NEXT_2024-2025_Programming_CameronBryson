@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="GameTest.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="App\app.cpp">
       <Filter>API</Filter>
@@ -24,65 +23,102 @@
     <ClCompile Include="miniaudio\miniaudio.cpp">
       <Filter>API\third_party\miniaudio</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scenes\PlayScene.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Core\Scene.cpp">
-      <Filter>Engine\Core</Filter>
+      <Filter>MiniGolf\Core</Filter>
     </ClCompile>
     <ClCompile Include="Game\Storage\Registry.cpp">
-      <Filter>Engine\Storage</Filter>
+      <Filter>MiniGolf\Storage</Filter>
     </ClCompile>
     <ClCompile Include="Game\Graphics\Camera.cpp">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>MiniGolf\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Game\Managers\GraphicsManager.cpp">
-      <Filter>Engine\Managers</Filter>
+      <Filter>MiniGolf\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Game\Math\Matrix4.cpp">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClCompile>
     <ClCompile Include="Game\Math\Vector2.cpp">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClCompile>
     <ClCompile Include="Game\Math\Vector3.cpp">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClCompile>
     <ClCompile Include="Game\Math\Vector4.cpp">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClCompile>
     <ClCompile Include="Game\Graphics\Renderer.cpp">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>MiniGolf\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Game\Systems\CollisionSystem.cpp">
-      <Filter>Engine\Systems</Filter>
+      <Filter>MiniGolf\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Game\Systems\PhysicsSystem.cpp">
-      <Filter>Engine\Systems</Filter>
+      <Filter>MiniGolf\Systems</Filter>
     </ClCompile>
     <ClCompile Include="Game\Systems\RenderSystem.cpp">
-      <Filter>Engine\Systems</Filter>
+      <Filter>MiniGolf\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Core\EntityFactory.cpp">
+      <Filter>MiniGolf\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Graphics\HiddenLineRemoval.cpp">
+      <Filter>MiniGolf\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Game\Systems\PlayerSystem.cpp">
-      <Filter>Game</Filter>
+      <Filter>MiniGolf\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Graphics\HiddenLineRemoval.cpp" />
-    <ClCompile Include="Game\Math\Octree.cpp" />
-    <ClCompile Include="Game\Math\Quadtree.cpp" />
-    <ClCompile Include="Game\Systems\ParticleSystem.cpp" />
-    <ClCompile Include="Game\Core\Logger.cpp" />
-    <ClCompile Include="Game\Core\Semaphore.cpp" />
-    <ClCompile Include="Game\Core\SemaphoreGuard.cpp" />
-    <ClCompile Include="Game\Math\Quaternion.cpp" />
-    <ClCompile Include="Game\Math\Matrix3.cpp" />
-    <ClCompile Include="Game\Core\EntityFactory.cpp" />
-    <ClCompile Include="Game\Scenes\MainMenuScene.cpp" />
-    <ClCompile Include="Game\Managers\PlayerManager.cpp" />
-    <ClCompile Include="Game\Systems\UISystem.cpp" />
-    <ClCompile Include="Game\Systems\MenuSystem.cpp" />
-    <ClCompile Include="Game\Scenes\LevelOneScene.cpp" />
-    <ClCompile Include="Game\Scenes\ResultsScene.cpp" />
-    <ClCompile Include="Game\Systems\ResultsSystem.cpp" />
+    <ClCompile Include="Game\Scenes\PlayScene.cpp">
+      <Filter>MiniGolf\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTest.cpp">
+      <Filter>MiniGolf</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scenes\LevelOneScene.cpp">
+      <Filter>MiniGolf\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Core\Logger.cpp">
+      <Filter>MiniGolf\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scenes\MainMenuScene.cpp">
+      <Filter>MiniGolf\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Math\Matrix3.cpp">
+      <Filter>MiniGolf\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\MenuSystem.cpp">
+      <Filter>MiniGolf\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Math\Octree.cpp">
+      <Filter>MiniGolf\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Math\Quadtree.cpp">
+      <Filter>MiniGolf\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\ParticleSystem.cpp">
+      <Filter>MiniGolf\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Managers\PlayerManager.cpp">
+      <Filter>MiniGolf\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Math\Quaternion.cpp">
+      <Filter>MiniGolf\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scenes\ResultsScene.cpp">
+      <Filter>MiniGolf\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\ResultsSystem.cpp">
+      <Filter>MiniGolf\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Core\Semaphore.cpp">
+      <Filter>MiniGolf\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Core\SemaphoreGuard.cpp">
+      <Filter>MiniGolf\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Systems\UISystem.cpp">
+      <Filter>MiniGolf\Systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -113,111 +149,183 @@
     <ClInclude Include="miniaudio\miniaudio.h">
       <Filter>API\third_party\miniaudio</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scenes\PlayScene.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Core\Scene.h">
-      <Filter>Engine\Core</Filter>
+      <Filter>MiniGolf\Core</Filter>
     </ClInclude>
     <ClInclude Include="Game\Storage\ComponentArray.h">
-      <Filter>Engine\Storage</Filter>
+      <Filter>MiniGolf\Storage</Filter>
     </ClInclude>
     <ClInclude Include="Game\Storage\IComponentArray.h">
-      <Filter>Engine\Storage</Filter>
+      <Filter>MiniGolf\Storage</Filter>
     </ClInclude>
     <ClInclude Include="Game\Storage\Registry.h">
-      <Filter>Engine\Storage</Filter>
+      <Filter>MiniGolf\Storage</Filter>
     </ClInclude>
     <ClInclude Include="Game\Core\Event.h">
-      <Filter>Engine\Core</Filter>
+      <Filter>MiniGolf\Core</Filter>
     </ClInclude>
     <ClInclude Include="Game\Graphics\Camera.h">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>MiniGolf\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Game\Core\Collision.h">
-      <Filter>Engine\Core</Filter>
+      <Filter>MiniGolf\Core</Filter>
     </ClInclude>
     <ClInclude Include="Game\Core\Components.h">
-      <Filter>Engine\Core</Filter>
+      <Filter>MiniGolf\Core</Filter>
     </ClInclude>
     <ClInclude Include="Game\Managers\GraphicsManager.h">
-      <Filter>Engine\Managers</Filter>
+      <Filter>MiniGolf\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Game\Math\Matrix4.h">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClInclude>
     <ClInclude Include="Game\Graphics\Mesh.h">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>MiniGolf\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Game\Graphics\Model.h">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>MiniGolf\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Game\Managers\SceneManager.h">
-      <Filter>Engine\Managers</Filter>
+      <Filter>MiniGolf\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Game\Math\Vector2.h">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClInclude>
     <ClInclude Include="Game\Math\Vector3.h">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClInclude>
     <ClInclude Include="Game\Math\Vector4.h">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClInclude>
     <ClInclude Include="Game\Math\MathUtil.h">
-      <Filter>Engine\Math</Filter>
+      <Filter>MiniGolf\Math</Filter>
     </ClInclude>
     <ClInclude Include="Game\Graphics\Renderer.h">
-      <Filter>Engine\Graphics</Filter>
+      <Filter>MiniGolf\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Game\Systems\CollisionSystem.h">
-      <Filter>Engine\Systems</Filter>
+      <Filter>MiniGolf\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Game\Systems\PhysicsSystem.h">
-      <Filter>Engine\Systems</Filter>
+      <Filter>MiniGolf\Systems</Filter>
     </ClInclude>
     <ClInclude Include="Game\Systems\RenderSystem.h">
-      <Filter>Engine\Systems</Filter>
+      <Filter>MiniGolf\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Graphics\Edge.h">
+      <Filter>MiniGolf\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\BoundingBox.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\BoundingBoxTests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\BoundingSphere.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\BoundingSphereTests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Core\Entity.h">
+      <Filter>MiniGolf\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Core\EntityFactory.h">
+      <Filter>MiniGolf\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Managers\EventManager.h">
+      <Filter>MiniGolf\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Graphics\HiddenLineRemoval.h">
+      <Filter>MiniGolf\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Game\Systems\PlayerSystem.h">
-      <Filter>Game</Filter>
+      <Filter>MiniGolf\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Graphics\Triangle.h" />
-    <ClInclude Include="Game\Storage\View.h" />
-    <ClInclude Include="Game\Graphics\Edge.h" />
-    <ClInclude Include="Game\Graphics\HiddenLineRemoval.h" />
-    <ClInclude Include="Game\Math\Octree.h" />
-    <ClInclude Include="Game\Math\Quadtree.h" />
-    <ClInclude Include="Game\Math\BoundingBox.h" />
-    <ClInclude Include="Game\Systems\ParticleSystem.h" />
-    <ClInclude Include="Game\Core\TestResult.h" />
-    <ClInclude Include="Game\Math\OctreeTests.h" />
-    <ClInclude Include="Game\Core\Tests.h" />
-    <ClInclude Include="Game\Core\Logger.h" />
-    <ClInclude Include="Game\Math\BoundingBoxTests.h" />
-    <ClInclude Include="Game\Math\Matrix4Tests.h" />
-    <ClInclude Include="Game\Math\QuadtreeTests.h" />
-    <ClInclude Include="Game\Math\Vector2Tests.h" />
-    <ClInclude Include="Game\Math\Vector3Tests.h" />
-    <ClInclude Include="Game\Math\Vector4Tests.h" />
-    <ClInclude Include="Game\Math\BoundingSphere.h" />
-    <ClInclude Include="Game\Math\BoundingSphereTests.h" />
-    <ClInclude Include="Game\Core\Semaphore.h" />
-    <ClInclude Include="Game\Core\SemaphoreGuard.h" />
-    <ClInclude Include="Game\Math\Quaternion.h" />
-    <ClInclude Include="Game\Math\QuaternionTests.h" />
-    <ClInclude Include="Game\Math\Matrix3.h" />
-    <ClInclude Include="Game\Math\Matrix3Tests.h" />
-    <ClInclude Include="Game\Core\EntityFactory.h" />
-    <ClInclude Include="Game\Core\Entity.h" />
-    <ClInclude Include="Game\Scenes\MainMenuScene.h" />
-    <ClInclude Include="Game\Managers\EventManager.h" />
-    <ClInclude Include="Game\Managers\PlayerManager.h" />
-    <ClInclude Include="Game\Systems\UISystem.h" />
-    <ClInclude Include="Game\Systems\MenuSystem.h" />
-    <ClInclude Include="Game\Scenes\LevelOneScene.h" />
-    <ClInclude Include="Game\Scenes\ResultsScene.h" />
-    <ClInclude Include="Game\Systems\ResultsSystem.h" />
+    <ClInclude Include="Game\Scenes\PlayScene.h">
+      <Filter>MiniGolf\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scenes\LevelOneScene.h">
+      <Filter>MiniGolf\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Core\Logger.h">
+      <Filter>MiniGolf\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scenes\MainMenuScene.h">
+      <Filter>MiniGolf\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Matrix4Tests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Matrix3.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Matrix3Tests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\MenuSystem.h">
+      <Filter>MiniGolf\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\OctreeTests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Octree.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Quadtree.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\QuadtreeTests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\ParticleSystem.h">
+      <Filter>MiniGolf\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Managers\PlayerManager.h">
+      <Filter>MiniGolf\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Quaternion.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\QuaternionTests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scenes\ResultsScene.h">
+      <Filter>MiniGolf\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\ResultsSystem.h">
+      <Filter>MiniGolf\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Core\Semaphore.h">
+      <Filter>MiniGolf\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Core\SemaphoreGuard.h">
+      <Filter>MiniGolf\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Core\Tests.h">
+      <Filter>MiniGolf\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Core\TestResult.h">
+      <Filter>MiniGolf\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Systems\UISystem.h">
+      <Filter>MiniGolf\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Vector4Tests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Vector3Tests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Math\Vector2Tests.h">
+      <Filter>MiniGolf\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Storage\View.h">
+      <Filter>MiniGolf\Storage</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Graphics\Triangle.h">
+      <Filter>MiniGolf\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="API">
@@ -232,32 +340,29 @@
     <Filter Include="API\third_party\stb_image">
       <UniqueIdentifier>{61cfc19b-c57e-4021-b530-bac172fcba86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game">
-      <UniqueIdentifier>{82bde0cc-6ac5-455b-b65a-73444bebf64e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine">
+    <Filter Include="MiniGolf">
       <UniqueIdentifier>{68d2aa26-4a52-4b6e-8aea-0c4cb38c5557}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Core">
+    <Filter Include="MiniGolf\Core">
       <UniqueIdentifier>{a04ecd66-0bda-404d-8b81-d576c609a571}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Graphics">
+    <Filter Include="MiniGolf\Graphics">
       <UniqueIdentifier>{9accd578-0043-4009-8517-ab61a21dccbf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Managers">
+    <Filter Include="MiniGolf\Managers">
       <UniqueIdentifier>{58beccc2-562a-4a24-8e7a-5304b59811dd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Storage">
+    <Filter Include="MiniGolf\Storage">
       <UniqueIdentifier>{aaf50c06-cc55-4208-af09-e8a48ad24d46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Math">
+    <Filter Include="MiniGolf\Math">
       <UniqueIdentifier>{4c6fdfb3-ed3f-49a8-b3ce-4fdc57a85a2c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Events">
-      <UniqueIdentifier>{4f4ea57f-ce1b-47f6-b121-9864c93112f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Systems">
+    <Filter Include="MiniGolf\Systems">
       <UniqueIdentifier>{a3e25f73-bb89-4141-ab01-41811c77805e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MiniGolf\Scenes">
+      <UniqueIdentifier>{4c82dc5c-133b-4bee-a562-1f9f57397072}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
